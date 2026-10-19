@@ -637,6 +637,11 @@
     // Initialize Dropdown Options
     function populateInitialDropdowns() {
       const sectorSelect = document.getElementById("filterSector");
+      sectorSelect.replaceChildren();
+      const allOption = document.createElement("option");
+      allOption.value = "ALL";
+      allOption.textContent = `全部業別 (${RAW_DATA.scenarios.length})`;
+      sectorSelect.appendChild(allOption);
       const sectors = ["保險業", "銀行業", "證券期貨業"];
       sectors.forEach(sec => {
         const cnt = RAW_DATA.scenarios.filter(s => s.sector === sec).length;
@@ -1696,10 +1701,6 @@
     // Event Listeners Initialization
     window.addEventListener("DOMContentLoaded", () => {
       loadExcelAndInit();
-      populateInitialDropdowns();
-      renderCrossMatrix();
-      renderDefinitionsAndNotes();
-      syncAll();
 
       // Navigation Tabs
       document.getElementById("tabBtn-dashboard").addEventListener("click", () => switchTab("dashboard"));
