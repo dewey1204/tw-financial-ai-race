@@ -1,0 +1,1854 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>台灣金融業 AI 場景應用互動儀表板</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', 'Noto Sans TC', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: #f8fafc;
+      color: #0f172a;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #f1f5f9;
+      border-radius: 4px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+
+    .matrix-cell {
+      transition: all 0.15s ease;
+    }
+
+    .matrix-cell:hover {
+      transform: scale(1.04);
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.12);
+    }
+  </style>
+</head>
+
+<body class="min-h-screen flex flex-col bg-slate-50 text-slate-900">
+
+  <!-- Top Header Banner -->
+  <header class="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white shadow-md sticky top-0 z-30">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+      <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div class="flex items-start sm:items-center gap-3">
+          <div
+            class="w-11 h-11 rounded-xl bg-indigo-500/20 border border-indigo-400/30 flex items-center justify-center shrink-0 shadow-inner">
+            <svg class="w-6 h-6 text-indigo-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+            </svg>
+          </div>
+          <div>
+            <div class="flex flex-wrap items-center gap-2">
+              <h1 class="text-lg sm:text-xl font-bold tracking-tight text-white">台灣金融業 AI 場景應用互動儀表板</h1>
+              <span
+                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-500/30 text-indigo-200 border border-indigo-400/30">
+                80 家機構 · 134 筆場景
+              </span>
+            </div>
+            <p class="text-xs sm:text-sm text-slate-300 mt-0.5">
+              涵蓋銀行業、保險業、證券期貨業及周邊單位之 AI 應用場景分類與來源索引分析
+            </p>
+          </div>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <nav class="flex items-center bg-slate-800/80 p-1 rounded-xl border border-slate-700/70 self-start md:self-auto"
+          aria-label="主要檢視分頁">
+          <button id="tabBtn-dashboard" type="button"
+            class="px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition-all bg-indigo-600 text-white shadow-sm">
+            總覽與圖表篩選
+          </button>
+          <button id="tabBtn-matrix" type="button"
+            class="px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition-all text-slate-300 hover:text-white">
+            交叉熱力矩陣
+          </button>
+          <button id="tabBtn-institutions" type="button"
+            class="px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition-all text-slate-300 hover:text-white">
+            機構來源索引 (80)
+          </button>
+          <button id="tabBtn-definitions" type="button"
+            class="px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition-all text-slate-300 hover:text-white">
+            分類定義與口徑
+          </button>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <!-- Sticky Interactive Filter Bar (Dropdowns & Search) -->
+  <section class="bg-white border-b border-slate-200 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-3 items-end">
+
+        <!-- Dropdown 1: 業別 -->
+        <div class="lg:col-span-3">
+          <label for="filterSector" class="block text-xs font-semibold text-slate-600 mb-1">
+            1. 金融業別篩選
+          </label>
+          <select id="filterSector"
+            class="w-full rounded-lg border border-slate-300 bg-slate-50 px-3 py-2 text-sm text-slate-800 font-medium focus:border-indigo-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition">
+            <option value="ALL">全部業別 (134)</option>
+          </select>
+        </div>
+
+        <!-- Dropdown 2: 應用類別 -->
+        <div class="lg:col-span-3">
+          <label for="filterCategory" class="block text-xs font-semibold text-slate-600 mb-1">
+            2. AI 應用類別篩選
+          </label>
+          <select id="filterCategory"
+            class="w-full rounded-lg border border-slate-300 bg-slate-50 px-3 py-2 text-sm text-slate-800 font-medium focus:border-indigo-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition">
+            <option value="ALL">全部應用類別 (13類)</option>
+          </select>
+        </div>
+
+        <!-- Dropdown 3: 金融機構 / 業者 -->
+        <div class="lg:col-span-3">
+          <label for="filterCompany" class="block text-xs font-semibold text-slate-600 mb-1">
+            3. 金融機構 (業者) 篩選
+          </label>
+          <select id="filterCompany"
+            class="w-full rounded-lg border border-slate-300 bg-slate-50 px-3 py-2 text-sm text-slate-800 font-medium focus:border-indigo-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition">
+            <option value="ALL">全部業者 (80家)</option>
+          </select>
+        </div>
+
+        <!-- Keyword Search -->
+        <div class="lg:col-span-3">
+          <label for="filterKeyword" class="block text-xs font-semibold text-slate-600 mb-1">
+            4. 關鍵字搜尋
+          </label>
+          <div class="relative">
+            <input id="filterKeyword" type="text" placeholder="搜尋場景、技術、業者..."
+              class="w-full rounded-lg border border-slate-300 bg-slate-50 pl-8 pr-7 py-2 text-sm text-slate-800 placeholder-slate-400 focus:border-indigo-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition" />
+            <svg class="w-4 h-4 text-slate-400 absolute left-2.5 top-2.5" fill="none" stroke="currentColor"
+              viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+            <button id="clearKeywordBtn" type="button" title="清除關鍵字"
+              class="hidden absolute right-2 top-2 text-slate-400 hover:text-slate-600">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Active Filter Bar & Action Buttons -->
+      <div class="flex flex-wrap items-center justify-between gap-2 mt-3 pt-2.5 border-t border-slate-100">
+        <div class="flex flex-wrap items-center gap-1.5" id="activeFiltersContainer">
+          <span class="text-xs text-slate-500 font-medium">目前篩選狀態：顯示全部 134 筆 AI 應用場景</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <button id="resetFiltersBtn" type="button"
+            class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 transition">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+            重置篩選條件
+          </button>
+          <button id="exportCsvBtn" type="button"
+            class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-indigo-700 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 transition">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+            </svg>
+            匯出目前篩選 CSV
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Content Container -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+
+    <!-- KPI Cards Row (Always Visible & Reactive) -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <!-- KPI 1: Scenarios -->
+      <div class="bg-white rounded-xl p-4 border border-slate-200/80 shadow-sm flex items-start justify-between">
+        <div>
+          <p class="text-xs font-semibold uppercase tracking-wider text-slate-500">符合篩選場景數</p>
+          <div class="mt-1 flex items-baseline gap-2">
+            <span id="kpiScenarioCount" class="text-2xl sm:text-3xl font-bold text-slate-900">134</span>
+            <span id="kpiScenarioPct"
+              class="text-xs font-semibold px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700">佔全體 100%</span>
+          </div>
+          <p id="kpiScenarioSub" class="text-xs text-slate-500 mt-1.5">全體總計 134 筆獨立 AI 應用場景</p>
+        </div>
+        <div class="w-10 h-10 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+          </svg>
+        </div>
+      </div>
+
+      <!-- KPI 2: Categories -->
+      <div class="bg-white rounded-xl p-4 border border-slate-200/80 shadow-sm flex items-start justify-between">
+        <div>
+          <p class="text-xs font-semibold uppercase tracking-wider text-slate-500">涵蓋 AI 應用類別</p>
+          <div class="mt-1 flex items-baseline gap-2">
+            <span id="kpiCategoryCount" class="text-2xl sm:text-3xl font-bold text-slate-900">12</span>
+            <span class="text-xs text-slate-500 font-medium">/ 13 類定義</span>
+          </div>
+          <p id="kpiCategorySub" class="text-xs text-slate-500 mt-1.5">12 類有實際案例（AI Agent 為 0 筆）</p>
+        </div>
+        <div class="w-10 h-10 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+          </svg>
+        </div>
+      </div>
+
+      <!-- KPI 3: Institutions -->
+      <div class="bg-white rounded-xl p-4 border border-slate-200/80 shadow-sm flex items-start justify-between">
+        <div>
+          <p class="text-xs font-semibold uppercase tracking-wider text-slate-500">涵蓋金融機構 / 單位</p>
+          <div class="mt-1 flex items-baseline gap-2">
+            <span id="kpiCompanyCount" class="text-2xl sm:text-3xl font-bold text-slate-900">80</span>
+            <span id="kpiAvgPerCompany"
+              class="text-xs font-semibold px-2 py-0.5 rounded-full bg-amber-50 text-amber-700">平均 1.68 筆/家</span>
+          </div>
+          <p id="kpiCompanySub" class="text-xs text-slate-500 mt-1.5">銀行 25 家 · 保險 26 家 · 證期 29 家</p>
+        </div>
+        <div class="w-10 h-10 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center shrink-0">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+          </svg>
+        </div>
+      </div>
+
+      <!-- KPI 4: Top Category -->
+      <div class="bg-white rounded-xl p-4 border border-slate-200/80 shadow-sm flex items-start justify-between">
+        <div>
+          <p class="text-xs font-semibold uppercase tracking-wider text-slate-500">最大宗應用類別</p>
+          <div class="mt-1 flex items-baseline gap-2">
+            <span id="kpiTopCategoryName"
+              class="text-xl sm:text-2xl font-bold text-indigo-700 truncate max-w-[160px]">生成式AI</span>
+            <span id="kpiTopCategoryCount"
+              class="text-xs font-semibold px-2 py-0.5 rounded-full bg-rose-50 text-rose-700">31 筆</span>
+          </div>
+          <p id="kpiTopCategorySub" class="text-xs text-slate-500 mt-1.5">佔目前篩選場景之 23.1%</p>
+        </div>
+        <div class="w-10 h-10 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center shrink-0">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== TAB 1: DASHBOARD & SCENARIOS ==================== -->
+    <div id="tabView-dashboard" class="space-y-6">
+
+      <!-- Charts Grid -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+        <!-- Chart 1: AI Category Distribution (7 cols) -->
+        <div class="lg:col-span-7 bg-white rounded-xl border border-slate-200/80 shadow-sm p-5 flex flex-col">
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-4">
+            <div>
+              <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
+                各 AI 應用類別場景數量分布
+                <span class="text-xs font-normal text-slate-500">(點擊長條可快速篩選類別)</span>
+              </h2>
+              <p class="text-xs text-slate-500 mt-0.5">統計各技術與應用類別之場景筆數（含 0 筆之 AI Agent 類別）</p>
+            </div>
+            <div class="flex items-center bg-slate-100 p-0.5 rounded-lg self-start sm:self-auto">
+              <button id="catChartModeTotal" type="button"
+                class="px-2.5 py-1 rounded-md text-xs font-medium bg-white text-slate-800 shadow-sm transition">
+                總量排行
+              </button>
+              <button id="catChartModeStacked" type="button"
+                class="px-2.5 py-1 rounded-md text-xs font-medium text-slate-600 hover:text-slate-900 transition">
+                依業別堆疊
+              </button>
+            </div>
+          </div>
+          <div class="relative h-80 w-full">
+            <canvas id="categoryChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Chart 2: Sector Distribution & Top Companies (5 cols) -->
+        <div class="lg:col-span-5 bg-white rounded-xl border border-slate-200/80 shadow-sm p-5 flex flex-col">
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-4">
+            <div>
+              <h2 id="rightChartTitle" class="text-base font-bold text-slate-900">
+                三大金融業別場景佔比
+              </h2>
+              <p id="rightChartSubtitle" class="text-xs text-slate-500 mt-0.5">點擊圖表區塊可篩選對應業別或機構</p>
+            </div>
+            <div class="flex items-center bg-slate-100 p-0.5 rounded-lg self-start sm:self-auto">
+              <button id="rightChartModeSector" type="button"
+                class="px-2.5 py-1 rounded-md text-xs font-medium bg-white text-slate-800 shadow-sm transition">
+                業別佔比
+              </button>
+              <button id="rightChartModeTopComp" type="button"
+                class="px-2.5 py-1 rounded-md text-xs font-medium text-slate-600 hover:text-slate-900 transition">
+                機構排行 Top 12
+              </button>
+            </div>
+          </div>
+          <div class="relative h-64 w-full">
+            <canvas id="sectorOrCompanyChart"></canvas>
+          </div>
+          <!-- Mini Sector Breakdown Legend Cards -->
+          <div id="sectorMiniSummary" class="grid grid-cols-3 gap-2 mt-4 pt-3 border-t border-slate-100">
+          </div>
+        </div>
+      </div>
+
+      <!-- Category Quick-Filter Pills Bar -->
+      <div class="bg-white rounded-xl border border-slate-200/80 shadow-sm p-4">
+        <div class="flex items-center justify-between mb-2.5">
+          <h3 class="text-xs font-bold uppercase tracking-wider text-slate-500">各類別快速篩選標籤 (點擊切換類別並查看判斷原則)</h3>
+          <span id="selectedCategoryHint" class="text-xs text-indigo-600 font-medium"></span>
+        </div>
+        <div id="categoryPillsContainer" class="flex flex-wrap gap-2">
+        </div>
+        <!-- Category Definition Callout Box (shows when a specific category is selected) -->
+        <div id="categoryDefinitionBanner"
+          class="hidden mt-3 p-3.5 rounded-lg bg-indigo-50/70 border border-indigo-200/80 text-xs text-slate-700 space-y-1">
+        </div>
+      </div>
+
+      <!-- Filtered Scenarios List Section -->
+      <div class="bg-white rounded-xl border border-slate-200/80 shadow-sm overflow-hidden">
+        <div
+          class="p-4 sm:px-6 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <div>
+            <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
+              AI 應用場景明細列表
+              <span id="tableCountBadge"
+                class="px-2.5 py-0.5 text-xs font-semibold rounded-full bg-slate-100 text-slate-700">共 134 筆</span>
+            </h2>
+            <p class="text-xs text-slate-500 mt-0.5">點擊任一列可檢視該場景之完整分類原則與業者資訊</p>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-2">
+            <label for="sortSelect" class="text-xs font-medium text-slate-600">排序：</label>
+            <select id="sortSelect"
+              class="rounded-lg border border-slate-300 bg-slate-50 px-2.5 py-1.5 text-xs text-slate-800 font-medium focus:border-indigo-500 focus:outline-none">
+              <option value="default">原始檔案順序 (編號 1–134)</option>
+              <option value="sector">依金融業別排序</option>
+              <option value="company">依機構名稱筆畫/字母</option>
+              <option value="category">依 AI 應用類別排序</option>
+            </select>
+
+            <div class="flex items-center bg-slate-100 p-0.5 rounded-lg ml-1">
+              <button id="viewModeTableBtn" type="button"
+                class="px-2.5 py-1 rounded-md text-xs font-medium bg-white text-slate-800 shadow-sm transition">
+                表格檢視
+              </button>
+              <button id="viewModeCardBtn" type="button"
+                class="px-2.5 py-1 rounded-md text-xs font-medium text-slate-600 hover:text-slate-900 transition">
+                卡片檢視
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Table View -->
+        <div id="scenariosTableView" class="overflow-x-auto custom-scrollbar">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr
+                class="bg-slate-50 border-b border-slate-200 text-xs font-semibold text-slate-600 uppercase tracking-wider">
+                <th class="py-3 px-4 w-14 text-center">#</th>
+                <th class="py-3 px-4 w-28">業別</th>
+                <th class="py-3 px-4 w-44">金融機構 (業者)</th>
+                <th class="py-3 px-4 w-36">AI 應用類別</th>
+                <th class="py-3 px-4">AI 場景與應用內容</th>
+              </tr>
+            </thead>
+            <tbody id="scenariosTableBody" class="divide-y divide-slate-100 text-sm">
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Card Grid View -->
+        <div id="scenariosCardView"
+          class="hidden p-4 sm:p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 bg-slate-50/50">
+        </div>
+
+        <!-- Empty State -->
+        <div id="scenariosEmptyState" class="hidden py-12 px-4 text-center">
+          <div class="w-12 h-12 rounded-full bg-slate-100 text-slate-400 mx-auto flex items-center justify-center mb-3">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <p class="text-sm font-semibold text-slate-700">找不到符合目前篩選條件的 AI 應用場景</p>
+          <p id="emptyStateHint" class="text-xs text-slate-500 mt-1">請嘗試放寬下拉選單條件或清除搜尋關鍵字</p>
+          <button id="emptyResetBtn" type="button"
+            class="mt-4 px-4 py-2 rounded-lg text-xs font-semibold bg-indigo-600 text-white hover:bg-indigo-700 transition">
+            顯示全部 134 筆場景
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== TAB 2: CROSS-TAB HEATMAP MATRIX ==================== -->
+    <div id="tabView-matrix" class="hidden space-y-6">
+      <div class="bg-white rounded-xl border border-slate-200/80 shadow-sm p-5">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-4">
+          <div>
+            <h2 class="text-base font-bold text-slate-900">金融業別 × AI 應用類別 交叉熱力矩陣</h2>
+            <p class="text-xs text-slate-500 mt-0.5">點擊矩陣內任一儲存格，即可自動套用該「業別 + 類別」篩選並切換至場景明細</p>
+          </div>
+          <span
+            class="text-xs font-medium text-indigo-700 bg-indigo-50 px-3 py-1 rounded-full border border-indigo-200">
+            總計 134 筆場景 · 13 大分類
+          </span>
+        </div>
+        <div class="overflow-x-auto custom-scrollbar">
+          <table class="w-full text-sm border-collapse" id="crossMatrixTable">
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== TAB 3: INSTITUTIONS DIRECTORY (80 SOURCES) ==================== -->
+    <div id="tabView-institutions" class="hidden space-y-6">
+      <div class="bg-white rounded-xl border border-slate-200/80 shadow-sm overflow-hidden">
+        <div class="p-5 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <div>
+            <h2 class="text-base font-bold text-slate-900">金融機構與周邊單位來源索引 (共 80 家)</h2>
+            <p class="text-xs text-slate-500 mt-0.5">對應 Excel「來源索引」工作表，點擊任一機構可立即篩選並檢視其申報之 AI 場景</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <label for="instSortSelect" class="text-xs font-medium text-slate-600">排序：</label>
+            <select id="instSortSelect"
+              class="rounded-lg border border-slate-300 bg-slate-50 px-2.5 py-1.5 text-xs text-slate-800 font-medium">
+              <option value="countDesc">依場景筆數 (多 → 少)</option>
+              <option value="pageAsc">依原始 PDF 頁碼順序</option>
+              <option value="sector">依業別分類</option>
+            </select>
+          </div>
+        </div>
+        <div class="p-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5" id="institutionsGrid">
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== TAB 4: DEFINITIONS & METHODOLOGY ==================== -->
+    <div id="tabView-definitions" class="hidden space-y-6">
+      <!-- Category Definitions Table -->
+      <div class="bg-white rounded-xl border border-slate-200/80 shadow-sm overflow-hidden">
+        <div class="p-5 border-b border-slate-200">
+          <h2 class="text-base font-bold text-slate-900">台灣金融業 AI 應用｜13 大類別判斷原則與界線說明</h2>
+          <p class="text-xs text-slate-500 mt-0.5">完整收錄附件 Excel「分類說明」工作表之分類標準、界線注意事項與筆數統計</p>
+        </div>
+        <div class="overflow-x-auto custom-scrollbar">
+          <table class="w-full text-left border-collapse text-sm">
+            <thead>
+              <tr class="bg-slate-50 border-b border-slate-200 text-xs font-semibold text-slate-600 uppercase">
+                <th class="py-3 px-4 w-40">AI 應用類別</th>
+                <th class="py-3 px-4 w-28 text-center">場景筆數</th>
+                <th class="py-3 px-4 w-1/3">判斷原則</th>
+                <th class="py-3 px-4">界線與注意事項</th>
+                <th class="py-3 px-4 w-28 text-center">快速查看</th>
+              </tr>
+            </thead>
+            <tbody id="definitionsTableBody" class="divide-y divide-slate-100">
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Methodology & Data Limitations -->
+      <div class="bg-white rounded-xl border border-slate-200/80 shadow-sm p-5">
+        <h3 class="text-base font-bold text-slate-900 mb-3">整理口徑與資料限制</h3>
+        <p class="text-xs text-slate-500 mb-4">來源：各業者AI應用 1.pdf，附件二，全文 7 頁；資料由金融機構及周邊單位自行提供。</p>
+        <div id="methodologyNotesGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Scenario Detail Modal -->
+  <div id="scenarioModal"
+    class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4">
+    <div class="bg-white rounded-2xl max-w-2xl w-full shadow-2xl border border-slate-200 overflow-hidden">
+      <div class="px-6 py-4 bg-slate-900 text-white flex items-center justify-between">
+        <div class="flex items-center gap-2.5">
+          <span id="modalSectorBadge"
+            class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-indigo-500 text-white"></span>
+          <h3 id="modalCompanyTitle" class="text-base font-bold"></h3>
+        </div>
+        <button id="closeModalBtn" type="button" class="text-slate-400 hover:text-white transition">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+      <div class="p-6 space-y-4 max-h-[80vh] overflow-y-auto">
+        <div class="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-slate-100">
+          <div class="flex items-center gap-2">
+            <span class="text-xs text-slate-500">歸屬類別：</span>
+            <span id="modalCategoryBadge" class="px-2.5 py-1 rounded-md text-xs font-bold"></span>
+          </div>
+          <div class="flex items-center gap-3 text-xs text-slate-500">
+            <span id="modalIdText"></span>
+            <span id="modalPdfPageText" class="px-2 py-0.5 rounded bg-slate-100 text-slate-700 font-medium"></span>
+          </div>
+        </div>
+
+        <div>
+          <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1.5">AI 應用場景描述</h4>
+          <p id="modalScenarioText"
+            class="text-base text-slate-800 leading-relaxed bg-slate-50 p-4 rounded-xl border border-slate-200/80 font-medium">
+          </p>
+        </div>
+
+        <div class="bg-indigo-50/60 rounded-xl p-4 border border-indigo-100 space-y-2">
+          <h4 class="text-xs font-bold uppercase tracking-wider text-indigo-900">該類別分類標準（出自「分類說明」）</h4>
+          <p id="modalCatPrinciple" class="text-xs text-slate-700 leading-relaxed"></p>
+          <p id="modalCatBoundary" class="text-xs text-slate-600 leading-relaxed"></p>
+        </div>
+
+        <div>
+          <h4 id="modalCompanyOtherHeader" class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">該機構之所有
+            AI 應用場景</h4>
+          <div id="modalCompanyOtherList" class="space-y-2"></div>
+        </div>
+      </div>
+      <div class="px-6 py-3.5 bg-slate-50 border-t border-slate-200 flex items-center justify-between">
+        <button id="modalFilterCompanyBtn" type="button"
+          class="text-xs font-semibold text-indigo-600 hover:text-indigo-800">
+          在儀表板中僅篩選此機構 →
+        </button>
+        <button id="modalCloseFooterBtn" type="button"
+          class="px-4 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 text-white hover:bg-slate-700 transition">
+          關閉視窗
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toastNotice"
+    class="fixed bottom-5 right-5 z-50 hidden bg-slate-900 text-white px-4 py-2.5 rounded-xl shadow-lg text-xs font-medium items-center gap-2 border border-slate-700">
+    <span id="toastText"></span>
+  </div>
+
+  <script>
+    // Embedded Workbook Data
+    let RAW_DATA = { scenarios: [], sources: [], categories: [], notes: [] };
+
+    // Color mappings for sectors & categories
+    const SECTOR_COLORS = {
+      "保險業": { bg: "#4f46e5", light: "#eef2ff", text: "#3730a3", border: "#c7d2fe" },
+      "銀行業": { bg: "#0284c7", light: "#f0f9ff", text: "#075985", border: "#bae6fd" },
+      "證券期貨業": { bg: "#0d9488", light: "#f0fdfa", text: "#115e59", border: "#99f6e4" }
+    };
+
+    const CATEGORY_PALETTE = {
+      "生成式AI": { color: "#4f46e5", badgeBg: "bg-indigo-50", badgeText: "text-indigo-700", badgeBorder: "border-indigo-200" },
+      "其它": { color: "#64748b", badgeBg: "bg-slate-100", badgeText: "text-slate-700", badgeBorder: "border-slate-300" },
+      "阻詐": { color: "#e11d48", badgeBg: "bg-rose-50", badgeText: "text-rose-700", badgeBorder: "border-rose-200" },
+      "智能客服": { color: "#0284c7", badgeBg: "bg-sky-50", badgeText: "text-sky-700", badgeBorder: "border-sky-200" },
+      "語音質檢/應用": { color: "#0d9488", badgeBg: "bg-teal-50", badgeText: "text-teal-700", badgeBorder: "border-teal-200" },
+      "RAG/KM": { color: "#7c3aed", badgeBg: "bg-violet-50", badgeText: "text-violet-700", badgeBorder: "border-violet-200" },
+      "M365 Copilot": { color: "#2563eb", badgeBg: "bg-blue-50", badgeText: "text-blue-700", badgeBorder: "border-blue-200" },
+      "RPA": { color: "#d97706", badgeBg: "bg-amber-50", badgeText: "text-amber-800", badgeBorder: "border-amber-200" },
+      "模型訓練": { color: "#059669", badgeBg: "bg-emerald-50", badgeText: "text-emerald-700", badgeBorder: "border-emerald-200" },
+      "程式助手": { color: "#9333ea", badgeBg: "bg-purple-50", badgeText: "text-purple-700", badgeBorder: "border-purple-200" },
+      "比對": { color: "#ea580c", badgeBg: "bg-orange-50", badgeText: "text-orange-700", badgeBorder: "border-orange-200" },
+      "OCR": { color: "#0891b2", badgeBg: "bg-cyan-50", badgeText: "text-cyan-700", badgeBorder: "border-cyan-200" },
+      "AI Agent": { color: "#94a3b8", badgeBg: "bg-gray-100", badgeText: "text-gray-500", badgeBorder: "border-gray-200" }
+    };
+
+    // Application State
+    const state = {
+      activeTab: "dashboard",
+      sector: "ALL",
+      category: "ALL",
+      company: "ALL",
+      pdfPage: "ALL",
+      keyword: "",
+      sortBy: "default",
+      viewMode: "table", // 'table' | 'card'
+      catChartMode: "total", // 'total' | 'stacked'
+      rightChartMode: "sector", // 'sector' | 'topComp'
+      instSort: "countDesc",
+      modalCompany: null
+    };
+
+    let categoryChartInstance = null;
+    let rightChartInstance = null;
+
+    // Helper: Category Map
+    const categoryInfoMap = {};
+    RAW_DATA.categories.forEach(c => {
+      categoryInfoMap[c.category] = c;
+    });
+
+    // Helper: Toast
+    function showToast(msg) {
+      const toast = document.getElementById("toastNotice");
+      const text = document.getElementById("toastText");
+      text.textContent = msg;
+      toast.classList.remove("hidden");
+      toast.classList.add("flex");
+      clearTimeout(window._toastTimer);
+      window._toastTimer = setTimeout(() => {
+        toast.classList.add("hidden");
+        toast.classList.remove("flex");
+      }, 2600);
+    }
+
+    // Initialize Dropdown Options
+    function populateInitialDropdowns() {
+      const sectorSelect = document.getElementById("filterSector");
+      const sectors = ["保險業", "銀行業", "證券期貨業"];
+      sectors.forEach(sec => {
+        const cnt = RAW_DATA.scenarios.filter(s => s.sector === sec).length;
+        const opt = document.createElement("option");
+        opt.value = sec;
+        opt.textContent = `${sec} (${cnt}筆)`;
+        sectorSelect.appendChild(opt);
+      });
+
+
+
+      updateDynamicDropdowns();
+    }
+
+    // Dynamically update Category and Company dropdown counts based on current Sector selection
+    function updateDynamicDropdowns() {
+      const catSelect = document.getElementById("filterCategory");
+      const prevCat = state.category;
+      catSelect.innerHTML = "";
+
+      const baseForCat = RAW_DATA.scenarios.filter(s =>
+        (state.sector === "ALL" || s.sector === state.sector) &&
+        (state.company === "ALL" || s.company === state.company) &&
+        (state.pdfPage === "ALL" || s.pdfPage === state.pdfPage)
+      );
+
+      const allCatOpt = document.createElement("option");
+      allCatOpt.value = "ALL";
+      allCatOpt.textContent = `全部應用類別 (${baseForCat.length}筆)`;
+      catSelect.appendChild(allCatOpt);
+
+      // Sort categories by overall count desc
+      const sortedCats = [...RAW_DATA.categories].sort((a, b) => b.count - a.count);
+      sortedCats.forEach(c => {
+        const cnt = baseForCat.filter(s => s.category === c.category).length;
+        const opt = document.createElement("option");
+        opt.value = c.category;
+        opt.textContent = `${c.category} (${cnt}筆)`;
+        catSelect.appendChild(opt);
+      });
+      catSelect.value = prevCat;
+
+      // Update Company dropdown filtered by selected Sector
+      const compSelect = document.getElementById("filterCompany");
+      const prevComp = state.company;
+      compSelect.innerHTML = "";
+
+      const eligibleSources = RAW_DATA.sources.filter(src =>
+        state.sector === "ALL" || src.sector === state.sector
+      );
+
+      const allCompOpt = document.createElement("option");
+      allCompOpt.value = "ALL";
+      allCompOpt.textContent = state.sector === "ALL"
+        ? `全部金融機構 (${eligibleSources.length}家)`
+        : `${state.sector}全部機構 (${eligibleSources.length}家)`;
+      compSelect.appendChild(allCompOpt);
+
+      eligibleSources.forEach(src => {
+        const opt = document.createElement("option");
+        opt.value = src.company;
+        opt.textContent = `${src.company} (${src.count}筆)`;
+        compSelect.appendChild(opt);
+      });
+
+      if (eligibleSources.some(s => s.company === prevComp)) {
+        compSelect.value = prevComp;
+      } else {
+        state.company = "ALL";
+        compSelect.value = "ALL";
+      }
+    }
+
+    // Filter Scenarios
+    function getFilteredScenarios() {
+      const kw = state.keyword.trim().toLowerCase();
+      let list = RAW_DATA.scenarios.filter(item => {
+        if (state.sector !== "ALL" && item.sector !== state.sector) return false;
+        if (state.category !== "ALL" && item.category !== state.category) return false;
+        if (state.company !== "ALL" && item.company !== state.company) return false;
+        if (state.pdfPage !== "ALL" && item.pdfPage !== state.pdfPage) return false;
+        if (kw) {
+          const hay = `${item.sector} ${item.company} ${item.category} ${item.scenario}`.toLowerCase();
+          if (!hay.includes(kw)) return false;
+        }
+        return true;
+      });
+
+      if (state.sortBy === "sector") {
+        list.sort((a, b) => a.sector.localeCompare(b.sector, "zh-Hant") || a.id - b.id);
+      } else if (state.sortBy === "company") {
+        list.sort((a, b) => a.company.localeCompare(b.company, "zh-Hant") || a.id - b.id);
+      } else if (state.sortBy === "category") {
+        list.sort((a, b) => a.category.localeCompare(b.category, "zh-Hant") || a.id - b.id);
+      } else {
+        list.sort((a, b) => a.id - b.id);
+      }
+      return list;
+    }
+
+    // Render Active Filter Badges
+    function renderActiveFilterBadges(filteredCount) {
+      const container = document.getElementById("activeFiltersContainer");
+      container.innerHTML = "";
+
+      const hasFilter = state.sector !== "ALL" || state.category !== "ALL" || state.company !== "ALL" || state.pdfPage !== "ALL" || state.keyword.trim() !== "";
+
+      if (!hasFilter) {
+        container.innerHTML = `<span class="text-xs text-slate-500 font-medium">目前篩選狀態：顯示全部 <strong class="text-slate-800">134</strong> 筆 AI 應用場景（可透過上方下拉選單或點擊圖表進行互動篩選）</span>`;
+        return;
+      }
+
+      const label = document.createElement("span");
+      label.className = "text-xs font-semibold text-slate-600 mr-1";
+      label.textContent = `篩選結果 (${filteredCount} 筆)：`;
+      container.appendChild(label);
+
+      const addChip = (title, val, onClear) => {
+        const chip = document.createElement("button");
+        chip.type = "button";
+        chip.className = "inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-50 text-indigo-700 border border-indigo-200 hover:bg-indigo-100 transition";
+        chip.innerHTML = `<span>${title}: ${val}</span><span class="text-indigo-400 font-bold ml-0.5">×</span>`;
+        chip.addEventListener("click", onClear);
+        container.appendChild(chip);
+      };
+
+      if (state.sector !== "ALL") {
+        addChip("業別", state.sector, () => { state.sector = "ALL"; document.getElementById("filterSector").value = "ALL"; syncAll(); });
+      }
+      if (state.category !== "ALL") {
+        addChip("類別", state.category, () => { state.category = "ALL"; document.getElementById("filterCategory").value = "ALL"; syncAll(); });
+      }
+      if (state.company !== "ALL") {
+        addChip("機構", state.company, () => { state.company = "ALL"; document.getElementById("filterCompany").value = "ALL"; syncAll(); });
+      }
+
+      if (state.keyword.trim() !== "") {
+        addChip("關鍵字", state.keyword.trim(), () => {
+          state.keyword = "";
+          document.getElementById("filterKeyword").value = "";
+          document.getElementById("clearKeywordBtn").classList.add("hidden");
+          syncAll();
+        });
+      }
+    }
+
+    // Update KPI Cards
+    function renderKPIs(filtered) {
+      const totalAll = RAW_DATA.scenarios.length; // 134
+      const count = filtered.length;
+      const pct = totalAll > 0 ? ((count / totalAll) * 100).toFixed(1) : "0.0";
+
+      document.getElementById("kpiScenarioCount").textContent = count;
+      document.getElementById("kpiScenarioPct").textContent = `佔全體 ${pct}%`;
+      document.getElementById("kpiScenarioSub").textContent =
+        count === totalAll ? "全體總計 134 筆獨立 AI 應用場景" : `從全體 ${totalAll} 筆場景中篩選出 ${count} 筆`;
+
+      // Unique active categories
+      const uniqueCats = new Set(filtered.map(s => s.category));
+      document.getElementById("kpiCategoryCount").textContent = uniqueCats.size;
+      document.getElementById("kpiCategorySub").textContent =
+        state.category !== "ALL"
+          ? `已鎖定單一類別：${state.category}`
+          : `涵蓋 ${uniqueCats.size} 個有案例之應用類別`;
+
+      // Unique companies
+      const uniqueComps = new Set(filtered.map(s => s.company));
+      const compCount = uniqueComps.size;
+      const avg = compCount > 0 ? (count / compCount).toFixed(2) : "0.00";
+      document.getElementById("kpiCompanyCount").textContent = compCount;
+      document.getElementById("kpiAvgPerCompany").textContent = `平均 ${avg} 筆/家`;
+
+      const secCounts = { "銀行業": 0, "保險業": 0, "證券期貨業": 0 };
+      const seenCompSec = new Set();
+      filtered.forEach(s => {
+        const key = `${s.sector}||${s.company}`;
+        if (!seenCompSec.has(key)) {
+          seenCompSec.add(key);
+          secCounts[s.sector] = (secCounts[s.sector] || 0) + 1;
+        }
+      });
+      document.getElementById("kpiCompanySub").textContent =
+        `銀行 ${secCounts["銀行業"]} 家 · 保險 ${secCounts["保險業"]} 家 · 證期 ${secCounts["證券期貨業"]} 家`;
+
+      // Top category
+      const catCounter = {};
+      filtered.forEach(s => {
+        catCounter[s.category] = (catCounter[s.category] || 0) + 1;
+      });
+      const sortedCatPairs = Object.entries(catCounter).sort((a, b) => b[1] - a[1]);
+      if (sortedCatPairs.length > 0) {
+        const [topName, topCnt] = sortedCatPairs[0];
+        const topShare = ((topCnt / count) * 100).toFixed(1);
+        document.getElementById("kpiTopCategoryName").textContent = topName;
+        document.getElementById("kpiTopCategoryCount").textContent = `${topCnt} 筆`;
+        document.getElementById("kpiTopCategorySub").textContent = `佔目前篩選場景之 ${topShare}%`;
+      } else {
+        document.getElementById("kpiTopCategoryName").textContent = "無資料";
+        document.getElementById("kpiTopCategoryCount").textContent = "0 筆";
+        document.getElementById("kpiTopCategorySub").textContent = "目前篩選條件下無場景";
+      }
+    }
+
+    // Render Category Quick Pills & Definition Callout
+    function renderCategoryPills() {
+      const container = document.getElementById("categoryPillsContainer");
+      container.innerHTML = "";
+
+      // Calculate category counts ignoring the category filter itself so users can see other categories' counts
+      const baseScenarios = RAW_DATA.scenarios.filter(item => {
+        if (state.sector !== "ALL" && item.sector !== state.sector) return false;
+        if (state.company !== "ALL" && item.company !== state.company) return false;
+        if (state.pdfPage !== "ALL" && item.pdfPage !== state.pdfPage) return false;
+        if (state.keyword.trim() !== "") {
+          const kw = state.keyword.trim().toLowerCase();
+          const hay = `${item.sector} ${item.company} ${item.category} ${item.scenario}`.toLowerCase();
+          if (!hay.includes(kw)) return false;
+        }
+        return true;
+      });
+
+      const counts = {};
+      baseScenarios.forEach(s => { counts[s.category] = (counts[s.category] || 0) + 1; });
+
+      // "ALL" pill
+      const allBtn = document.createElement("button");
+      allBtn.type = "button";
+      const isAll = state.category === "ALL";
+      allBtn.className = `px-3 py-1.5 rounded-lg text-xs font-semibold transition border ${isAll
+          ? "bg-slate-900 text-white border-slate-900 shadow-sm"
+          : "bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100"
+        }`;
+      allBtn.textContent = `全部類別 (${baseScenarios.length})`;
+      allBtn.addEventListener("click", () => {
+        state.category = "ALL";
+        document.getElementById("filterCategory").value = "ALL";
+        syncAll();
+      });
+      container.appendChild(allBtn);
+
+      const sortedCats = [...RAW_DATA.categories].sort((a, b) => b.count - a.count);
+      sortedCats.forEach(catObj => {
+        const cat = catObj.category;
+        const cnt = counts[cat] || 0;
+        const isSelected = state.category === cat;
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = `inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition border ${isSelected
+            ? "bg-indigo-600 text-white border-indigo-600 shadow-sm ring-2 ring-indigo-500/30"
+            : cnt > 0
+              ? "bg-white text-slate-700 border-slate-200 hover:border-indigo-300 hover:bg-indigo-50/40"
+              : "bg-slate-50 text-slate-400 border-slate-200/60"
+          }`;
+        const dotColor = CATEGORY_PALETTE[cat] ? CATEGORY_PALETTE[cat].color : "#64748b";
+        btn.innerHTML = `<span class="w-2 h-2 rounded-full shrink-0" style="background-color:${isSelected ? '#ffffff' : dotColor}"></span><span>${cat}</span><span class="${isSelected ? 'text-indigo-100' : 'text-slate-400'}">(${cnt})</span>`;
+        btn.addEventListener("click", () => {
+          state.category = state.category === cat ? "ALL" : cat;
+          document.getElementById("filterCategory").value = state.category;
+          syncAll();
+        });
+        container.appendChild(btn);
+      });
+
+      // Definition Banner
+      const banner = document.getElementById("categoryDefinitionBanner");
+      const hint = document.getElementById("selectedCategoryHint");
+      if (state.category !== "ALL" && categoryInfoMap[state.category]) {
+        const info = categoryInfoMap[state.category];
+        hint.textContent = `目前鎖定：${state.category}（共 ${info.count} 筆）`;
+        banner.classList.remove("hidden");
+        banner.innerHTML = `
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1 pb-1.5 border-b border-indigo-200/60">
+            <span class="font-bold text-indigo-950 text-xs">【${info.category}】分類定義與判斷標準（全體共 ${info.count} 筆）</span>
+            <button type="button" id="clearCatBannerBtn" class="text-xs text-indigo-600 hover:underline self-start sm:self-auto">取消類別鎖定</button>
+          </div>
+          <p class="pt-1"><strong class="text-indigo-900">判斷原則：</strong>${info.principle}</p>
+          <p><strong class="text-indigo-900">界線與注意事項：</strong>${info.boundary}</p>
+        `;
+        document.getElementById("clearCatBannerBtn").addEventListener("click", () => {
+          state.category = "ALL";
+          document.getElementById("filterCategory").value = "ALL";
+          syncAll();
+        });
+      } else {
+        hint.textContent = "點擊任一類別標籤可檢視該類別之判斷原則与界線";
+        banner.classList.add("hidden");
+      }
+    }
+
+    // Render Charts
+    function renderCharts(filtered) {
+      // 1. Category Chart
+      const ctxCat = document.getElementById("categoryChart").getContext("2d");
+      if (categoryChartInstance) {
+        categoryChartInstance.destroy();
+      }
+
+      // Base scenarios for category chart (respect sector, company, page, keyword; highlight active category)
+      const baseForChart = RAW_DATA.scenarios.filter(item => {
+        if (state.sector !== "ALL" && item.sector !== state.sector) return false;
+        if (state.company !== "ALL" && item.company !== state.company) return false;
+        if (state.pdfPage !== "ALL" && item.pdfPage !== state.pdfPage) return false;
+        if (state.keyword.trim() !== "") {
+          const kw = state.keyword.trim().toLowerCase();
+          const hay = `${item.sector} ${item.company} ${item.category} ${item.scenario}`.toLowerCase();
+          if (!hay.includes(kw)) return false;
+        }
+        return true;
+      });
+
+      const catOrder = [...RAW_DATA.categories].map(c => c.category);
+      // Sort categories by count in baseForChart descending (keep AI Agent at bottom)
+      const catCountsMap = {};
+      catOrder.forEach(c => { catCountsMap[c] = 0; });
+      baseForChart.forEach(s => { catCountsMap[s.category] = (catCountsMap[s.category] || 0) + 1; });
+
+      catOrder.sort((a, b) => (catCountsMap[b] - catCountsMap[a]) || (categoryInfoMap[b].count - categoryInfoMap[a].count));
+
+      if (state.catChartMode === "total") {
+        const dataVals = catOrder.map(c => catCountsMap[c]);
+        const bgColors = catOrder.map(c => {
+          const baseCol = CATEGORY_PALETTE[c] ? CATEGORY_PALETTE[c].color : "#64748b";
+          if (state.category === "ALL" || state.category === c) return baseCol;
+          return baseCol + "40"; // dimmed when another category is selected
+        });
+
+        categoryChartInstance = new Chart(ctxCat, {
+          type: "bar",
+          data: {
+            labels: catOrder,
+            datasets: [{
+              label: "場景筆數",
+              data: dataVals,
+              backgroundColor: bgColors,
+              borderRadius: 6,
+              barThickness: 16
+            }]
+          },
+          options: {
+            indexAxis: "y",
+            responsive: true,
+            maintainAspectRatio: false,
+            onClick: (evt, elements) => {
+              if (elements.length > 0) {
+                const idx = elements[0].index;
+                const clickedCat = catOrder[idx];
+                state.category = state.category === clickedCat ? "ALL" : clickedCat;
+                document.getElementById("filterCategory").value = state.category;
+                syncAll();
+              }
+            },
+            plugins: {
+              legend: { display: false },
+              tooltip: {
+                callbacks: {
+                  afterLabel: (ctx) => {
+                    const cName = catOrder[ctx.dataIndex];
+                    const info = categoryInfoMap[cName];
+                    return info ? `判斷原則：${info.principle}` : "";
+                  }
+                }
+              }
+            },
+            scales: {
+              x: {
+                beginAtZero: true,
+                ticks: { precision: 0, font: { size: 11 } },
+                grid: { color: "#f1f5f9" }
+              },
+              y: {
+                ticks: { font: { size: 12, weight: "600" }, color: "#1e293b" },
+                grid: { display: false }
+              }
+            }
+          }
+        });
+      } else {
+        // Stacked by Sector
+        const sectors = ["保險業", "銀行業", "證券期貨業"];
+        const datasets = sectors.map(sec => {
+          return {
+            label: sec,
+            data: catOrder.map(c => baseForChart.filter(s => s.sector === sec && s.category === c).length),
+            backgroundColor: SECTOR_COLORS[sec].bg,
+            borderRadius: 4,
+            barThickness: 16
+          };
+        });
+
+        categoryChartInstance = new Chart(ctxCat, {
+          type: "bar",
+          data: {
+            labels: catOrder,
+            datasets: datasets
+          },
+          options: {
+            indexAxis: "y",
+            responsive: true,
+            maintainAspectRatio: false,
+            onClick: (evt, elements) => {
+              if (elements.length > 0) {
+                const idx = elements[0].index;
+                const clickedCat = catOrder[idx];
+                state.category = state.category === clickedCat ? "ALL" : clickedCat;
+                document.getElementById("filterCategory").value = state.category;
+                syncAll();
+              }
+            },
+            plugins: {
+              legend: { position: "top", labels: { boxWidth: 12, font: { size: 11 } } }
+            },
+            scales: {
+              x: {
+                stacked: true,
+                beginAtZero: true,
+                ticks: { precision: 0, font: { size: 11 } },
+                grid: { color: "#f1f5f9" }
+              },
+              y: {
+                stacked: true,
+                ticks: { font: { size: 12, weight: "600" }, color: "#1e293b" },
+                grid: { display: false }
+              }
+            }
+          }
+        });
+      }
+
+      // 2. Right Chart: Sector Doughnut OR Top 12 Institutions Bar
+      const ctxRight = document.getElementById("sectorOrCompanyChart").getContext("2d");
+      if (rightChartInstance) {
+        rightChartInstance.destroy();
+      }
+
+      const sectors = ["保險業", "銀行業", "證券期貨業"];
+      const sectorCounts = sectors.map(sec => filtered.filter(s => s.sector === sec).length);
+      const totalFiltered = filtered.length;
+
+      // Render Mini Sector Breakdown Cards below right chart
+      const miniSummary = document.getElementById("sectorMiniSummary");
+      miniSummary.innerHTML = "";
+      sectors.forEach((sec, i) => {
+        const cnt = sectorCounts[i];
+        const pct = totalFiltered > 0 ? ((cnt / totalFiltered) * 100).toFixed(1) : "0.0";
+        const isSelected = state.sector === sec;
+        const card = document.createElement("button");
+        card.type = "button";
+        card.className = `p-2 rounded-lg border text-left transition ${isSelected
+            ? "bg-indigo-50/80 border-indigo-400 ring-1 ring-indigo-400"
+            : "bg-slate-50/70 border-slate-200/80 hover:bg-slate-100"
+          }`;
+        card.innerHTML = `
+          <div class="flex items-center gap-1.5">
+            <span class="w-2.5 h-2.5 rounded-full shrink-0" style="background-color:${SECTOR_COLORS[sec].bg}"></span>
+            <span class="text-xs font-bold text-slate-700 truncate">${sec}</span>
+          </div>
+          <div class="mt-1 flex items-baseline justify-between">
+            <span class="text-sm font-bold text-slate-900">${cnt} 筆</span>
+            <span class="text-[11px] text-slate-500">${pct}%</span>
+          </div>
+        `;
+        card.addEventListener("click", () => {
+          state.sector = state.sector === sec ? "ALL" : sec;
+          document.getElementById("filterSector").value = state.sector;
+          syncAll();
+        });
+        miniSummary.appendChild(card);
+      });
+
+      if (state.rightChartMode === "sector") {
+        document.getElementById("rightChartTitle").textContent = "三大金融業別場景佔比";
+        document.getElementById("rightChartSubtitle").textContent = "點擊圓餅圖區塊或下方卡片可篩選特定業別";
+
+        rightChartInstance = new Chart(ctxRight, {
+          type: "doughnut",
+          data: {
+            labels: sectors,
+            datasets: [{
+              data: sectorCounts,
+              backgroundColor: sectors.map(sec => SECTOR_COLORS[sec].bg),
+              borderWidth: 2,
+              borderColor: "#ffffff",
+              hoverOffset: 6
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            cutout: "62%",
+            onClick: (evt, elements) => {
+              if (elements.length > 0) {
+                const idx = elements[0].index;
+                const clickedSec = sectors[idx];
+                state.sector = state.sector === clickedSec ? "ALL" : clickedSec;
+                document.getElementById("filterSector").value = state.sector;
+                syncAll();
+              }
+            },
+            plugins: {
+              legend: {
+                position: "right",
+                labels: { boxWidth: 12, padding: 14, font: { size: 12, weight: "600" } }
+              },
+              tooltip: {
+                callbacks: {
+                  label: (ctx) => {
+                    const val = ctx.parsed;
+                    const p = totalFiltered > 0 ? ((val / totalFiltered) * 100).toFixed(1) : "0.0";
+                    return ` ${ctx.label}: ${val} 筆 (${p}%)`;
+                  }
+                }
+              }
+            }
+          }
+        });
+      } else {
+        document.getElementById("rightChartTitle").textContent = "場景數領先之金融機構 Top 12";
+        document.getElementById("rightChartSubtitle").textContent = "點擊機構長條可單獨篩選該機構之 AI 應用場景";
+
+        const compMap = {};
+        const compSecMap = {};
+        filtered.forEach(s => {
+          compMap[s.company] = (compMap[s.company] || 0) + 1;
+          compSecMap[s.company] = s.sector;
+        });
+        const topPairs = Object.entries(compMap)
+          .sort((a, b) => b[1] - a[1])
+          .slice(0, 12);
+
+        const compLabels = topPairs.map(p => p[0]);
+        const compVals = topPairs.map(p => p[1]);
+        const compColors = compLabels.map(c => SECTOR_COLORS[compSecMap[c]]?.bg || "#4f46e5");
+
+        rightChartInstance = new Chart(ctxRight, {
+          type: "bar",
+          data: {
+            labels: compLabels,
+            datasets: [{
+              label: "場景筆數",
+              data: compVals,
+              backgroundColor: compColors,
+              borderRadius: 4,
+              barThickness: 12
+            }]
+          },
+          options: {
+            indexAxis: "y",
+            responsive: true,
+            maintainAspectRatio: false,
+            onClick: (evt, elements) => {
+              if (elements.length > 0) {
+                const idx = elements[0].index;
+                const clickedComp = compLabels[idx];
+                state.company = state.company === clickedComp ? "ALL" : clickedComp;
+                updateDynamicDropdowns();
+                document.getElementById("filterCompany").value = state.company;
+                syncAll();
+              }
+            },
+            plugins: {
+              legend: { display: false }
+            },
+            scales: {
+              x: {
+                beginAtZero: true,
+                ticks: { precision: 0, font: { size: 10 } },
+                grid: { color: "#f1f5f9" }
+              },
+              y: {
+                ticks: { font: { size: 11, weight: "600" }, color: "#1e293b" },
+                grid: { display: false }
+              }
+            }
+          }
+        });
+      }
+    }
+
+    // Render Scenarios Table & Card View
+    function renderScenariosList(filtered) {
+      document.getElementById("tableCountBadge").textContent = `共 ${filtered.length} 筆`;
+
+      const tableView = document.getElementById("scenariosTableView");
+      const cardView = document.getElementById("scenariosCardView");
+      const emptyState = document.getElementById("scenariosEmptyState");
+      const tbody = document.getElementById("scenariosTableBody");
+
+      if (filtered.length === 0) {
+        tableView.classList.add("hidden");
+        cardView.classList.add("hidden");
+        emptyState.classList.remove("hidden");
+        if (state.category === "AI Agent") {
+          document.getElementById("emptyStateHint").textContent = "備註：依分類說明，「AI Agent」類別在全體 134 筆資料中為 0 筆（華南銀行 AI 代理人依投研報告產出用途歸類為生成式AI）。";
+        } else {
+          document.getElementById("emptyStateHint").textContent = "請嘗試放寬下拉選單篩選條件或清除搜尋關鍵字";
+        }
+        return;
+      }
+
+      emptyState.classList.add("hidden");
+      if (state.viewMode === "table") {
+        tableView.classList.remove("hidden");
+        cardView.classList.add("hidden");
+      } else {
+        tableView.classList.add("hidden");
+        cardView.classList.remove("hidden");
+      }
+
+      // Populate Table
+      tbody.innerHTML = "";
+      filtered.forEach(item => {
+        const tr = document.createElement("tr");
+        tr.className = "hover:bg-indigo-50/40 cursor-pointer transition";
+        const secStyle = SECTOR_COLORS[item.sector] || { light: "#f1f5f9", text: "#334155" };
+        const catStyle = CATEGORY_PALETTE[item.category] || CATEGORY_PALETTE["其它"];
+
+        tr.innerHTML = `
+          <td class="py-3 px-4 text-center text-xs font-mono text-slate-400">${item.id}</td>
+          <td class="py-3 px-4">
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold" style="background-color:${secStyle.light};color:${secStyle.text}">
+              ${item.sector}
+            </span>
+          </td>
+          <td class="py-3 px-4 font-semibold text-slate-800">${item.company}</td>
+          <td class="py-3 px-4">
+            <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold border ${catStyle.badgeBg} ${catStyle.badgeText} ${catStyle.badgeBorder}">
+              ${item.category}
+            </span>
+          </td>
+          <td class="py-3 px-4 text-slate-700 leading-relaxed">${item.scenario}</td>
+        `;
+        tr.addEventListener("click", () => openScenarioModal(item));
+        tbody.appendChild(tr);
+      });
+
+      // Populate Cards
+      cardView.innerHTML = "";
+      filtered.forEach(item => {
+        const card = document.createElement("div");
+        card.className = "bg-white rounded-xl p-4 border border-slate-200/90 shadow-sm hover:shadow-md hover:border-indigo-300 cursor-pointer transition flex flex-col justify-between";
+        const secStyle = SECTOR_COLORS[item.sector] || { light: "#f1f5f9", text: "#334155" };
+        const catStyle = CATEGORY_PALETTE[item.category] || CATEGORY_PALETTE["其它"];
+
+        card.innerHTML = `
+          <div>
+            <div class="flex items-center justify-between gap-2 mb-2.5">
+              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold" style="background-color:${secStyle.light};color:${secStyle.text}">
+                ${item.sector}
+              </span>
+              <span class="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-semibold border ${catStyle.badgeBg} ${catStyle.badgeText} ${catStyle.badgeBorder}">
+                ${item.category}
+              </span>
+            </div>
+            <h3 class="text-sm font-bold text-slate-900 mb-1.5">${item.company}</h3>
+            <p class="text-xs text-slate-600 leading-relaxed">${item.scenario}</p>
+          </div>
+          <div class="mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-400">
+            <span>場景編號 #${item.id}</span>
+            <span class="font-medium text-indigo-600">點擊檢視詳情 →</span>
+          </div>
+        `;
+        card.addEventListener("click", () => openScenarioModal(item));
+        cardView.appendChild(card);
+      });
+    }
+
+    // Render Cross-Tab Heatmap Matrix (Tab 2)
+    function renderCrossMatrix() {
+      const table = document.getElementById("crossMatrixTable");
+      const sectors = ["銀行業", "保險業", "證券期貨業"];
+      const sortedCats = [...RAW_DATA.categories].sort((a, b) => b.count - a.count);
+
+      let html = `
+        <thead>
+          <tr class="bg-slate-50 border-b border-slate-200 text-xs font-bold text-slate-600 uppercase">
+            <th class="py-3 px-4 text-left">AI 應用類別 \ 金融業別</th>
+            <th class="py-3 px-4 text-center">銀行業 (45)</th>
+            <th class="py-3 px-4 text-center">保險業 (51)</th>
+            <th class="py-3 px-4 text-center">證券期貨業 (38)</th>
+            <th class="py-3 px-4 text-center bg-slate-100">合計筆數 (134)</th>
+            <th class="py-3 px-4 text-center">全體佔比</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100">
+      `;
+
+      sortedCats.forEach(cObj => {
+        const cat = cObj.category;
+        const total = cObj.count;
+        const pct = ((total / 134) * 100).toFixed(1) + "%";
+        const catStyle = CATEGORY_PALETTE[cat] || CATEGORY_PALETTE["其它"];
+
+        html += `<tr class="hover:bg-slate-50/80">`;
+        html += `
+          <td class="py-2.5 px-4 font-semibold text-slate-800">
+            <span class="inline-flex items-center gap-1.5">
+              <span class="w-2.5 h-2.5 rounded-full" style="background-color:${catStyle.color}"></span>
+              ${cat}
+            </span>
+          </td>
+        `;
+
+        sectors.forEach(sec => {
+          const cnt = RAW_DATA.scenarios.filter(s => s.sector === sec && s.category === cat).length;
+          // Heatmap intensity
+          let cellBg = "bg-slate-50 text-slate-400";
+          if (cnt >= 10) cellBg = "bg-indigo-600 text-white font-bold";
+          else if (cnt >= 5) cellBg = "bg-indigo-100 text-indigo-900 font-bold";
+          else if (cnt >= 1) cellBg = "bg-indigo-50/70 text-indigo-700 font-semibold";
+
+          html += `
+            <td class="py-2 px-3 text-center">
+              <button type="button" data-sec="${sec}" data-cat="${cat}" class="matrix-cell w-full py-1.5 px-3 rounded-lg text-xs ${cellBg}">
+                ${cnt} 筆
+              </button>
+            </td>
+          `;
+        });
+
+        html += `
+          <td class="py-2.5 px-4 text-center font-bold text-slate-900 bg-slate-50/80">${total}</td>
+          <td class="py-2.5 px-4 text-center text-xs text-slate-500 font-medium">${pct}</td>
+        </tr>`;
+      });
+
+      html += `</tbody>`;
+      table.innerHTML = html;
+
+      table.querySelectorAll("button[data-sec]").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const sec = btn.getAttribute("data-sec");
+          const cat = btn.getAttribute("data-cat");
+          state.sector = sec;
+          state.category = cat;
+          state.company = "ALL";
+          state.pdfPage = "ALL";
+          document.getElementById("filterSector").value = sec;
+          updateDynamicDropdowns();
+          document.getElementById("filterCategory").value = cat;
+          switchTab("dashboard");
+          syncAll();
+          showToast(`已套用篩選：${sec} × ${cat}`);
+        });
+      });
+    }
+
+    // Render Institutions Directory (Tab 3 - 80 Sources)
+    function renderInstitutionsDirectory() {
+      const grid = document.getElementById("institutionsGrid");
+      grid.innerHTML = "";
+
+      let list = [...RAW_DATA.sources].filter(src => {
+        if (state.sector !== "ALL" && src.sector !== state.sector) return false;
+        if (state.pdfPage !== "ALL" && src.pdfPage !== state.pdfPage) return false;
+        if (state.keyword.trim() !== "") {
+          const kw = state.keyword.trim().toLowerCase();
+          if (!src.company.toLowerCase().includes(kw) && !src.sector.toLowerCase().includes(kw)) return false;
+        }
+        return true;
+      });
+
+      if (state.instSort === "countDesc") {
+        list.sort((a, b) => b.count - a.count || a.id - b.id);
+      } else if (state.instSort === "sector") {
+        list.sort((a, b) => a.sector.localeCompare(b.sector, "zh-Hant") || b.count - a.count);
+      } else {
+        list.sort((a, b) => a.id - b.id);
+      }
+
+      list.forEach(src => {
+        const compScenarios = RAW_DATA.scenarios.filter(s => s.company === src.company && s.sector === src.sector);
+        const cats = [...new Set(compScenarios.map(s => s.category))];
+        const secStyle = SECTOR_COLORS[src.sector] || { light: "#f1f5f9", text: "#334155" };
+
+        const card = document.createElement("div");
+        card.className = "p-4 rounded-xl border border-slate-200 hover:border-indigo-400 hover:shadow-md transition bg-slate-50/40 flex flex-col justify-between cursor-pointer";
+        card.innerHTML = `
+          <div>
+            <div class="flex items-center justify-between gap-2 mb-2">
+              <span class="px-2 py-0.5 rounded-full text-[11px] font-semibold" style="background-color:${secStyle.light};color:${secStyle.text}">
+                ${src.sector}
+              </span>
+              <span class="text-xs font-bold text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded-md border border-indigo-200">
+                ${src.count} 筆場景
+              </span>
+            </div>
+            <h3 class="text-sm font-bold text-slate-900 mb-2">${src.company}</h3>
+            <div class="flex flex-wrap gap-1">
+              ${cats.map(c => `<span class="px-2 py-0.5 rounded text-[11px] bg-white border border-slate-200 text-slate-600">${c}</span>`).join("")}
+            </div>
+          </div>
+          <div class="mt-3 pt-2 border-t border-slate-200/70 flex items-center justify-between text-[11px] text-slate-500">
+            <span>來源頁碼：PDF 第 ${src.pdfPage} 頁</span>
+            <span class="text-indigo-600 font-semibold">點擊篩選 →</span>
+          </div>
+        `;
+        card.addEventListener("click", () => {
+          state.sector = src.sector;
+          state.company = src.company;
+          state.category = "ALL";
+          document.getElementById("filterSector").value = src.sector;
+          updateDynamicDropdowns();
+          document.getElementById("filterCompany").value = src.company;
+          switchTab("dashboard");
+          syncAll();
+          showToast(`已篩選機構：${src.company} (${src.count}筆)`);
+        });
+        grid.appendChild(card);
+      });
+    }
+
+    // Render Definitions & Notes (Tab 4)
+    function renderDefinitionsAndNotes() {
+      const tbody = document.getElementById("definitionsTableBody");
+      tbody.innerHTML = "";
+
+      RAW_DATA.categories.forEach(c => {
+        const catStyle = CATEGORY_PALETTE[c.category] || CATEGORY_PALETTE["其它"];
+        const tr = document.createElement("tr");
+        tr.className = "hover:bg-slate-50";
+        tr.innerHTML = `
+          <td class="py-3.5 px-4 font-bold">
+            <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold border ${catStyle.badgeBg} ${catStyle.badgeText} ${catStyle.badgeBorder}">
+              ${c.category}
+            </span>
+          </td>
+          <td class="py-3.5 px-4 text-center font-bold text-slate-900">${c.count} 筆</td>
+          <td class="py-3.5 px-4 text-slate-800 leading-relaxed">${c.principle}</td>
+          <td class="py-3.5 px-4 text-slate-600 text-xs leading-relaxed">${c.boundary}</td>
+          <td class="py-3.5 px-4 text-center">
+            <button type="button" data-def-cat="${c.category}" class="px-2.5 py-1 rounded-lg text-xs font-semibold text-indigo-600 bg-indigo-50 hover:bg-indigo-100 transition">
+              查看 (${c.count})
+            </button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      tbody.querySelectorAll("button[data-def-cat]").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const cat = btn.getAttribute("data-def-cat");
+          state.sector = "ALL";
+          state.company = "ALL";
+          state.pdfPage = "ALL";
+          state.category = cat;
+          document.getElementById("filterSector").value = "ALL";
+          updateDynamicDropdowns();
+          document.getElementById("filterCategory").value = cat;
+          switchTab("dashboard");
+          syncAll();
+        });
+      });
+
+      const notesGrid = document.getElementById("methodologyNotesGrid");
+      notesGrid.innerHTML = "";
+      RAW_DATA.notes.forEach(n => {
+        const div = document.createElement("div");
+        div.className = "p-4 rounded-xl bg-slate-50 border border-slate-200/80";
+        div.innerHTML = `
+          <h4 class="text-xs font-bold uppercase tracking-wider text-indigo-700 mb-1.5">${n.title}</h4>
+          <p class="text-xs text-slate-700 leading-relaxed">${n.content}</p>
+        `;
+        notesGrid.appendChild(div);
+      });
+    }
+
+    // Modal Handler
+    function openScenarioModal(item) {
+      const modal = document.getElementById("scenarioModal");
+      const catStyle = CATEGORY_PALETTE[item.category] || CATEGORY_PALETTE["其它"];
+      const info = categoryInfoMap[item.category];
+
+      state.modalCompany = item.company;
+
+      document.getElementById("modalSectorBadge").textContent = item.sector;
+      document.getElementById("modalCompanyTitle").textContent = item.company;
+      const catBadge = document.getElementById("modalCategoryBadge");
+      catBadge.className = `px-2.5 py-1 rounded-md text-xs font-bold border ${catStyle.badgeBg} ${catStyle.badgeText} ${catStyle.badgeBorder}`;
+      catBadge.textContent = item.category;
+
+      document.getElementById("modalIdText").textContent = `場景編號 #${item.id}`;
+      document.getElementById("modalPdfPageText").textContent = `來源 PDF 第 ${item.pdfPage} 頁`;
+      document.getElementById("modalScenarioText").textContent = item.scenario;
+
+      document.getElementById("modalCatPrinciple").innerHTML = `<strong>判斷原則：</strong>${info ? info.principle : ""}`;
+      document.getElementById("modalCatBoundary").innerHTML = `<strong>界線與注意事項：</strong>${info ? info.boundary : ""}`;
+
+      // Show all scenarios from the same company
+      const sameCompScenarios = RAW_DATA.scenarios.filter(s => s.company === item.company);
+      document.getElementById("modalCompanyOtherHeader").textContent = `${item.company} 申報之所有 AI 應用場景 (共 ${sameCompScenarios.length} 筆)`;
+      const listEl = document.getElementById("modalCompanyOtherList");
+      listEl.innerHTML = "";
+      sameCompScenarios.forEach(s => {
+        const div = document.createElement("div");
+        const isCurrent = s.id === item.id;
+        div.className = `p-3 rounded-lg border text-xs ${isCurrent ? "bg-indigo-50/50 border-indigo-300 font-semibold text-slate-900" : "bg-white border-slate-200 text-slate-700"}`;
+        div.innerHTML = `<span class="font-bold text-indigo-700 mr-1.5">[${s.category}]</span>${s.scenario}`;
+        listEl.appendChild(div);
+      });
+
+      modal.classList.remove("hidden");
+      modal.classList.add("flex");
+    }
+
+    function closeScenarioModal() {
+      const modal = document.getElementById("scenarioModal");
+      modal.classList.add("hidden");
+      modal.classList.remove("flex");
+    }
+
+    // Tab Switcher
+    function switchTab(tabName) {
+      state.activeTab = tabName;
+      const tabs = ["dashboard", "matrix", "institutions", "definitions"];
+      tabs.forEach(t => {
+        const view = document.getElementById(`tabView-${t}`);
+        const btn = document.getElementById(`tabBtn-${t}`);
+        if (t === tabName) {
+          view.classList.remove("hidden");
+          btn.className = "px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition-all bg-indigo-600 text-white shadow-sm";
+        } else {
+          view.classList.add("hidden");
+          btn.className = "px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition-all text-slate-300 hover:text-white";
+        }
+      });
+    }
+
+    // Master Sync Function
+    function syncAll() {
+      updateDynamicDropdowns();
+      const filtered = getFilteredScenarios();
+      renderActiveFilterBadges(filtered.length);
+      renderKPIs(filtered);
+      renderCategoryPills();
+      renderCharts(filtered);
+      renderScenariosList(filtered);
+      renderInstitutionsDirectory();
+    }
+
+    // Export CSV
+    function exportFilteredCsv() {
+      const filtered = getFilteredScenarios();
+      if (filtered.length === 0) {
+        showToast("目前無篩選結果可供匯出");
+        return;
+      }
+      const headers = ["編號", "業別", "業者", "類別", "場景", "PDF頁碼"];
+      const rows = filtered.map(s => [
+        s.id,
+        `"${s.sector.replace(/"/g, '""')}"`,
+        `"${s.company.replace(/"/g, '""')}"`,
+        `"${s.category.replace(/"/g, '""')}"`,
+        `"${s.scenario.replace(/"/g, '""')}"`,
+        `"${s.pdfPage.replace(/"/g, '""')}"`
+      ]);
+      const csvContent = "\uFEFF" + [headers.join(","), ...rows.map(r => r.join(","))].join("\n");
+      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `金融業AI場景應用_篩選結果_${filtered.length}筆.csv`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      showToast(`已成功匯出 ${filtered.length} 筆 AI 場景資料 CSV`);
+    }
+
+    // 動態讀取同目錄下的 Excel 檔案
+    async function loadExcelAndInit() {
+      const excelFileName = '金融業AI場景應用.xlsx'; // 與 HTML 放在同層目錄
+      try {
+        const response = await fetch(excelFileName);
+        if (!response.ok) {
+          throw new Error(`無法載入 Excel 檔案（HTTP ${response.status}）`);
+        }
+        const arrayBuffer = await response.arrayBuffer();
+
+        // 透過 SheetJS 解析 Excel
+        const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+
+        // 1. 解析「來源索引」工作表
+        const wsSources = workbook.Sheets['來源索引'];
+        const sourcesJson = XLSX.utils.sheet_to_json(wsSources);
+        const pageMap = {};
+        RAW_DATA.sources = sourcesJson.map((row, idx) => {
+          const sector = String(row['業別'] || '').trim();
+          const company = String(row['業者'] || '').trim();
+          const pdfPage = String(row['PDF頁碼'] || '').trim();
+          const count = Number(row['場景筆數'] || 0);
+          pageMap[`${sector}||${company}`] = pdfPage;
+          return { id: idx + 1, sector, company, pdfPage, count };
+        });
+
+        // 2. 解析「AI應用場景」工作表
+        const wsScenarios = workbook.Sheets['AI應用場景'];
+        const scenariosJson = XLSX.utils.sheet_to_json(wsScenarios);
+        RAW_DATA.scenarios = scenariosJson.map((row, idx) => {
+          const sector = String(row['業別'] || '').trim();
+          const company = String(row['業者'] || '').trim();
+          return {
+            id: idx + 1,
+            sector,
+            company,
+            scenario: String(row['場景'] || '').trim(),
+            category: String(row['類別'] || '').trim(),
+            pdfPage: pageMap[`${sector}||${company}`] || ''
+          };
+        });
+
+        // 3. 解析「分類說明」工作表
+        const wsCats = workbook.Sheets['分類說明'];
+        const catRows = XLSX.utils.sheet_to_json(wsCats, { header: 1 });
+        RAW_DATA.categories = [];
+        RAW_DATA.notes = [];
+
+        // 列 5~17 為 13 大分類定義 (第 4 列為標題)
+        for (let r = 4; r < Math.min(17, catRows.length); r++) {
+          const row = catRows[r];
+          if (row && row[0]) {
+            RAW_DATA.categories.push({
+              category: String(row[0]).trim(),
+              principle: String(row[1] || '').trim(),
+              boundary: String(row[2] || '').trim(),
+              count: Number(row[3] || 0)
+            });
+          }
+        }
+
+        // 列 21 以後為整理口徑說明
+        for (let r = 20; r < catRows.length; r++) {
+          const row = catRows[r];
+          if (row && row[0]) {
+            const text = String(row[0]).trim();
+            if (text.includes('：')) {
+              const [title, content] = text.split('：', 2);
+              RAW_DATA.notes.push({ title: title.trim(), content: content.trim() });
+            }
+          }
+        }
+
+        // 建立分類對照表並初始化儀表板
+        RAW_DATA.categories.forEach(c => { categoryInfoMap[c.category] = c; });
+        populateInitialDropdowns();
+        renderCrossMatrix();
+        renderDefinitionsAndNotes();
+        syncAll();
+        showToast('已成功從 Excel 載入最新數據！');
+
+      } catch (error) {
+        console.error('載入 Excel 失敗：', error);
+        showToast('載入 Excel 失敗，請確認檔案是否存在於伺服器中。');
+      }
+    }
+
+
+    // Event Listeners Initialization
+    window.addEventListener("DOMContentLoaded", () => {
+      loadExcelAndInit();
+      populateInitialDropdowns();
+      renderCrossMatrix();
+      renderDefinitionsAndNotes();
+      syncAll();
+
+      // Navigation Tabs
+      document.getElementById("tabBtn-dashboard").addEventListener("click", () => switchTab("dashboard"));
+      document.getElementById("tabBtn-matrix").addEventListener("click", () => switchTab("matrix"));
+      document.getElementById("tabBtn-institutions").addEventListener("click", () => switchTab("institutions"));
+      document.getElementById("tabBtn-definitions").addEventListener("click", () => switchTab("definitions"));
+
+      // Dropdown 1: Sector
+      document.getElementById("filterSector").addEventListener("change", (e) => {
+        state.sector = e.target.value;
+        syncAll();
+      });
+
+      // Dropdown 2: Category
+      document.getElementById("filterCategory").addEventListener("change", (e) => {
+        state.category = e.target.value;
+        syncAll();
+      });
+
+      // Dropdown 3: Company
+      document.getElementById("filterCompany").addEventListener("change", (e) => {
+        state.company = e.target.value;
+        syncAll();
+      });
+
+
+
+      // Keyword Input
+      const kwInput = document.getElementById("filterKeyword");
+      const clearKwBtn = document.getElementById("clearKeywordBtn");
+      kwInput.addEventListener("input", (e) => {
+        state.keyword = e.target.value;
+        if (state.keyword.trim().length > 0) {
+          clearKwBtn.classList.remove("hidden");
+        } else {
+          clearKwBtn.classList.add("hidden");
+        }
+        syncAll();
+      });
+
+      clearKwBtn.addEventListener("click", () => {
+        state.keyword = "";
+        kwInput.value = "";
+        clearKwBtn.classList.add("hidden");
+        syncAll();
+      });
+
+      // Reset All Filters
+      const resetAll = () => {
+        state.sector = "ALL";
+        state.category = "ALL";
+        state.company = "ALL";
+        state.pdfPage = "ALL";
+        state.keyword = "";
+        document.getElementById("filterSector").value = "ALL";
+        document.getElementById("filterKeyword").value = "";
+        document.getElementById("clearKeywordBtn").classList.add("hidden");
+        updateDynamicDropdowns();
+        document.getElementById("filterCategory").value = "ALL";
+        document.getElementById("filterCompany").value = "ALL";
+        syncAll();
+        showToast("已重置所有篩選條件（顯示全部 134 筆場景）");
+      };
+      document.getElementById("resetFiltersBtn").addEventListener("click", resetAll);
+      document.getElementById("emptyResetBtn").addEventListener("click", resetAll);
+
+      // Export CSV
+      document.getElementById("exportCsvBtn").addEventListener("click", exportFilteredCsv);
+
+      // Chart Mode Toggles
+      const btnCatTotal = document.getElementById("catChartModeTotal");
+      const btnCatStacked = document.getElementById("catChartModeStacked");
+      btnCatTotal.addEventListener("click", () => {
+        state.catChartMode = "total";
+        btnCatTotal.className = "px-2.5 py-1 rounded-md text-xs font-medium bg-white text-slate-800 shadow-sm transition";
+        btnCatStacked.className = "px-2.5 py-1 rounded-md text-xs font-medium text-slate-600 hover:text-slate-900 transition";
+        renderCharts(getFilteredScenarios());
+      });
+      btnCatStacked.addEventListener("click", () => {
+        state.catChartMode = "stacked";
+        btnCatStacked.className = "px-2.5 py-1 rounded-md text-xs font-medium bg-white text-slate-800 shadow-sm transition";
+        btnCatTotal.className = "px-2.5 py-1 rounded-md text-xs font-medium text-slate-600 hover:text-slate-900 transition";
+        renderCharts(getFilteredScenarios());
+      });
+
+      const btnRightSec = document.getElementById("rightChartModeSector");
+      const btnRightTop = document.getElementById("rightChartModeTopComp");
+      btnRightSec.addEventListener("click", () => {
+        state.rightChartMode = "sector";
+        btnRightSec.className = "px-2.5 py-1 rounded-md text-xs font-medium bg-white text-slate-800 shadow-sm transition";
+        btnRightTop.className = "px-2.5 py-1 rounded-md text-xs font-medium text-slate-600 hover:text-slate-900 transition";
+        renderCharts(getFilteredScenarios());
+      });
+      btnRightTop.addEventListener("click", () => {
+        state.rightChartMode = "topComp";
+        btnRightTop.className = "px-2.5 py-1 rounded-md text-xs font-medium bg-white text-slate-800 shadow-sm transition";
+        btnRightSec.className = "px-2.5 py-1 rounded-md text-xs font-medium text-slate-600 hover:text-slate-900 transition";
+        renderCharts(getFilteredScenarios());
+      });
+
+      // Sort & View Mode Toggles
+      document.getElementById("sortSelect").addEventListener("change", (e) => {
+        state.sortBy = e.target.value;
+        renderScenariosList(getFilteredScenarios());
+      });
+
+      const btnTable = document.getElementById("viewModeTableBtn");
+      const btnCard = document.getElementById("viewModeCardBtn");
+      btnTable.addEventListener("click", () => {
+        state.viewMode = "table";
+        btnTable.className = "px-2.5 py-1 rounded-md text-xs font-medium bg-white text-slate-800 shadow-sm transition";
+        btnCard.className = "px-2.5 py-1 rounded-md text-xs font-medium text-slate-600 hover:text-slate-900 transition";
+        renderScenariosList(getFilteredScenarios());
+      });
+      btnCard.addEventListener("click", () => {
+        state.viewMode = "card";
+        btnCard.className = "px-2.5 py-1 rounded-md text-xs font-medium bg-white text-slate-800 shadow-sm transition";
+        btnTable.className = "px-2.5 py-1 rounded-md text-xs font-medium text-slate-600 hover:text-slate-900 transition";
+        renderScenariosList(getFilteredScenarios());
+      });
+
+      // Institutions Sort
+      document.getElementById("instSortSelect").addEventListener("change", (e) => {
+        state.instSort = e.target.value;
+        renderInstitutionsDirectory();
+      });
+
+      // Modal Close Events
+      document.getElementById("closeModalBtn").addEventListener("click", closeScenarioModal);
+      document.getElementById("modalCloseFooterBtn").addEventListener("click", closeScenarioModal);
+      document.getElementById("scenarioModal").addEventListener("click", (e) => {
+        if (e.target.id === "scenarioModal") closeScenarioModal();
+      });
+      document.getElementById("modalFilterCompanyBtn").addEventListener("click", () => {
+        if (state.modalCompany) {
+          state.sector = "ALL";
+          state.category = "ALL";
+          state.company = state.modalCompany;
+          document.getElementById("filterSector").value = "ALL";
+          updateDynamicDropdowns();
+          document.getElementById("filterCompany").value = state.modalCompany;
+          closeScenarioModal();
+          switchTab("dashboard");
+          syncAll();
+          showToast(`已篩選機構：${state.modalCompany}`);
+        }
+      });
+    });
+  </script>
+</body>
+
+</html>
