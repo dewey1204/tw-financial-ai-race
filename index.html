@@ -114,10 +114,10 @@
   <!-- Sticky Interactive Filter Bar (Dropdowns & Search) -->
   <section class="bg-white border-b border-slate-200 shadow-sm">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5">
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-3 items-end">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 items-end">
 
         <!-- Dropdown 1: 業別 -->
-        <div class="lg:col-span-3">
+        <div>
           <label for="filterSector" class="block text-xs font-semibold text-slate-600 mb-1">
             1. 金融業別篩選
           </label>
@@ -128,7 +128,7 @@
         </div>
 
         <!-- Dropdown 2: 應用類別 -->
-        <div class="lg:col-span-3">
+        <div>
           <label for="filterCategory" class="block text-xs font-semibold text-slate-600 mb-1">
             2. AI 應用類別篩選
           </label>
@@ -138,10 +138,21 @@
           </select>
         </div>
 
-        <!-- Dropdown 3: 金融機構 / 業者 -->
-        <div class="lg:col-span-3">
+        <!-- Dropdown 3: 所屬金控 -->
+        <div>
+          <label for="filterHolding" class="block text-xs font-semibold text-slate-600 mb-1">
+            3. 所屬金控篩選
+          </label>
+          <select id="filterHolding"
+            class="w-full rounded-lg border border-slate-300 bg-slate-50 px-3 py-2 text-sm text-slate-800 font-medium focus:border-indigo-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition">
+            <option value="ALL">全部所屬金控</option>
+          </select>
+        </div>
+
+        <!-- Dropdown 4: 金融機構 / 業者 -->
+        <div>
           <label for="filterCompany" class="block text-xs font-semibold text-slate-600 mb-1">
-            3. 金融機構 (業者) 篩選
+            4. 金融機構 (業者) 篩選
           </label>
           <select id="filterCompany"
             class="w-full rounded-lg border border-slate-300 bg-slate-50 px-3 py-2 text-sm text-slate-800 font-medium focus:border-indigo-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition">
@@ -150,12 +161,12 @@
         </div>
 
         <!-- Keyword Search -->
-        <div class="lg:col-span-3">
+        <div>
           <label for="filterKeyword" class="block text-xs font-semibold text-slate-600 mb-1">
-            4. 關鍵字搜尋
+            5. 關鍵字搜尋
           </label>
           <div class="relative">
-            <input id="filterKeyword" type="text" placeholder="搜尋場景、技術、業者..."
+            <input id="filterKeyword" type="text" placeholder="搜尋場景、技術、金控、業者..."
               class="w-full rounded-lg border border-slate-300 bg-slate-50 pl-8 pr-7 py-2 text-sm text-slate-800 placeholder-slate-400 focus:border-indigo-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition" />
             <svg class="w-4 h-4 text-slate-400 absolute left-2.5 top-2.5" fill="none" stroke="currentColor"
               viewBox="0 0 24 24">
@@ -341,9 +352,23 @@
         </div>
       </div>
 
+      <!-- Holding Quick-Filter Pills Bar (新增：於各類別快速篩選標籤之前) -->
+      <div class="bg-white rounded-xl border border-slate-200/80 shadow-sm p-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1 mb-2.5">
+          <h3 class="text-xs font-bold uppercase tracking-wider text-slate-500">所屬金控快速篩選 (點擊快速切換金控並更新下方 AI 應用場景明細列表)</h3>
+          <span id="selectedHoldingHint" class="text-xs text-amber-700 font-medium"></span>
+        </div>
+        <div id="holdingPillsContainer" class="flex flex-wrap gap-2">
+        </div>
+        <!-- Holding Rule Callout Box (shows when a specific holding is selected) -->
+        <div id="holdingDefinitionBanner"
+          class="hidden mt-3 p-3 rounded-lg bg-amber-50/70 border border-amber-200/80 text-xs text-slate-700 space-y-1">
+        </div>
+      </div>
+
       <!-- Category Quick-Filter Pills Bar -->
       <div class="bg-white rounded-xl border border-slate-200/80 shadow-sm p-4">
-        <div class="flex items-center justify-between mb-2.5">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1 mb-2.5">
           <h3 class="text-xs font-bold uppercase tracking-wider text-slate-500">各類別快速篩選標籤 (點擊切換類別並查看判斷原則)</h3>
           <span id="selectedCategoryHint" class="text-xs text-indigo-600 font-medium"></span>
         </div>
@@ -374,6 +399,7 @@
               class="rounded-lg border border-slate-300 bg-slate-50 px-2.5 py-1.5 text-xs text-slate-800 font-medium focus:border-indigo-500 focus:outline-none">
               <option id="sortDefaultOpt" value="default">原始檔案順序</option>
               <option value="sector">依金融業別排序</option>
+              <option value="holding">依所屬金控排序</option>
               <option value="company">依機構名稱筆畫/字母</option>
               <option value="category">依 AI 應用類別排序</option>
             </select>
@@ -397,9 +423,10 @@
             <thead>
               <tr
                 class="bg-slate-50 border-b border-slate-200 text-xs font-semibold text-slate-600 uppercase tracking-wider">
-                <th class="py-3 px-4 w-14 text-center">#</th>
-                <th class="py-3 px-4 w-28">業別</th>
+                <th class="py-3 px-4 w-16 text-center">序號</th>
                 <th class="py-3 px-4 w-44">金融機構 (業者)</th>
+                <th class="py-3 px-4 w-32">所屬金控</th>
+                <th class="py-3 px-4 w-28">業別</th>
                 <th class="py-3 px-4 w-36">AI 應用類別</th>
                 <th class="py-3 px-4">AI 場景與應用內容</th>
               </tr>
@@ -465,12 +492,12 @@
             <select id="instSortSelect"
               class="rounded-lg border border-slate-300 bg-slate-50 px-2.5 py-1.5 text-xs text-slate-800 font-medium">
               <option value="countDesc">依場景筆數 (多 → 少)</option>
-              <option value="pageAsc">依原始 PDF 頁碼順序</option>
+              <option value="holding">依所屬金控</option>
               <option value="sector">依業別分類</option>
             </select>
           </div>
         </div>
-        <div class="p-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5" id="institutionsGrid">
+        <div class="p-5 space-y-7" id="institutionsGrid">
         </div>
       </div>
     </div>
@@ -500,6 +527,29 @@
         </div>
       </div>
 
+      <!-- Holding Keyword Rules Table -->
+      <div class="bg-white rounded-xl border border-slate-200/80 shadow-sm overflow-hidden">
+        <div class="p-5 border-b border-slate-200">
+          <h2 class="text-base font-bold text-slate-900">所屬金控｜名稱關鍵字歸類說明</h2>
+          <p class="text-xs text-slate-500 mt-0.5">依指定名稱關鍵字重新歸類，多項符合時依表列順序優先；未符合者標為「未歸類」，不代表已確認無金控隸屬</p>
+        </div>
+        <div class="overflow-x-auto custom-scrollbar">
+          <table class="w-full text-left border-collapse text-sm">
+            <thead>
+              <tr class="bg-slate-50 border-b border-slate-200 text-xs font-semibold text-slate-600 uppercase">
+                <th class="py-3 px-4 w-44">所屬金控</th>
+                <th class="py-3 px-4 w-44">關鍵字 1</th>
+                <th class="py-3 px-4">其他關鍵字（或）</th>
+                <th class="py-3 px-4 w-28 text-center">場景筆數</th>
+                <th class="py-3 px-4 w-28 text-center">快速查看</th>
+              </tr>
+            </thead>
+            <tbody id="holdingsTableBody" class="divide-y divide-slate-100">
+            </tbody>
+          </table>
+        </div>
+      </div>
+
       <!-- Methodology & Data Limitations -->
       <div class="bg-white rounded-xl border border-slate-200/80 shadow-sm p-5">
         <h3 class="text-base font-bold text-slate-900 mb-3">整理口徑與資料限制</h3>
@@ -516,9 +566,11 @@
     class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4">
     <div class="bg-white rounded-2xl max-w-2xl w-full shadow-2xl border border-slate-200 overflow-hidden">
       <div class="px-6 py-4 bg-slate-900 text-white flex items-center justify-between">
-        <div class="flex items-center gap-2.5">
+        <div class="flex items-center flex-wrap gap-2">
           <span id="modalSectorBadge"
             class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-indigo-500 text-white"></span>
+          <span id="modalHoldingBadge"
+            class="hidden px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-500/20 text-amber-200 border border-amber-400/30"></span>
           <h3 id="modalCompanyTitle" class="text-base font-bold"></h3>
         </div>
         <button id="closeModalBtn" type="button" class="text-slate-400 hover:text-white transition">
@@ -579,7 +631,7 @@
 
   <script>
     // Embedded Initial Data (Fallback when opened without HTTP server; overridden dynamically by 金融業AI場景應用.xlsx)
-    let RAW_DATA = {"scenarios": [{"id": 1, "sector": "銀行業", "company": "富邦金控", "scenario": "智能法遵系統：蒐集外規異動資訊，自動判讀內外規及相關單位關聯，輔助法遵檢視與派發作業。", "category": "比對", "pdfPage": "1"}, {"id": 2, "sector": "銀行業", "company": "富邦金控", "scenario": "端點偵測及回應（EDR）資安監控分析：即時監控電腦活動，交叉比對威脅情資。", "category": "比對", "pdfPage": "1"}, {"id": 3, "sector": "銀行業", "company": "富邦金控", "scenario": "網路偵測與回應（NDR）：即時側錄與截取網路流量，以機器學習解析異常行為。", "category": "其它", "pdfPage": "1"}, {"id": 4, "sector": "銀行業", "company": "臺灣金控", "scenario": "導入微軟 Copilot，協助文件撰寫、資料分析、簡報製作、資訊摘要及報告初稿，並支援會議紀錄、信件與公文作業。", "category": "M365 Copilot", "pdfPage": "1"}, {"id": 5, "sector": "銀行業", "company": "玉山金控", "scenario": "「金融無塵室」計畫：應用同態加密與雙盲技術，在安全合規環境促成跨行庫、跨產業資料協作，強化聯防識詐。", "category": "阻詐", "pdfPage": "1"}, {"id": 6, "sector": "銀行業", "company": "王道銀行", "scenario": "智能客服。", "category": "智能客服", "pdfPage": "1"}, {"id": 7, "sector": "銀行業", "company": "連線銀行", "scenario": "防詐預警：已發展四個預警模型，其中兩個具每小時自動 BLOCK 機制。", "category": "阻詐", "pdfPage": "1"}, {"id": 8, "sector": "銀行業", "company": "台新銀行", "scenario": "防範詐騙：以圖演算法追蹤多層次金流與可疑帳戶，結合機器學習辨識詐騙模式。", "category": "阻詐", "pdfPage": "1"}, {"id": 9, "sector": "銀行業", "company": "台新銀行", "scenario": "智能質檢：導入 ASR 語音辨識與 LLM，建構自動化質檢流程，實現音檔轉譯文本等作業。", "category": "語音質檢/應用", "pdfPage": "1"}, {"id": 10, "sector": "銀行業", "company": "台新銀行", "scenario": "智能小幫手：建立智能知識管理平台，提供內部員工語意式智能搜尋問答（原文未明示 RAG）。", "category": "RAG/KM", "pdfPage": "1"}, {"id": 11, "sector": "銀行業", "company": "彰化銀行", "scenario": "「鷹眼 AI 防詐模型」：搭配「疑似不法顯屬異常」兩項 Rule-based 風險態樣指標，每日自動設控高風險存款帳戶，並保留人工審核、介入及解控救濟機制。", "category": "阻詐", "pdfPage": "1"}, {"id": 12, "sector": "銀行業", "company": "將來銀行", "scenario": "「AI 小將」文字客服：提供 24×7 服務，涵蓋既有產品，原文載明覆蓋率（精準度）達 97.6%。", "category": "智能客服", "pdfPage": "1"}, {"id": 13, "sector": "銀行業", "company": "渣打銀行", "scenario": "YODA 銀行內部智能助理機器人：協助員工快速找到所需資訊（原文未明示 RAG 或自主代理機制）。", "category": "RAG/KM", "pdfPage": "1"}, {"id": 14, "sector": "銀行業", "company": "華南銀行", "scenario": "AI 助理系統：快速檢索銀行核心知識並生成摘要（依檢索結合生成的用途判為 RAG）。", "category": "RAG/KM", "pdfPage": "2"}, {"id": 15, "sector": "銀行業", "company": "華南銀行", "scenario": "「雷神識詐」：鎖定異常帳戶以防範詐騙。", "category": "阻詐", "pdfPage": "2"}, {"id": 16, "sector": "銀行業", "company": "華南銀行", "scenario": "AML 風險評級：對案件進行風險分級，提升審查效率。", "category": "其它", "pdfPage": "2"}, {"id": 17, "sector": "銀行業", "company": "華南銀行", "scenario": "智能 IVR：透過語音辨識判斷並完成客戶意圖。", "category": "語音質檢/應用", "pdfPage": "2"}, {"id": 18, "sector": "銀行業", "company": "華南銀行", "scenario": "AI 代理人：運用於投研報告及產經週報，協助掌握全球市場動態與產業趨勢。", "category": "生成式AI", "pdfPage": "2"}, {"id": 19, "sector": "銀行業", "company": "台中銀行", "scenario": "知識檢索平台：以 RAG 整合行內規章，跨部門定位文件片段，並結合生成式 AI 自動彙整、即時產出重點答案。", "category": "RAG/KM", "pdfPage": "2"}, {"id": 20, "sector": "銀行業", "company": "臺灣銀行", "scenario": "導入 Copilot，協助文件撰寫、資料分析、簡報製作、資訊摘要及報告初稿，並支援會議紀錄、信件與公文作業。", "category": "M365 Copilot", "pdfPage": "2"}, {"id": 21, "sector": "銀行業", "company": "玉山銀行", "scenario": "信貸流程導入 Proxy Income 財力評估模型與自動報價系統，實現數據驅動風險定價，提升徵審自動化時效。", "category": "RPA", "pdfPage": "2"}, {"id": 22, "sector": "銀行業", "company": "元大銀行", "scenario": "「天網防詐模型」：訓練 AI 辨識客戶交易行為是否涉及詐騙並提前預警。", "category": "阻詐", "pdfPage": "2"}, {"id": 23, "sector": "銀行業", "company": "國泰世華銀行", "scenario": "員工 AI 助手：結合生成式 AI 與知識管理，協助查詢作業規範、業務知識及常見問題（依知識查詢結合生成的用途判為 RAG）。", "category": "RAG/KM", "pdfPage": "2"}, {"id": 24, "sector": "銀行業", "company": "國泰世華銀行", "scenario": "智能客服「阿發」：結合生成式 AI、官網公開資訊及 FAQ 檢索資料庫，供客戶查找銀行業務與服務資訊。", "category": "智能客服", "pdfPage": "2"}, {"id": 25, "sector": "銀行業", "company": "滙豐銀行", "scenario": "AI Markets：以自然語言處理（NLP）及大型語言模型（LLM）等技術，支援機構投資人與全球市場互動。", "category": "生成式AI", "pdfPage": "2"}, {"id": 26, "sector": "銀行業", "company": "臺灣中小企銀", "scenario": "行動銀行智能語音小幫手 i-Money：結合 NLU、語音辨識與 API，提供功能導航、帳務查詢、轉帳及近 50 項生活繳費等語音對話服務。", "category": "語音質檢/應用", "pdfPage": "2"}, {"id": 27, "sector": "銀行業", "company": "中國信託銀行", "scenario": "智能客服「小 C」。", "category": "智能客服", "pdfPage": "2"}, {"id": 28, "sector": "銀行業", "company": "中國信託銀行", "scenario": "分行 AI 審票（原文未交代具體辨識或比對技術）。", "category": "其它", "pdfPage": "2"}, {"id": 29, "sector": "銀行業", "company": "中國信託銀行", "scenario": "防詐應用（原文未詳述）。", "category": "阻詐", "pdfPage": "2"}, {"id": 30, "sector": "銀行業", "company": "台北富邦銀行", "scenario": "即時意圖偵測模型。", "category": "模型訓練", "pdfPage": "2–3"}, {"id": 31, "sector": "銀行業", "company": "台北富邦銀行", "scenario": "跨產品偏好排序模型。", "category": "模型訓練", "pdfPage": "2–3"}, {"id": 32, "sector": "銀行業", "company": "台北富邦銀行", "scenario": "情境偏好排序模型。", "category": "模型訓練", "pdfPage": "2–3"}, {"id": 33, "sector": "銀行業", "company": "台北富邦銀行", "scenario": "產品意圖預測模型。", "category": "模型訓練", "pdfPage": "2–3"}, {"id": 34, "sector": "銀行業", "company": "台北富邦銀行", "scenario": "鷹眼防詐模型。", "category": "阻詐", "pdfPage": "2–3"}, {"id": 35, "sector": "銀行業", "company": "樂天銀行", "scenario": "於鷹眼聯盟會議分享應用與成效（原文未詳述實際場景與技術，但有鷹眼就歸類為阻詐）。", "category": "阻詐", "pdfPage": "3"}, {"id": 36, "sector": "銀行業", "company": "全盈支付", "scenario": "導入 AI 助理，協助軟體開發、資料庫語言審查及白箱測試風險修復，兼顧服務功能發展與資安風險控管。", "category": "程式助手", "pdfPage": "3"}, {"id": 37, "sector": "銀行業", "company": "全支付公司", "scenario": "程式碼除錯：以 AI 檢驗 code 內容 bug，提升程式正確性。", "category": "程式助手", "pdfPage": "3"}, {"id": 38, "sector": "銀行業", "company": "全支付公司", "scenario": "內部教育訓練：以 AI 調整、檢核或生成內部訓練內容，降低人力耗費並提升訓練成效。", "category": "生成式AI", "pdfPage": "3"}, {"id": 39, "sector": "銀行業", "company": "金融研訓院", "scenario": "AI 線上面試輔助口試（原文未交代具體技術）。", "category": "其它", "pdfPage": "3"}, {"id": 40, "sector": "銀行業", "company": "存保公司", "scenario": "開發存保專屬 AI 應答助理，應用於內部知識問答（原文未明示 RAG）。", "category": "RAG/KM", "pdfPage": "3"}, {"id": 41, "sector": "銀行業", "company": "存保公司", "scenario": "使用 AI 工具製作內部文件等非機敏資料業務。", "category": "生成式AI", "pdfPage": "3"}, {"id": 42, "sector": "銀行業", "company": "存保公司", "scenario": "使用 AI 工具進行工作流程自動化等非機敏資料業務。", "category": "RPA", "pdfPage": "3"}, {"id": 43, "sector": "銀行業", "company": "存保公司", "scenario": "建置地端 AI 基礎架構及封閉式 AI 平台，應用於機敏資料業務（原文未詳列業務）。", "category": "其它", "pdfPage": "3"}, {"id": 44, "sector": "銀行業", "company": "聯卡中心", "scenario": "TRACE 詐欺偵測：依持卡人過去交易行為變數評分，於交易當下產生風險預測分數，協助發卡機構評估風險。", "category": "阻詐", "pdfPage": "3"}, {"id": 45, "sector": "銀行業", "company": "聯卡中心", "scenario": "AML 系統：執行未知風險異常交易態樣分析預測概念驗證，辨識監控人員尚未發現的異常態樣。", "category": "其它", "pdfPage": "3"}, {"id": 46, "sector": "保險業", "company": "國泰人壽", "scenario": "AI Coach：以 LLM 模擬虛擬客戶並扮演多元角色，供業務員與客服進行技巧對練。", "category": "生成式AI", "pdfPage": "3"}, {"id": 47, "sector": "保險業", "company": "國泰人壽", "scenario": "理賠 AI 系統：以 LLM 輔助理賠單據資訊萃取。", "category": "生成式AI", "pdfPage": "3"}, {"id": 48, "sector": "保險業", "company": "國泰人壽", "scenario": "理賠 AI 系統：以機器學習預測異常風險，輔助理賠人員決策（原文未限定為詐欺風險）。", "category": "其它", "pdfPage": "3"}, {"id": 49, "sector": "保險業", "company": "國泰人壽", "scenario": "「泰好客 Cathay AIM」：以機器學習預測近期各類商品高購買力客戶，輔助業務員拜訪行銷。", "category": "其它", "pdfPage": "3"}, {"id": 50, "sector": "保險業", "company": "新光人壽", "scenario": "理賠防詐模型。", "category": "阻詐", "pdfPage": "3"}, {"id": 51, "sector": "保險業", "company": "新光人壽", "scenario": "LLM 法扣系統（原文未進一步說明）。", "category": "生成式AI", "pdfPage": "3"}, {"id": 52, "sector": "保險業", "company": "新光人壽", "scenario": "語音辨識應用。", "category": "語音質檢/應用", "pdfPage": "3"}, {"id": 53, "sector": "保險業", "company": "友邦人壽", "scenario": "運用 Copilot 生成式 AI 協助文件撰寫、資料整理及程式開發，採人機協作以確保決策品質與合規性。", "category": "程式助手", "pdfPage": "3"}, {"id": 54, "sector": "保險業", "company": "台灣人壽", "scenario": "高齡錄音質檢系統（原文未明示語音轉文字流程）。", "category": "語音質檢/應用", "pdfPage": "3"}, {"id": 55, "sector": "保險業", "company": "台灣人壽", "scenario": "語音機器人電訪系統。", "category": "語音質檢/應用", "pdfPage": "3"}, {"id": 56, "sector": "保險業", "company": "富邦人壽", "scenario": "AI 協助核保員與理賠員進行文件重點摘要。", "category": "生成式AI", "pdfPage": "3–4"}, {"id": 57, "sector": "保險業", "company": "富邦人壽", "scenario": "AI 輔助職業／手術代碼判斷。", "category": "其它", "pdfPage": "3–4"}, {"id": 58, "sector": "保險業", "company": "富邦人壽", "scenario": "AI 輔助產出商品開發文件。", "category": "生成式AI", "pdfPage": "3–4"}, {"id": 59, "sector": "保險業", "company": "富邦人壽", "scenario": "AI 智能客服，提供客戶即時問答。", "category": "智能客服", "pdfPage": "3–4"}, {"id": 60, "sector": "保險業", "company": "富邦人壽", "scenario": "AI 輔助 IT 人員程式碼編譯（原文未明示程式碼生成）。", "category": "程式助手", "pdfPage": "3–4"}, {"id": 61, "sector": "保險業", "company": "富邦人壽", "scenario": "AI 應用於風險管理與法遵（原文未詳述具體功能）。", "category": "其它", "pdfPage": "3–4"}, {"id": 62, "sector": "保險業", "company": "元大人壽", "scenario": "通路行為風險模型：預測業務員風險；原文載明約減少 74% 需進階審查資料量，並捕捉約 70% 異常業務員。", "category": "模型訓練", "pdfPage": "4"}, {"id": 63, "sector": "保險業", "company": "元大人壽", "scenario": "理賠詐欺風險模型：預測理賠申請風險；原文載明約減少 96% 需進階審查資料量，並捕捉約 95% 疑似理賠詐欺案件。", "category": "阻詐", "pdfPage": "4"}, {"id": 64, "sector": "保險業", "company": "凱基人壽", "scenario": "保險商品輔銷文件（如商品簡介）合規預審：進行適法性比對。", "category": "比對", "pdfPage": "4"}, {"id": 65, "sector": "保險業", "company": "凱基人壽", "scenario": "保險商品輔銷文件合規預審：生成預審檢核報告。", "category": "生成式AI", "pdfPage": "4"}, {"id": 66, "sector": "保險業", "company": "全球人壽", "scenario": "與清大產學合作建置「AI 智能語音質檢」系統，全面檢視新契約電訪品質（原文未明示語音轉文字流程）。", "category": "語音質檢/應用", "pdfPage": "4"}, {"id": 67, "sector": "保險業", "company": "南山人壽", "scenario": "AI 輔助核保流程（原文未詳述技術）。", "category": "其它", "pdfPage": "4"}, {"id": 68, "sector": "保險業", "company": "南山人壽", "scenario": "AI 輔助理賠流程（原文未詳述技術）。", "category": "其它", "pdfPage": "4"}, {"id": 69, "sector": "保險業", "company": "南山人壽", "scenario": "業務員 AI 智能對練（依角色對練用途判為生成式 AI）。", "category": "生成式AI", "pdfPage": "4"}, {"id": 70, "sector": "保險業", "company": "南山人壽", "scenario": "法遵 AI 智能助理（原文未明示 RAG 或自主代理機制）。", "category": "其它", "pdfPage": "4"}, {"id": 71, "sector": "保險業", "company": "保誠人壽", "scenario": "AI 核保：識別低風險客戶，結合簡化醫療問卷、交叉銷售及再次銷售以提升客戶體驗。", "category": "其它", "pdfPage": "4"}, {"id": 72, "sector": "保險業", "company": "科隆再保公司", "scenario": "台灣分公司僅於內部作業使用 AI（原文未詳述場景）。", "category": "其它", "pdfPage": "4"}, {"id": 73, "sector": "保險業", "company": "中信產險", "scenario": "投保文件智能辨識平台：以 AI OCR 結合電腦視覺與機器學習，自動辨識身分證件、行車執照與投保文件並擷取欄位，串接核保與核對機制。", "category": "OCR", "pdfPage": "4"}, {"id": 74, "sector": "保險業", "company": "科法斯產險", "scenario": "導入 Microsoft Copilot，支援文件撰寫、資料摘要及內部溝通，並應用於風險管理與合規作業。", "category": "M365 Copilot", "pdfPage": "4"}, {"id": 75, "sector": "保險業", "company": "國泰產險", "scenario": "「CarTech 智能車險加值服務」：結合車聯網數據、AI 風險預測、駕駛行為管理及顧問式損害防阻服務，以預防風險為核心。", "category": "其它", "pdfPage": "4"}, {"id": 76, "sector": "保險業", "company": "富邦產險", "scenario": "語音自助服務：優化智能留單、保單查詢、智能補發及理賠進度查詢。", "category": "語音質檢/應用", "pdfPage": "4"}, {"id": 77, "sector": "保險業", "company": "新安東京產險", "scenario": "以客戶風險模型輔助核保作業。", "category": "模型訓練", "pdfPage": "4"}, {"id": 78, "sector": "保險業", "company": "兆豐產險", "scenario": "智能客服。", "category": "智能客服", "pdfPage": "4"}, {"id": 79, "sector": "保險業", "company": "兆豐產險", "scenario": "機器人流程自動化（RPA）。", "category": "RPA", "pdfPage": "4"}, {"id": 80, "sector": "保險業", "company": "富邦綜合保險代理人股份有限公司", "scenario": "以大型語言模型產出過往通話摘要、總結客戶需求，協助業務同仁及客服人員快速掌握歷史互動與客戶想法。", "category": "生成式AI", "pdfPage": "4"}, {"id": 81, "sector": "保險業", "company": "和安保險代理人股份有限公司", "scenario": "推動「全員數位化」，導入 Gemini、Canva AI 等生成式工具製作會議資料、簡報與 DM。", "category": "生成式AI", "pdfPage": "5"}, {"id": 82, "sector": "保險業", "company": "和安保險代理人股份有限公司", "scenario": "將 RPA 導入日常行政作業，減少重複、低價值作業。", "category": "RPA", "pdfPage": "5"}, {"id": 83, "sector": "保險業", "company": "遠傳保險代理人股份有限公司", "scenario": "以 AI 分析客戶資料庫，進行精準行銷。", "category": "其它", "pdfPage": "5"}, {"id": 84, "sector": "保險業", "company": "智匯保險經紀人股份有限公司", "scenario": "保單健診（原文未交代比對機制）。", "category": "其它", "pdfPage": "5"}, {"id": 85, "sector": "保險業", "company": "智匯保險經紀人股份有限公司", "scenario": "智能客服。", "category": "智能客服", "pdfPage": "5"}, {"id": 86, "sector": "保險業", "company": "錠嵂保險經紀人股份有限公司", "scenario": "保單健診（原文未交代比對機制）。", "category": "其它", "pdfPage": "5"}, {"id": 87, "sector": "保險業", "company": "錠嵂保險經紀人股份有限公司", "scenario": "智能客服。", "category": "智能客服", "pdfPage": "5"}, {"id": 88, "sector": "保險業", "company": "錠嵂保險經紀人股份有限公司", "scenario": "考照教練（原文未詳述技術）。", "category": "其它", "pdfPage": "5"}, {"id": 89, "sector": "保險業", "company": "公勝保險經紀人股份有限公司", "scenario": "內部 KM 知識管理應用（原文未明示 RAG）。", "category": "RAG/KM", "pdfPage": "5"}, {"id": 90, "sector": "保險業", "company": "公勝保險經紀人股份有限公司", "scenario": "內部流程自動化。", "category": "RPA", "pdfPage": "5"}, {"id": 91, "sector": "保險業", "company": "公勝保險經紀人股份有限公司", "scenario": "內部生成應用。", "category": "生成式AI", "pdfPage": "5"}, {"id": 92, "sector": "保險業", "company": "公勝保險經紀人股份有限公司", "scenario": "子公司財富規劃建議模組。", "category": "其它", "pdfPage": "5"}, {"id": 93, "sector": "保險業", "company": "美商達信保險經紀人股份有限公司台灣分公司", "scenario": "支援多國語言，提供答案理由與來源（如內部文件）；依文件來源問答用途推定為 RAG，原文未明示技術。", "category": "RAG/KM", "pdfPage": "5"}, {"id": 94, "sector": "保險業", "company": "永達保險經紀人股份有限公司", "scenario": "機器人流程自動化：應用於內部行政作業流程，提升效率與生產力。", "category": "RPA", "pdfPage": "5"}, {"id": 95, "sector": "保險業", "company": "財團法人汽車交通事故特別補償基金", "scenario": "以生成式 AI 服務自動將會議錄音檔轉成文字。", "category": "語音質檢/應用", "pdfPage": "5"}, {"id": 96, "sector": "保險業", "company": "財團法人汽車交通事故特別補償基金", "scenario": "以生成式 AI 擷取會議重點摘要，並自動生成符合內部會議紀錄格式的電子檔。", "category": "生成式AI", "pdfPage": "5"}, {"id": 97, "sector": "證券期貨業", "company": "口袋證券", "scenario": "導入 OpenAI 大型語言模型並結合 RAG，整理股票客觀公開資訊。", "category": "RAG/KM", "pdfPage": "5"}, {"id": 98, "sector": "證券期貨業", "company": "口袋證券", "scenario": "以大型語言模型結合 RAG 提供智能客服，協助投資人取得公開資訊。", "category": "智能客服", "pdfPage": "5"}, {"id": 99, "sector": "證券期貨業", "company": "大昌證券", "scenario": "行銷內容生成。", "category": "生成式AI", "pdfPage": "5"}, {"id": 100, "sector": "證券期貨業", "company": "統一證券", "scenario": "總公司部分人員導入 M365 Copilot，並舉辦黑客松競賽，改善內部作業流程與工作效率。", "category": "M365 Copilot", "pdfPage": "5"}, {"id": 101, "sector": "證券期貨業", "company": "凱基證券", "scenario": "eKYC：於線上開戶及額度調整流程，以監督式機器學習分析結構化客戶資料進行風險推估；非生成式 AI，額度結果供參考並由人工最終審核。", "category": "其它", "pdfPage": "5"}, {"id": 102, "sector": "證券期貨業", "company": "富邦證券", "scenario": "AI 投資助理：解析市場動態並回答投資問題、快速摘要美股法說會重點，以及提供每日 AI 盤前資訊播報（原文未交代語音合成技術）。", "category": "生成式AI", "pdfPage": "5"}, {"id": 103, "sector": "證券期貨業", "company": "華南證券", "scenario": "「AI 投資早報」：整合全球市場動態產出早報，遵循 AI 輔助、人工定稿，並經專業團隊深度審核。", "category": "生成式AI", "pdfPage": "5"}, {"id": 104, "sector": "證券期貨業", "company": "永豐金證券", "scenario": "個股 AI 市場輿情分析及每日投資早報（原文未詳述輿情分析技術；依指定整合為一筆，歸類為生成式AI）。", "category": "生成式AI", "pdfPage": "5"}, {"id": 105, "sector": "證券期貨業", "company": "玉山證券", "scenario": "ETF 智能投資策略互動平台：透過趣味問答與角色互動，即時生成個人化 ETF 投資組合建議。", "category": "生成式AI", "pdfPage": "5–6"}, {"id": 106, "sector": "證券期貨業", "company": "國泰證券", "scenario": "「庫存管家」：以客戶持股為核心，透過 AI 提供個人化推播，協助掌握庫存狀況。", "category": "其它", "pdfPage": "6"}, {"id": 107, "sector": "證券期貨業", "company": "德信證券", "scenario": "財經知識內容教育（原文未詳述生成或問答技術）。", "category": "其它", "pdfPage": "6"}, {"id": 108, "sector": "證券期貨業", "company": "台新證券", "scenario": "智能客服。", "category": "智能客服", "pdfPage": "6"}, {"id": 109, "sector": "證券期貨業", "company": "群益期貨", "scenario": "智能客服。", "category": "智能客服", "pdfPage": "6"}, {"id": 110, "sector": "證券期貨業", "company": "群益期貨", "scenario": "知識管理（原文未明示 RAG）。", "category": "RAG/KM", "pdfPage": "6"}, {"id": 111, "sector": "證券期貨業", "company": "群益期貨", "scenario": "文件分析（原文未交代具體技術）。", "category": "生成式AI", "pdfPage": "6"}, {"id": 112, "sector": "證券期貨業", "company": "群益期貨", "scenario": "風險控管；配合資訊安全與內控制度，符合金融監理要求。", "category": "其它", "pdfPage": "6"}, {"id": 113, "sector": "證券期貨業", "company": "統一期貨", "scenario": "以 AI 自動整理資料、生成簡報及處理複雜文件，減少重複性作業、提升工作效率與品質，並透過人機協作加速工作流程（原文未詳述文件處理技術；依指定歸類為 M365 Copilot）。", "category": "M365 Copilot", "pdfPage": "6"}, {"id": 114, "sector": "證券期貨業", "company": "富邦期貨", "scenario": "「富邦 AI PRO App」：內建 AI 投資助理，即時解析市場訊息並回答投資問題；快速彙整法說會重點；透過 AI 主播每日播報盤前焦點資訊（原文未交代語音合成技術）；並依個人偏好推送個股新聞事件、盤勢摘要與策略資訊。", "category": "App", "pdfPage": "6"}, {"id": 115, "sector": "證券期貨業", "company": "景順投信", "scenario": "Copilot M365 結合 Teams、Outlook、Word、Excel 及 PowerPoint：產出會議紀錄與行動項目、摘要郵件與建議回覆、撰寫文件、分析數據及生成簡報。", "category": "M365 Copilot", "pdfPage": "6"}, {"id": 116, "sector": "證券期貨業", "company": "摩根投信", "scenario": "內部影音生成，支援部門日常流程與專業工作。", "category": "生成式AI", "pdfPage": "6"}, {"id": 117, "sector": "證券期貨業", "company": "摩根投信", "scenario": "內部資訊分析整理。", "category": "生成式AI", "pdfPage": "6"}, {"id": 118, "sector": "證券期貨業", "company": "摩根投信", "scenario": "交易執行優化輔助。", "category": "其它", "pdfPage": "6"}, {"id": 119, "sector": "證券期貨業", "company": "摩根投信", "scenario": "員工通用 AI 生產力輔助工具（原文未詳述功能，判斷為M365 Copilot）。", "category": "M365 Copilot", "pdfPage": "6"}, {"id": 120, "sector": "證券期貨業", "company": "瑞銀投信", "scenario": "導入微軟 Copilot，協助產出文件草稿、簡報大綱與會議摘要；僅作為決策支援，最終決策由具資格人員審核確認。", "category": "M365 Copilot", "pdfPage": "6"}, {"id": 121, "sector": "證券期貨業", "company": "群益投信", "scenario": "即時負面新聞自動化：爬取公開新聞內文，以 LLM 判別新聞中的嫌疑人名並自動建檔。", "category": "生成式AI", "pdfPage": "6"}, {"id": 122, "sector": "證券期貨業", "company": "聯博投信", "scenario": "ABAI：透過單一 API 提供員工閉源與開源大型語言模型環境，支援 GPT、Gemini 等模型及內部投資、通路、營運需求。", "category": "生成式AI", "pdfPage": "7"}, {"id": 123, "sector": "證券期貨業", "company": "聯博投信", "scenario": "ABAI：可存取文件與資料並提供聊天查詢（依文件資料問答用途推定涉及 RAG，原文未明示技術）；以大型語言模型環境提供資料抽取，並提供文件比較、圖表生成及 Text-to-SQL 功能，以及透過安全 API 支援量化研究與開發團隊。", "category": "其它", "pdfPage": "7"}, {"id": 124, "sector": "證券期貨業", "company": "復華投信", "scenario": "AI OCR 表單辨識。", "category": "OCR", "pdfPage": "7"}, {"id": 125, "sector": "證券期貨業", "company": "野村投信", "scenario": "依基金經理人決定的投資策略，輔助生成「四大投資流程」之投資分析報告，減輕文書負擔。", "category": "生成式AI", "pdfPage": "7"}, {"id": 126, "sector": "證券期貨業", "company": "東方匯理投信", "scenario": "以集團 Alto Studio AI 進行文件資料匯總。", "category": "生成式AI", "pdfPage": "7"}, {"id": 127, "sector": "證券期貨業", "company": "東方匯理投信", "scenario": "以集團 Alto Studio AI 進行文件翻譯。", "category": "生成式AI", "pdfPage": "7"}, {"id": 128, "sector": "證券期貨業", "company": "富達投信", "scenario": "導入 Microsoft Copilot，協助日常文件生成、會議重點整理、資料分析及郵件撰寫。", "category": "M365 Copilot", "pdfPage": "7"}, {"id": 129, "sector": "證券期貨業", "company": "路博邁投信", "scenario": "僅運用內部聊天機器人支援行政處理與分析作業（非對客客服，原文未明示 RAG）。", "category": "其它", "pdfPage": "7"}, {"id": 130, "sector": "證券期貨業", "company": "富蘭克林投顧", "scenario": "以 AI 製作廣告素材，於符合作業程序下減少時間與人工成本。", "category": "生成式AI", "pdfPage": "7"}, {"id": 131, "sector": "證券期貨業", "company": "法盛投顧", "scenario": "使用母公司 BPCE Group 開發部署的 AI 工具，僅支援台灣員工行政與日常作業，如文書撰寫、資料整理及會議紀錄，不用於客戶溝通。", "category": "生成式AI", "pdfPage": "7"}, {"id": 132, "sector": "證券期貨業", "company": "阿爾發投顧", "scenario": "「AI 投資長（CIO）」：結合外部專業顧問團隊、專業理財顧問及 24H 智慧監控，提供策略配置、信託規劃與員工福儲等機構資產管理服務（原文未明示自主 AI Agent）。", "category": "其它", "pdfPage": "7"}, {"id": 133, "sector": "證券期貨業", "company": "證券交易所", "scenario": "以語音轉文字等 AI 技術提升市場監理作業效率。", "category": "語音質檢/應用", "pdfPage": "7"}, {"id": 134, "sector": "證券期貨業", "company": "期貨交易所", "scenario": "以機器學習異常偵測演算法，辨識疑似異常交易委託行為，輔助市場監理。", "category": "其它", "pdfPage": "7"}, {"id": 135, "sector": "銀行業", "company": "臺灣中小企業銀行", "scenario": "「AI 模型投資阻詐示警服務」：結合警政署 165 數據與機器學習，從受害者視角捕捉異常轉帳特徵（如異於日常頻率、小額測試），前端即時主動示警，模型精確率逾五成。", "category": "阻詐", "pdfPage": "最新蒐集"}, {"id": 136, "sector": "銀行業", "company": "臺灣中小企業銀行", "scenario": "「天眼識詐模型」：運用 AI 與深度學習分析帳戶交易頻率與金流特徵，即時發出警示輔助行員關懷提問，異常帳戶偵測率達七成。", "category": "阻詐", "pdfPage": "最新蒐集"}, {"id": 137, "sector": "銀行業", "company": "元大銀行", "scenario": "「元先生」雙腦智能客服：結合諮詢腦（FAQ）與查詢腦（NLU）之雙腦 AI，支援多意圖識別，回答精準度達 9 成以上。", "category": "智能客服", "pdfPage": "2"}, {"id": 138, "sector": "銀行業", "company": "華南銀行", "scenario": "資訊單位導入 GitHub Copilot 協作代理人，協助工程師進行程式碼建議、弱點修補與單元測試生成。", "category": "程式助手", "pdfPage": "2"}, {"id": 139, "sector": "銀行業", "company": "國泰世華銀行", "scenario": "GAIA 2.0 智慧文檔處理（IDP）：以多代理（Multi-Agent）架構自動摘要聯貸合約與法規關鍵風險。", "category": "生成式AI", "pdfPage": "2"}, {"id": 140, "sector": "銀行業", "company": "台新銀行", "scenario": "「AI企業徵信平台」：運用 AI 於企業徵信與授信評估，自動辨識財力文件、驗證數據並產製報告，提升報告產製時效與風險辨識。", "category": "生成式AI", "pdfPage": "1"}, {"id": 141, "sector": "銀行業", "company": "台新銀行", "scenario": "「RICHIE 智慧推薦引擎」：於 Richart App 中透過 AI 分析客戶行為與交易紀錄，主動提供個人化金融服務與理財建議。", "category": "App", "pdfPage": "1"}, {"id": 142, "sector": "證券期貨業", "company": "永豐金證券", "scenario": "大戶投 App 導入自主開發 AI 智能引擎與 RAG 技術，推出個人化智能庫存日報與情緒雷達，根據用戶持股盤前自動整理相關新聞與觀點。", "category": "App", "pdfPage": "5"}, {"id": 143, "sector": "證券期貨業", "company": "元大證券", "scenario": "導入 AI 威脅辨識與自動化資安應變防禦系統，將資安防禦從被動防禦提升至主動預警。", "category": "其它", "pdfPage": "最新蒐集"}], "sources": [{"id": 1, "sector": "銀行業", "company": "富邦金控", "pdfPage": "1", "count": 3}, {"id": 2, "sector": "銀行業", "company": "臺灣金控", "pdfPage": "1", "count": 1}, {"id": 3, "sector": "銀行業", "company": "玉山金控", "pdfPage": "1", "count": 1}, {"id": 4, "sector": "銀行業", "company": "王道銀行", "pdfPage": "1", "count": 1}, {"id": 5, "sector": "銀行業", "company": "連線銀行", "pdfPage": "1", "count": 1}, {"id": 6, "sector": "銀行業", "company": "台新銀行", "pdfPage": "1", "count": 5}, {"id": 7, "sector": "銀行業", "company": "彰化銀行", "pdfPage": "1", "count": 1}, {"id": 8, "sector": "銀行業", "company": "將來銀行", "pdfPage": "1", "count": 1}, {"id": 9, "sector": "銀行業", "company": "渣打銀行", "pdfPage": "1", "count": 1}, {"id": 10, "sector": "銀行業", "company": "華南銀行", "pdfPage": "2", "count": 6}, {"id": 11, "sector": "銀行業", "company": "台中銀行", "pdfPage": "2", "count": 1}, {"id": 12, "sector": "銀行業", "company": "臺灣銀行", "pdfPage": "2", "count": 1}, {"id": 13, "sector": "銀行業", "company": "玉山銀行", "pdfPage": "2", "count": 1}, {"id": 14, "sector": "銀行業", "company": "元大銀行", "pdfPage": "2", "count": 2}, {"id": 15, "sector": "銀行業", "company": "國泰世華銀行", "pdfPage": "2", "count": 3}, {"id": 16, "sector": "銀行業", "company": "滙豐銀行", "pdfPage": "2", "count": 1}, {"id": 17, "sector": "銀行業", "company": "臺灣中小企銀", "pdfPage": "2", "count": 1}, {"id": 18, "sector": "銀行業", "company": "中國信託銀行", "pdfPage": "2", "count": 3}, {"id": 19, "sector": "銀行業", "company": "台北富邦銀行", "pdfPage": "2–3", "count": 5}, {"id": 20, "sector": "銀行業", "company": "樂天銀行", "pdfPage": "3", "count": 1}, {"id": 21, "sector": "銀行業", "company": "全盈支付", "pdfPage": "3", "count": 1}, {"id": 22, "sector": "銀行業", "company": "全支付公司", "pdfPage": "3", "count": 2}, {"id": 23, "sector": "銀行業", "company": "金融研訓院", "pdfPage": "3", "count": 1}, {"id": 24, "sector": "銀行業", "company": "存保公司", "pdfPage": "3", "count": 4}, {"id": 25, "sector": "銀行業", "company": "聯卡中心", "pdfPage": "3", "count": 2}, {"id": 26, "sector": "保險業", "company": "國泰人壽", "pdfPage": "3", "count": 4}, {"id": 27, "sector": "保險業", "company": "新光人壽", "pdfPage": "3", "count": 3}, {"id": 28, "sector": "保險業", "company": "友邦人壽", "pdfPage": "3", "count": 1}, {"id": 29, "sector": "保險業", "company": "台灣人壽", "pdfPage": "3", "count": 2}, {"id": 30, "sector": "保險業", "company": "富邦人壽", "pdfPage": "3–4", "count": 6}, {"id": 31, "sector": "保險業", "company": "元大人壽", "pdfPage": "4", "count": 2}, {"id": 32, "sector": "保險業", "company": "凱基人壽", "pdfPage": "4", "count": 2}, {"id": 33, "sector": "保險業", "company": "全球人壽", "pdfPage": "4", "count": 1}, {"id": 34, "sector": "保險業", "company": "南山人壽", "pdfPage": "4", "count": 4}, {"id": 35, "sector": "保險業", "company": "保誠人壽", "pdfPage": "4", "count": 1}, {"id": 36, "sector": "保險業", "company": "科隆再保公司", "pdfPage": "4", "count": 1}, {"id": 37, "sector": "保險業", "company": "中信產險", "pdfPage": "4", "count": 1}, {"id": 38, "sector": "保險業", "company": "科法斯產險", "pdfPage": "4", "count": 1}, {"id": 39, "sector": "保險業", "company": "國泰產險", "pdfPage": "4", "count": 1}, {"id": 40, "sector": "保險業", "company": "富邦產險", "pdfPage": "4", "count": 1}, {"id": 41, "sector": "保險業", "company": "新安東京產險", "pdfPage": "4", "count": 1}, {"id": 42, "sector": "保險業", "company": "兆豐產險", "pdfPage": "4", "count": 2}, {"id": 43, "sector": "保險業", "company": "富邦綜合保險代理人股份有限公司", "pdfPage": "4", "count": 1}, {"id": 44, "sector": "保險業", "company": "和安保險代理人股份有限公司", "pdfPage": "5", "count": 2}, {"id": 45, "sector": "保險業", "company": "遠傳保險代理人股份有限公司", "pdfPage": "5", "count": 1}, {"id": 46, "sector": "保險業", "company": "智匯保險經紀人股份有限公司", "pdfPage": "5", "count": 2}, {"id": 47, "sector": "保險業", "company": "錠嵂保險經紀人股份有限公司", "pdfPage": "5", "count": 3}, {"id": 48, "sector": "保險業", "company": "公勝保險經紀人股份有限公司", "pdfPage": "5", "count": 4}, {"id": 49, "sector": "保險業", "company": "美商達信保險經紀人股份有限公司台灣分公司", "pdfPage": "5", "count": 1}, {"id": 50, "sector": "保險業", "company": "永達保險經紀人股份有限公司", "pdfPage": "5", "count": 1}, {"id": 51, "sector": "保險業", "company": "財團法人汽車交通事故特別補償基金", "pdfPage": "5", "count": 2}, {"id": 52, "sector": "證券期貨業", "company": "口袋證券", "pdfPage": "5", "count": 2}, {"id": 53, "sector": "證券期貨業", "company": "大昌證券", "pdfPage": "5", "count": 1}, {"id": 54, "sector": "證券期貨業", "company": "統一證券", "pdfPage": "5", "count": 1}, {"id": 55, "sector": "證券期貨業", "company": "凱基證券", "pdfPage": "5", "count": 1}, {"id": 56, "sector": "證券期貨業", "company": "富邦證券", "pdfPage": "5", "count": 1}, {"id": 57, "sector": "證券期貨業", "company": "華南證券", "pdfPage": "5", "count": 1}, {"id": 58, "sector": "證券期貨業", "company": "永豐金證券", "pdfPage": "5", "count": 2}, {"id": 59, "sector": "證券期貨業", "company": "玉山證券", "pdfPage": "5–6", "count": 1}, {"id": 60, "sector": "證券期貨業", "company": "國泰證券", "pdfPage": "6", "count": 1}, {"id": 61, "sector": "證券期貨業", "company": "德信證券", "pdfPage": "6", "count": 1}, {"id": 62, "sector": "證券期貨業", "company": "台新證券", "pdfPage": "6", "count": 1}, {"id": 63, "sector": "證券期貨業", "company": "群益期貨", "pdfPage": "6", "count": 4}, {"id": 64, "sector": "證券期貨業", "company": "統一期貨", "pdfPage": "6", "count": 1}, {"id": 65, "sector": "證券期貨業", "company": "富邦期貨", "pdfPage": "6", "count": 1}, {"id": 66, "sector": "證券期貨業", "company": "景順投信", "pdfPage": "6", "count": 1}, {"id": 67, "sector": "證券期貨業", "company": "摩根投信", "pdfPage": "6", "count": 4}, {"id": 68, "sector": "證券期貨業", "company": "瑞銀投信", "pdfPage": "6", "count": 1}, {"id": 69, "sector": "證券期貨業", "company": "群益投信", "pdfPage": "6", "count": 1}, {"id": 70, "sector": "證券期貨業", "company": "聯博投信", "pdfPage": "7", "count": 2}, {"id": 71, "sector": "證券期貨業", "company": "復華投信", "pdfPage": "7", "count": 1}, {"id": 72, "sector": "證券期貨業", "company": "野村投信", "pdfPage": "7", "count": 1}, {"id": 73, "sector": "證券期貨業", "company": "東方匯理投信", "pdfPage": "7", "count": 2}, {"id": 74, "sector": "證券期貨業", "company": "富達投信", "pdfPage": "7", "count": 1}, {"id": 75, "sector": "證券期貨業", "company": "路博邁投信", "pdfPage": "7", "count": 1}, {"id": 76, "sector": "證券期貨業", "company": "富蘭克林投顧", "pdfPage": "7", "count": 1}, {"id": 77, "sector": "證券期貨業", "company": "法盛投顧", "pdfPage": "7", "count": 1}, {"id": 78, "sector": "證券期貨業", "company": "阿爾發投顧", "pdfPage": "7", "count": 1}, {"id": 79, "sector": "證券期貨業", "company": "證券交易所", "pdfPage": "7", "count": 1}, {"id": 80, "sector": "證券期貨業", "company": "期貨交易所", "pdfPage": "7", "count": 1}, {"id": 81, "sector": "銀行業", "company": "臺灣中小企業銀行", "pdfPage": "最新蒐集", "count": 2}, {"id": 82, "sector": "證券期貨業", "company": "元大證券", "pdfPage": "最新蒐集", "count": 1}], "categories": [{"category": "RAG/KM", "principle": "結合文件／知識檢索與生成回答。", "boundary": "台中銀行、口袋證券原文明示 RAG；華南銀行、國泰世華銀行員工助手、達信、聯博依用途推定，並非技術驗證。", "count": 10}, {"category": "語音質檢/應用", "principle": "語音轉文字、文字轉語音、錄音／語音質檢，以及明示語音辨識、IVR、語音機器人或語音自助服務的應用。", "boundary": "語音相關用途優先於 RPA、智能客服等分類；錄音質檢不須明示轉文字即可納入。語音服務不代表已驗證 STT／TTS 技術；僅通話摘要或 AI 播報且未明示語音轉換／質檢者不逕行納入。", "count": 10}, {"category": "生成式AI", "principle": "內容、摘要、報告、影音生成，以及明示 LLM 的內容處理；程式／SQL 開發輔助另歸程式助手。", "boundary": "亦包含依角色對練、報告產出等用途推定者；不是每項都由原文明示生成式技術。", "count": 32}, {"category": "比對", "principle": "以法規關聯、威脅情資或文件適法性比較為主要用途。", "boundary": "不將所有風險模型、審查、保單健診或 eKYC 一律視為比對。", "count": 3}, {"category": "阻詐", "principle": "明確用於詐欺偵測、識詐、聯防或阻擋詐騙。", "boundary": "一般風險評級、反洗錢、異常交易、資安及理賠異常，不在未明示詐欺時直接歸入。", "count": 14}, {"category": "M365 Copilot", "principle": "原文提及 Microsoft／微軟 Copilot 或 M365 Copilot 的辦公與生產力應用。", "boundary": "將僅稱 Copilot 的辦公應用一併歸此；明示程式開發用途者優先歸程式助手。不憑 Copilot 名稱推定為 GitHub Copilot，版本與授權以原文為準。", "count": 9}, {"category": "AI Agent", "principle": "原文明確稱為 AI 代理人。", "boundary": "目前無場景歸入此類；不因名稱含「助理」「機器人」或「AI 投資長」就推定為自主代理。", "count": 0}, {"category": "OCR", "principle": "原文明確使用 AI OCR 進行文件或表單辨識及欄位擷取。", "boundary": "LLM 單據萃取、AI 審票未明示 OCR 者不自行推定。", "count": 2}, {"category": "智能客服", "principle": "以對客服務、諮詢問答、語音對話、IVR 或電訪機器人為主要用途。", "boundary": "對客服務原則歸此；明示語音辨識、IVR、語音機器人、語音自助服務或語音質檢者，優先歸語音質檢/應用；內部助理不直接歸客服。", "count": 12}, {"category": "程式助手", "principle": "GitHub Copilot 或其它輔助程式／SQL 撰寫、軟體開發、編譯、測試修復或 debug 的應用。", "boundary": "明示程式開發用途者優先歸此，含混合辦公用途及 Text-to-SQL；僅提供 API 或泛稱支援開發團隊不足以判入。現有場景未明示 GitHub Copilot。", "count": 5}, {"category": "RPA", "principle": "依指定口徑，場景明示 RPA 或流程自動化即歸此，含徵審自動化；語音質檢／應用優先另分類。", "boundary": "本分類採用途口徑，不代表均採傳統 RPA 技術；語音自動化質檢改歸語音質檢/應用。僅自動生成、摘要、辨識、設控或泛稱效率提升，不直接判入。", "count": 6}, {"category": "模型訓練", "principle": "依指定口徑，將本次調整前類別為「其它」，且場景文字含「模型」的項目歸入。", "boundary": "依文字條件分類，包含模型預測、排序及風險應用；不代表原文已明示模型訓練用途。", "count": 6}, {"category": "App", "principle": "場景描述與 App 有關者歸入此類。", "boundary": "場景描述只要提及「App」即歸入此類；亦可由使用者手動將場景類別指定為 App，不以描述是否提及「App」為限。", "count": 3}, {"category": "其它", "principle": "預測、排序、評分、基礎架構，或資訊不足的應用；明示 RPA／流程自動化者另歸 RPA；本次原為其它且場景含「模型」者改歸模型訓練。", "boundary": "保留原文概括敘述，不自行補寫不存在的細節；「其它」不代表不使用 AI。", "count": 31}], "notes": [{"title": "整理單位", "content": "共 82 個業者／周邊單位、143 筆場景；保留原文業別及出現順序，不依業者名稱重新推定監理業別。"}, {"title": "拆分原則", "content": "每列為一個可獨立辨識的用途；同一產品若涵蓋不同功能可拆列。同一 Copilot 辦公套件的常見工作則合併敘述，筆數不等於系統數或成熟度。 全盈支付依指定將軟體開發、資料庫語言審查及白箱測試風險修復合併為一筆，歸類為程式助手。 富邦證券依指定將 AI 投資助理的市場問答、美股法說會摘要及每日盤前資訊播報合併為一筆，歸類為生成式AI。 永豐金證券依指定將個股 AI 市場輿情分析及每日投資早報合併為一筆，歸類為生成式AI。 統一期貨依指定將資料整理、簡報生成及複雜文件處理合併為一筆，歸類為 M365 Copilot。 富邦期貨依指定將「富邦 AI PRO」投資問答、法說會摘要、AI 主播盤前播報及個人化資訊推送合併為一筆，並依使用者指定改歸 App。 聯博投信依指定將 ABAI 的文件資料聊天查詢、資料抽取、文件比較、圖表生成、Text-to-SQL 及安全 API 支援合併為一筆，歸類為其它；其餘場景保留。"}, {"title": "單一分類", "content": "每筆只選一個主要類別；語音轉文字、文字轉語音、錄音／語音質檢及明示語音辨識／服務者優先歸語音質檢/應用；其後依 RPA／流程自動化、程式助手及其餘主要用途分類。"}, {"title": "推定標註", "content": "主表部分列依用途推定技術類別；RAG 等標籤是整理判斷，不代表對業者技術架構進行查證。"}, {"title": "產品名稱", "content": "除原文明示 M365 者外，Copilot 的版本與授權不明；純辦公用途歸 M365 Copilot，明示程式開發用途歸程式助手；本次未將任何場景自行推定為 GitHub Copilot。"}, {"title": "資料限制", "content": "原文未詳述的場景仍予保留並註明；未引入外部資料。原文所列精準度、減量比例等為業者自行提供，未獨立驗證。"}, {"title": "來源回查", "content": "請於「來源索引」以業者查找 PDF 頁碼；跨頁項目標為 2–3、3–4、5–6。PDF 頁序與本附件印刷頁碼一致。"}, {"title": "使用方式", "content": "主表可依業別、業者及類別篩選；來源索引與本表的場景筆數以公式連結主表，後續修改分類時會重新計算。"}]};
+    let RAW_DATA = {"scenarios": [{"id": 1, "sector": "銀行業", "company": "富邦金控", "holding": "富邦金", "scenario": "智能法遵系統：蒐集外規異動資訊，自動判讀內外規及相關單位關聯，輔助法遵檢視與派發作業。", "category": "比對", "pdfPage": "1"}, {"id": 2, "sector": "銀行業", "company": "富邦金控", "holding": "富邦金", "scenario": "端點偵測及回應（EDR）資安監控分析：即時監控電腦活動，交叉比對威脅情資。", "category": "比對", "pdfPage": "1"}, {"id": 3, "sector": "銀行業", "company": "富邦金控", "holding": "富邦金", "scenario": "網路偵測與回應（NDR）：即時側錄與截取網路流量，以機器學習解析異常行為。", "category": "其它", "pdfPage": "1"}, {"id": 4, "sector": "銀行業", "company": "臺灣金控", "holding": "臺灣金", "scenario": "導入微軟 Copilot，協助文件撰寫、資料分析、簡報製作、資訊摘要及報告初稿，並支援會議紀錄、信件與公文作業。", "category": "M365 Copilot", "pdfPage": "1"}, {"id": 5, "sector": "銀行業", "company": "玉山金控", "holding": "玉山金", "scenario": "「金融無塵室」計畫：應用同態加密與雙盲技術，在安全合規環境促成跨行庫、跨產業資料協作，強化聯防識詐。", "category": "阻詐", "pdfPage": "1"}, {"id": 6, "sector": "銀行業", "company": "王道銀行", "holding": "未歸類", "scenario": "智能客服。", "category": "智能客服", "pdfPage": "1"}, {"id": 7, "sector": "銀行業", "company": "連線銀行", "holding": "未歸類", "scenario": "防詐預警：已發展四個預警模型，其中兩個具每小時自動 BLOCK 機制。", "category": "阻詐", "pdfPage": "1"}, {"id": 8, "sector": "銀行業", "company": "台新銀行", "holding": "台新新光金", "scenario": "防範詐騙：以圖演算法追蹤多層次金流與可疑帳戶，結合機器學習辨識詐騙模式。", "category": "阻詐", "pdfPage": "1"}, {"id": 9, "sector": "銀行業", "company": "台新銀行", "holding": "台新新光金", "scenario": "智能質檢：導入 ASR 語音辨識與 LLM，建構自動化質檢流程，實現音檔轉譯文本等作業。", "category": "語音質檢/應用", "pdfPage": "1"}, {"id": 10, "sector": "銀行業", "company": "台新銀行", "holding": "台新新光金", "scenario": "智能小幫手：建立智能知識管理平台，提供內部員工語意式智能搜尋問答（原文未明示 RAG）。", "category": "RAG/KM", "pdfPage": "1"}, {"id": 11, "sector": "銀行業", "company": "彰化銀行", "holding": "未歸類", "scenario": "「鷹眼 AI 防詐模型」：搭配「疑似不法顯屬異常」兩項 Rule-based 風險態樣指標，每日自動設控高風險存款帳戶，並保留人工審核、介入及解控救濟機制。", "category": "阻詐", "pdfPage": "1"}, {"id": 12, "sector": "銀行業", "company": "將來銀行", "holding": "未歸類", "scenario": "「AI 小將」文字客服：提供 24×7 服務，涵蓋既有產品，原文載明覆蓋率（精準度）達 97.6%。", "category": "智能客服", "pdfPage": "1"}, {"id": 13, "sector": "銀行業", "company": "渣打銀行", "holding": "未歸類", "scenario": "YODA 銀行內部智能助理機器人：協助員工快速找到所需資訊（原文未明示 RAG 或自主代理機制）。", "category": "RAG/KM", "pdfPage": "1"}, {"id": 14, "sector": "銀行業", "company": "華南銀行", "holding": "華南金", "scenario": "AI 助理系統：快速檢索銀行核心知識並生成摘要（依檢索結合生成的用途判為 RAG）。", "category": "RAG/KM", "pdfPage": "2"}, {"id": 15, "sector": "銀行業", "company": "華南銀行", "holding": "華南金", "scenario": "「雷神識詐」：鎖定異常帳戶以防範詐騙。", "category": "阻詐", "pdfPage": "2"}, {"id": 16, "sector": "銀行業", "company": "華南銀行", "holding": "華南金", "scenario": "AML 風險評級：對案件進行風險分級，提升審查效率。", "category": "其它", "pdfPage": "2"}, {"id": 17, "sector": "銀行業", "company": "華南銀行", "holding": "華南金", "scenario": "智能 IVR：透過語音辨識判斷並完成客戶意圖。", "category": "語音質檢/應用", "pdfPage": "2"}, {"id": 18, "sector": "銀行業", "company": "華南銀行", "holding": "華南金", "scenario": "AI 代理人：運用於投研報告及產經週報，協助掌握全球市場動態與產業趨勢。", "category": "生成式AI", "pdfPage": "2"}, {"id": 19, "sector": "銀行業", "company": "台中銀行", "holding": "未歸類", "scenario": "知識檢索平台：以 RAG 整合行內規章，跨部門定位文件片段，並結合生成式 AI 自動彙整、即時產出重點答案。", "category": "RAG/KM", "pdfPage": "2"}, {"id": 20, "sector": "銀行業", "company": "臺灣銀行", "holding": "臺灣金", "scenario": "導入 Copilot，協助文件撰寫、資料分析、簡報製作、資訊摘要及報告初稿，並支援會議紀錄、信件與公文作業。", "category": "M365 Copilot", "pdfPage": "2"}, {"id": 21, "sector": "銀行業", "company": "玉山銀行", "holding": "玉山金", "scenario": "信貸流程導入 Proxy Income 財力評估模型與自動報價系統，實現數據驅動風險定價，提升徵審自動化時效。", "category": "RPA", "pdfPage": "2"}, {"id": 22, "sector": "銀行業", "company": "元大銀行", "holding": "元大金", "scenario": "「天網防詐模型」：訓練 AI 辨識客戶交易行為是否涉及詐騙並提前預警。", "category": "阻詐", "pdfPage": "2"}, {"id": 23, "sector": "銀行業", "company": "國泰世華銀行", "holding": "國泰金", "scenario": "員工 AI 助手：結合生成式 AI 與知識管理，協助查詢作業規範、業務知識及常見問題（依知識查詢結合生成的用途判為 RAG）。", "category": "RAG/KM", "pdfPage": "2"}, {"id": 24, "sector": "銀行業", "company": "國泰世華銀行", "holding": "國泰金", "scenario": "智能客服「阿發」：結合生成式 AI、官網公開資訊及 FAQ 檢索資料庫，供客戶查找銀行業務與服務資訊。", "category": "智能客服", "pdfPage": "2"}, {"id": 25, "sector": "銀行業", "company": "滙豐銀行", "holding": "未歸類", "scenario": "AI Markets：以自然語言處理（NLP）及大型語言模型（LLM）等技術，支援機構投資人與全球市場互動。", "category": "生成式AI", "pdfPage": "2"}, {"id": 26, "sector": "銀行業", "company": "臺灣中小企銀", "holding": "未歸類", "scenario": "行動銀行智能語音小幫手 i-Money：結合 NLU、語音辨識與 API，提供功能導航、帳務查詢、轉帳及近 50 項生活繳費等語音對話服務。", "category": "語音質檢/應用", "pdfPage": "2"}, {"id": 27, "sector": "銀行業", "company": "中國信託銀行", "holding": "中信金", "scenario": "智能客服「小 C」。", "category": "智能客服", "pdfPage": "2"}, {"id": 28, "sector": "銀行業", "company": "中國信託銀行", "holding": "中信金", "scenario": "分行 AI 審票（原文未交代具體辨識或比對技術）。", "category": "其它", "pdfPage": "2"}, {"id": 29, "sector": "銀行業", "company": "中國信託銀行", "holding": "中信金", "scenario": "防詐應用（原文未詳述）。", "category": "阻詐", "pdfPage": "2"}, {"id": 30, "sector": "銀行業", "company": "台北富邦銀行", "holding": "富邦金", "scenario": "即時意圖偵測模型。", "category": "模型訓練", "pdfPage": "2–3"}, {"id": 31, "sector": "銀行業", "company": "台北富邦銀行", "holding": "富邦金", "scenario": "跨產品偏好排序模型。", "category": "模型訓練", "pdfPage": "2–3"}, {"id": 32, "sector": "銀行業", "company": "台北富邦銀行", "holding": "富邦金", "scenario": "情境偏好排序模型。", "category": "模型訓練", "pdfPage": "2–3"}, {"id": 33, "sector": "銀行業", "company": "台北富邦銀行", "holding": "富邦金", "scenario": "產品意圖預測模型。", "category": "模型訓練", "pdfPage": "2–3"}, {"id": 34, "sector": "銀行業", "company": "台北富邦銀行", "holding": "富邦金", "scenario": "鷹眼防詐模型。", "category": "阻詐", "pdfPage": "2–3"}, {"id": 35, "sector": "銀行業", "company": "樂天銀行", "holding": "未歸類", "scenario": "於鷹眼聯盟會議分享應用與成效（原文未詳述實際場景與技術，但有鷹眼就歸類為阻詐）。", "category": "阻詐", "pdfPage": "3"}, {"id": 36, "sector": "銀行業", "company": "全盈支付", "holding": "未歸類", "scenario": "導入 AI 助理，協助軟體開發、資料庫語言審查及白箱測試風險修復，兼顧服務功能發展與資安風險控管。", "category": "程式助手", "pdfPage": "3"}, {"id": 37, "sector": "銀行業", "company": "全支付公司", "holding": "未歸類", "scenario": "程式碼除錯：以 AI 檢驗 code 內容 bug，提升程式正確性。", "category": "程式助手", "pdfPage": "3"}, {"id": 38, "sector": "銀行業", "company": "全支付公司", "holding": "未歸類", "scenario": "內部教育訓練：以 AI 調整、檢核或生成內部訓練內容，降低人力耗費並提升訓練成效。", "category": "生成式AI", "pdfPage": "3"}, {"id": 39, "sector": "銀行業", "company": "金融研訓院", "holding": "未歸類", "scenario": "AI 線上面試輔助口試（原文未交代具體技術）。", "category": "其它", "pdfPage": "3"}, {"id": 40, "sector": "銀行業", "company": "存保公司", "holding": "未歸類", "scenario": "開發存保專屬 AI 應答助理，應用於內部知識問答（原文未明示 RAG）。", "category": "RAG/KM", "pdfPage": "3"}, {"id": 41, "sector": "銀行業", "company": "存保公司", "holding": "未歸類", "scenario": "使用 AI 工具製作內部文件等非機敏資料業務。", "category": "生成式AI", "pdfPage": "3"}, {"id": 42, "sector": "銀行業", "company": "存保公司", "holding": "未歸類", "scenario": "使用 AI 工具進行工作流程自動化等非機敏資料業務。", "category": "RPA", "pdfPage": "3"}, {"id": 43, "sector": "銀行業", "company": "存保公司", "holding": "未歸類", "scenario": "建置地端 AI 基礎架構及封閉式 AI 平台，應用於機敏資料業務（原文未詳列業務）。", "category": "其它", "pdfPage": "3"}, {"id": 44, "sector": "銀行業", "company": "聯卡中心", "holding": "未歸類", "scenario": "TRACE 詐欺偵測：依持卡人過去交易行為變數評分，於交易當下產生風險預測分數，協助發卡機構評估風險。", "category": "阻詐", "pdfPage": "3"}, {"id": 45, "sector": "銀行業", "company": "聯卡中心", "holding": "未歸類", "scenario": "AML 系統：執行未知風險異常交易態樣分析預測概念驗證，辨識監控人員尚未發現的異常態樣。", "category": "其它", "pdfPage": "3"}, {"id": 46, "sector": "保險業", "company": "國泰人壽", "holding": "國泰金", "scenario": "AI Coach：以 LLM 模擬虛擬客戶並扮演多元角色，供業務員與客服進行技巧對練。", "category": "生成式AI", "pdfPage": "3"}, {"id": 47, "sector": "保險業", "company": "國泰人壽", "holding": "國泰金", "scenario": "理賠 AI 系統：以 LLM 輔助理賠單據資訊萃取。", "category": "生成式AI", "pdfPage": "3"}, {"id": 48, "sector": "保險業", "company": "國泰人壽", "holding": "國泰金", "scenario": "理賠 AI 系統：以機器學習預測異常風險，輔助理賠人員決策（原文未限定為詐欺風險）。", "category": "其它", "pdfPage": "3"}, {"id": 49, "sector": "保險業", "company": "國泰人壽", "holding": "國泰金", "scenario": "「泰好客 Cathay AIM」：以機器學習預測近期各類商品高購買力客戶，輔助業務員拜訪行銷。", "category": "其它", "pdfPage": "3"}, {"id": 50, "sector": "保險業", "company": "新光人壽", "holding": "台新新光金", "scenario": "理賠防詐模型。", "category": "阻詐", "pdfPage": "3"}, {"id": 51, "sector": "保險業", "company": "新光人壽", "holding": "台新新光金", "scenario": "LLM 法扣系統（原文未進一步說明）。", "category": "生成式AI", "pdfPage": "3"}, {"id": 52, "sector": "保險業", "company": "新光人壽", "holding": "台新新光金", "scenario": "語音辨識應用。", "category": "語音質檢/應用", "pdfPage": "3"}, {"id": 53, "sector": "保險業", "company": "友邦人壽", "holding": "未歸類", "scenario": "運用 Copilot 生成式 AI 協助文件撰寫、資料整理及程式開發，採人機協作以確保決策品質與合規性。", "category": "程式助手", "pdfPage": "3"}, {"id": 54, "sector": "保險業", "company": "台灣人壽", "holding": "中信金", "scenario": "高齡錄音質檢系統（原文未明示語音轉文字流程）。", "category": "語音質檢/應用", "pdfPage": "3"}, {"id": 55, "sector": "保險業", "company": "台灣人壽", "holding": "中信金", "scenario": "語音機器人電訪系統。", "category": "語音質檢/應用", "pdfPage": "3"}, {"id": 56, "sector": "保險業", "company": "富邦人壽", "holding": "富邦金", "scenario": "AI 協助核保員與理賠員進行文件重點摘要。", "category": "生成式AI", "pdfPage": "3–4"}, {"id": 57, "sector": "保險業", "company": "富邦人壽", "holding": "富邦金", "scenario": "AI 輔助職業／手術代碼判斷。", "category": "其它", "pdfPage": "3–4"}, {"id": 58, "sector": "保險業", "company": "富邦人壽", "holding": "富邦金", "scenario": "AI 輔助產出商品開發文件。", "category": "生成式AI", "pdfPage": "3–4"}, {"id": 59, "sector": "保險業", "company": "富邦人壽", "holding": "富邦金", "scenario": "AI 智能客服，提供客戶即時問答。", "category": "智能客服", "pdfPage": "3–4"}, {"id": 60, "sector": "保險業", "company": "富邦人壽", "holding": "富邦金", "scenario": "AI 輔助 IT 人員程式碼編譯（原文未明示程式碼生成）。", "category": "程式助手", "pdfPage": "3–4"}, {"id": 61, "sector": "保險業", "company": "富邦人壽", "holding": "富邦金", "scenario": "AI 應用於風險管理與法遵（原文未詳述具體功能）。", "category": "其它", "pdfPage": "3–4"}, {"id": 62, "sector": "保險業", "company": "元大人壽", "holding": "元大金", "scenario": "通路行為風險模型：預測業務員風險；原文載明約減少 74% 需進階審查資料量，並捕捉約 70% 異常業務員。", "category": "模型訓練", "pdfPage": "4"}, {"id": 63, "sector": "保險業", "company": "元大人壽", "holding": "元大金", "scenario": "理賠詐欺風險模型：預測理賠申請風險；原文載明約減少 96% 需進階審查資料量，並捕捉約 95% 疑似理賠詐欺案件。", "category": "阻詐", "pdfPage": "4"}, {"id": 64, "sector": "保險業", "company": "凱基人壽", "holding": "凱基金", "scenario": "保險商品輔銷文件（如商品簡介）合規預審：進行適法性比對。", "category": "比對", "pdfPage": "4"}, {"id": 65, "sector": "保險業", "company": "凱基人壽", "holding": "凱基金", "scenario": "保險商品輔銷文件合規預審：生成預審檢核報告。", "category": "生成式AI", "pdfPage": "4"}, {"id": 66, "sector": "保險業", "company": "全球人壽", "holding": "未歸類", "scenario": "與清大產學合作建置「AI 智能語音質檢」系統，全面檢視新契約電訪品質（原文未明示語音轉文字流程）。", "category": "語音質檢/應用", "pdfPage": "4"}, {"id": 67, "sector": "保險業", "company": "南山人壽", "holding": "未歸類", "scenario": "AI 輔助核保流程（原文未詳述技術）。", "category": "其它", "pdfPage": "4"}, {"id": 68, "sector": "保險業", "company": "南山人壽", "holding": "未歸類", "scenario": "AI 輔助理賠流程（原文未詳述技術）。", "category": "其它", "pdfPage": "4"}, {"id": 69, "sector": "保險業", "company": "南山人壽", "holding": "未歸類", "scenario": "業務員 AI 智能對練（依角色對練用途判為生成式 AI）。", "category": "生成式AI", "pdfPage": "4"}, {"id": 70, "sector": "保險業", "company": "南山人壽", "holding": "未歸類", "scenario": "法遵 AI 智能助理（原文未明示 RAG 或自主代理機制）。", "category": "其它", "pdfPage": "4"}, {"id": 71, "sector": "保險業", "company": "保誠人壽", "holding": "未歸類", "scenario": "AI 核保：識別低風險客戶，結合簡化醫療問卷、交叉銷售及再次銷售以提升客戶體驗。", "category": "其它", "pdfPage": "4"}, {"id": 72, "sector": "保險業", "company": "科隆再保公司", "holding": "未歸類", "scenario": "台灣分公司僅於內部作業使用 AI（原文未詳述場景）。", "category": "其它", "pdfPage": "4"}, {"id": 73, "sector": "保險業", "company": "中信產險", "holding": "中信金", "scenario": "投保文件智能辨識平台：以 AI OCR 結合電腦視覺與機器學習，自動辨識身分證件、行車執照與投保文件並擷取欄位，串接核保與核對機制。", "category": "OCR", "pdfPage": "4"}, {"id": 74, "sector": "保險業", "company": "科法斯產險", "holding": "未歸類", "scenario": "導入 Microsoft Copilot，支援文件撰寫、資料摘要及內部溝通，並應用於風險管理與合規作業。", "category": "M365 Copilot", "pdfPage": "4"}, {"id": 75, "sector": "保險業", "company": "國泰產險", "holding": "國泰金", "scenario": "「CarTech 智能車險加值服務」：結合車聯網數據、AI 風險預測、駕駛行為管理及顧問式損害防阻服務，以預防風險為核心。", "category": "其它", "pdfPage": "4"}, {"id": 76, "sector": "保險業", "company": "富邦產險", "holding": "富邦金", "scenario": "語音自助服務：優化智能留單、保單查詢、智能補發及理賠進度查詢。", "category": "語音質檢/應用", "pdfPage": "4"}, {"id": 77, "sector": "保險業", "company": "新安東京產險", "holding": "未歸類", "scenario": "以客戶風險模型輔助核保作業。", "category": "模型訓練", "pdfPage": "4"}, {"id": 78, "sector": "保險業", "company": "兆豐產險", "holding": "兆豐金", "scenario": "智能客服。", "category": "智能客服", "pdfPage": "4"}, {"id": 79, "sector": "保險業", "company": "兆豐產險", "holding": "兆豐金", "scenario": "機器人流程自動化（RPA）。", "category": "RPA", "pdfPage": "4"}, {"id": 80, "sector": "保險業", "company": "富邦綜合保險代理人股份有限公司", "holding": "富邦金", "scenario": "以大型語言模型產出過往通話摘要、總結客戶需求，協助業務同仁及客服人員快速掌握歷史互動與客戶想法。", "category": "生成式AI", "pdfPage": "4"}, {"id": 81, "sector": "保險業", "company": "和安保險代理人股份有限公司", "holding": "未歸類", "scenario": "推動「全員數位化」，導入 Gemini、Canva AI 等生成式工具製作會議資料、簡報與 DM。", "category": "生成式AI", "pdfPage": "5"}, {"id": 82, "sector": "保險業", "company": "和安保險代理人股份有限公司", "holding": "未歸類", "scenario": "將 RPA 導入日常行政作業，減少重複、低價值作業。", "category": "RPA", "pdfPage": "5"}, {"id": 83, "sector": "保險業", "company": "遠傳保險代理人股份有限公司", "holding": "未歸類", "scenario": "以 AI 分析客戶資料庫，進行精準行銷。", "category": "其它", "pdfPage": "5"}, {"id": 84, "sector": "保險業", "company": "智匯保險經紀人股份有限公司", "holding": "未歸類", "scenario": "保單健診（原文未交代比對機制）。", "category": "其它", "pdfPage": "5"}, {"id": 85, "sector": "保險業", "company": "智匯保險經紀人股份有限公司", "holding": "未歸類", "scenario": "智能客服。", "category": "智能客服", "pdfPage": "5"}, {"id": 86, "sector": "保險業", "company": "錠嵂保險經紀人股份有限公司", "holding": "未歸類", "scenario": "保單健診（原文未交代比對機制）。", "category": "其它", "pdfPage": "5"}, {"id": 87, "sector": "保險業", "company": "錠嵂保險經紀人股份有限公司", "holding": "未歸類", "scenario": "智能客服。", "category": "智能客服", "pdfPage": "5"}, {"id": 88, "sector": "保險業", "company": "錠嵂保險經紀人股份有限公司", "holding": "未歸類", "scenario": "考照教練（原文未詳述技術）。", "category": "其它", "pdfPage": "5"}, {"id": 89, "sector": "保險業", "company": "公勝保險經紀人股份有限公司", "holding": "未歸類", "scenario": "內部 KM 知識管理應用（原文未明示 RAG）。", "category": "RAG/KM", "pdfPage": "5"}, {"id": 90, "sector": "保險業", "company": "公勝保險經紀人股份有限公司", "holding": "未歸類", "scenario": "內部流程自動化。", "category": "RPA", "pdfPage": "5"}, {"id": 91, "sector": "保險業", "company": "公勝保險經紀人股份有限公司", "holding": "未歸類", "scenario": "內部生成應用。", "category": "生成式AI", "pdfPage": "5"}, {"id": 92, "sector": "保險業", "company": "公勝保險經紀人股份有限公司", "holding": "未歸類", "scenario": "子公司財富規劃建議模組。", "category": "其它", "pdfPage": "5"}, {"id": 93, "sector": "保險業", "company": "美商達信保險經紀人股份有限公司台灣分公司", "holding": "未歸類", "scenario": "支援多國語言，提供答案理由與來源（如內部文件）；依文件來源問答用途推定為 RAG，原文未明示技術。", "category": "RAG/KM", "pdfPage": "5"}, {"id": 94, "sector": "保險業", "company": "永達保險經紀人股份有限公司", "holding": "未歸類", "scenario": "機器人流程自動化：應用於內部行政作業流程，提升效率與生產力。", "category": "RPA", "pdfPage": "5"}, {"id": 95, "sector": "保險業", "company": "財團法人汽車交通事故特別補償基金", "holding": "未歸類", "scenario": "以生成式 AI 服務自動將會議錄音檔轉成文字。", "category": "語音質檢/應用", "pdfPage": "5"}, {"id": 96, "sector": "保險業", "company": "財團法人汽車交通事故特別補償基金", "holding": "未歸類", "scenario": "以生成式 AI 擷取會議重點摘要，並自動生成符合內部會議紀錄格式的電子檔。", "category": "生成式AI", "pdfPage": "5"}, {"id": 97, "sector": "證券期貨業", "company": "口袋證券", "holding": "未歸類", "scenario": "導入 OpenAI 大型語言模型並結合 RAG，整理股票客觀公開資訊。", "category": "RAG/KM", "pdfPage": "5"}, {"id": 98, "sector": "證券期貨業", "company": "口袋證券", "holding": "未歸類", "scenario": "以大型語言模型結合 RAG 提供智能客服，協助投資人取得公開資訊。", "category": "智能客服", "pdfPage": "5"}, {"id": 99, "sector": "證券期貨業", "company": "大昌證券", "holding": "未歸類", "scenario": "行銷內容生成。", "category": "生成式AI", "pdfPage": "5"}, {"id": 100, "sector": "證券期貨業", "company": "統一證券", "holding": "未歸類", "scenario": "總公司部分人員導入 M365 Copilot，並舉辦黑客松競賽，改善內部作業流程與工作效率。", "category": "M365 Copilot", "pdfPage": "5"}, {"id": 101, "sector": "證券期貨業", "company": "凱基證券", "holding": "凱基金", "scenario": "eKYC：於線上開戶及額度調整流程，以監督式機器學習分析結構化客戶資料進行風險推估；非生成式 AI，額度結果供參考並由人工最終審核。", "category": "其它", "pdfPage": "5"}, {"id": 102, "sector": "證券期貨業", "company": "富邦證券", "holding": "富邦金", "scenario": "AI 投資助理：解析市場動態並回答投資問題、快速摘要美股法說會重點，以及提供每日 AI 盤前資訊播報（原文未交代語音合成技術）。", "category": "生成式AI", "pdfPage": "5"}, {"id": 103, "sector": "證券期貨業", "company": "華南證券", "holding": "華南金", "scenario": "「AI 投資早報」：整合全球市場動態產出早報，遵循 AI 輔助、人工定稿，並經專業團隊深度審核。", "category": "生成式AI", "pdfPage": "5"}, {"id": 104, "sector": "證券期貨業", "company": "永豐金證券", "holding": "永豐金", "scenario": "個股 AI 市場輿情分析及每日投資早報（原文未詳述輿情分析技術；依指定整合為一筆，歸類為生成式AI）。", "category": "生成式AI", "pdfPage": "5"}, {"id": 105, "sector": "證券期貨業", "company": "玉山證券", "holding": "玉山金", "scenario": "ETF 智能投資策略互動平台：透過趣味問答與角色互動，即時生成個人化 ETF 投資組合建議。", "category": "生成式AI", "pdfPage": "5–6"}, {"id": 106, "sector": "證券期貨業", "company": "國泰證券", "holding": "國泰金", "scenario": "「庫存管家」：以客戶持股為核心，透過 AI 提供個人化推播，協助掌握庫存狀況。", "category": "其它", "pdfPage": "6"}, {"id": 107, "sector": "證券期貨業", "company": "德信證券", "holding": "未歸類", "scenario": "財經知識內容教育（原文未詳述生成或問答技術）。", "category": "其它", "pdfPage": "6"}, {"id": 108, "sector": "證券期貨業", "company": "台新證券", "holding": "台新新光金", "scenario": "智能客服。", "category": "智能客服", "pdfPage": "6"}, {"id": 109, "sector": "證券期貨業", "company": "群益期貨", "holding": "未歸類", "scenario": "智能客服。", "category": "智能客服", "pdfPage": "6"}, {"id": 110, "sector": "證券期貨業", "company": "群益期貨", "holding": "未歸類", "scenario": "知識管理（原文未明示 RAG）。", "category": "RAG/KM", "pdfPage": "6"}, {"id": 111, "sector": "證券期貨業", "company": "群益期貨", "holding": "未歸類", "scenario": "文件分析（原文未交代具體技術）。", "category": "生成式AI", "pdfPage": "6"}, {"id": 112, "sector": "證券期貨業", "company": "群益期貨", "holding": "未歸類", "scenario": "風險控管；配合資訊安全與內控制度，符合金融監理要求。", "category": "其它", "pdfPage": "6"}, {"id": 113, "sector": "證券期貨業", "company": "統一期貨", "holding": "未歸類", "scenario": "以 AI 自動整理資料、生成簡報及處理複雜文件，減少重複性作業、提升工作效率與品質，並透過人機協作加速工作流程（原文未詳述文件處理技術；依指定歸類為 M365 Copilot）。", "category": "M365 Copilot", "pdfPage": "6"}, {"id": 114, "sector": "證券期貨業", "company": "富邦期貨", "holding": "富邦金", "scenario": "「富邦 AI PRO App」：內建 AI 投資助理，即時解析市場訊息並回答投資問題；快速彙整法說會重點；透過 AI 主播每日播報盤前焦點資訊（原文未交代語音合成技術）；並依個人偏好推送個股新聞事件、盤勢摘要與策略資訊。", "category": "App", "pdfPage": "6"}, {"id": 115, "sector": "證券期貨業", "company": "景順投信", "holding": "未歸類", "scenario": "Copilot M365 結合 Teams、Outlook、Word、Excel 及 PowerPoint：產出會議紀錄與行動項目、摘要郵件與建議回覆、撰寫文件、分析數據及生成簡報。", "category": "M365 Copilot", "pdfPage": "6"}, {"id": 116, "sector": "證券期貨業", "company": "摩根投信", "holding": "未歸類", "scenario": "內部影音生成，支援部門日常流程與專業工作。", "category": "生成式AI", "pdfPage": "6"}, {"id": 117, "sector": "證券期貨業", "company": "摩根投信", "holding": "未歸類", "scenario": "內部資訊分析整理。", "category": "生成式AI", "pdfPage": "6"}, {"id": 118, "sector": "證券期貨業", "company": "摩根投信", "holding": "未歸類", "scenario": "交易執行優化輔助。", "category": "其它", "pdfPage": "6"}, {"id": 119, "sector": "證券期貨業", "company": "摩根投信", "holding": "未歸類", "scenario": "員工通用 AI 生產力輔助工具（原文未詳述功能，判斷為M365 Copilot）。", "category": "M365 Copilot", "pdfPage": "6"}, {"id": 120, "sector": "證券期貨業", "company": "瑞銀投信", "holding": "未歸類", "scenario": "導入微軟 Copilot，協助產出文件草稿、簡報大綱與會議摘要；僅作為決策支援，最終決策由具資格人員審核確認。", "category": "M365 Copilot", "pdfPage": "6"}, {"id": 121, "sector": "證券期貨業", "company": "群益投信", "holding": "未歸類", "scenario": "即時負面新聞自動化：爬取公開新聞內文，以 LLM 判別新聞中的嫌疑人名並自動建檔。", "category": "生成式AI", "pdfPage": "6"}, {"id": 122, "sector": "證券期貨業", "company": "聯博投信", "holding": "未歸類", "scenario": "ABAI：透過單一 API 提供員工閉源與開源大型語言模型環境，支援 GPT、Gemini 等模型及內部投資、通路、營運需求。", "category": "生成式AI", "pdfPage": "7"}, {"id": 123, "sector": "證券期貨業", "company": "聯博投信", "holding": "未歸類", "scenario": "ABAI：可存取文件與資料並提供聊天查詢（依文件資料問答用途推定涉及 RAG，原文未明示技術）；以大型語言模型環境提供資料抽取，並提供文件比較、圖表生成及 Text-to-SQL 功能，以及透過安全 API 支援量化研究與開發團隊。", "category": "其它", "pdfPage": "7"}, {"id": 124, "sector": "證券期貨業", "company": "復華投信", "holding": "未歸類", "scenario": "AI OCR 表單辨識。", "category": "OCR", "pdfPage": "7"}, {"id": 125, "sector": "證券期貨業", "company": "野村投信", "holding": "未歸類", "scenario": "依基金經理人決定的投資策略，輔助生成「四大投資流程」之投資分析報告，減輕文書負擔。", "category": "生成式AI", "pdfPage": "7"}, {"id": 126, "sector": "證券期貨業", "company": "東方匯理投信", "holding": "未歸類", "scenario": "以集團 Alto Studio AI 進行文件資料匯總。", "category": "生成式AI", "pdfPage": "7"}, {"id": 127, "sector": "證券期貨業", "company": "東方匯理投信", "holding": "未歸類", "scenario": "以集團 Alto Studio AI 進行文件翻譯。", "category": "生成式AI", "pdfPage": "7"}, {"id": 128, "sector": "證券期貨業", "company": "富達投信", "holding": "未歸類", "scenario": "導入 Microsoft Copilot，協助日常文件生成、會議重點整理、資料分析及郵件撰寫。", "category": "M365 Copilot", "pdfPage": "7"}, {"id": 129, "sector": "證券期貨業", "company": "路博邁投信", "holding": "未歸類", "scenario": "僅運用內部聊天機器人支援行政處理與分析作業（非對客客服，原文未明示 RAG）。", "category": "其它", "pdfPage": "7"}, {"id": 130, "sector": "證券期貨業", "company": "富蘭克林投顧", "holding": "未歸類", "scenario": "以 AI 製作廣告素材，於符合作業程序下減少時間與人工成本。", "category": "生成式AI", "pdfPage": "7"}, {"id": 131, "sector": "證券期貨業", "company": "法盛投顧", "holding": "未歸類", "scenario": "使用母公司 BPCE Group 開發部署的 AI 工具，僅支援台灣員工行政與日常作業，如文書撰寫、資料整理及會議紀錄，不用於客戶溝通。", "category": "生成式AI", "pdfPage": "7"}, {"id": 132, "sector": "證券期貨業", "company": "阿爾發投顧", "holding": "未歸類", "scenario": "「AI 投資長（CIO）」：結合外部專業顧問團隊、專業理財顧問及 24H 智慧監控，提供策略配置、信託規劃與員工福儲等機構資產管理服務（原文未明示自主 AI Agent）。", "category": "其它", "pdfPage": "7"}, {"id": 133, "sector": "證券期貨業", "company": "證券交易所", "holding": "未歸類", "scenario": "以語音轉文字等 AI 技術提升市場監理作業效率。", "category": "語音質檢/應用", "pdfPage": "7"}, {"id": 134, "sector": "證券期貨業", "company": "期貨交易所", "holding": "未歸類", "scenario": "以機器學習異常偵測演算法，辨識疑似異常交易委託行為，輔助市場監理。", "category": "其它", "pdfPage": "7"}, {"id": 135, "sector": "銀行業", "company": "臺灣中小企業銀行", "holding": "未歸類", "scenario": "「AI 模型投資阻詐示警服務」：結合警政署 165 數據與機器學習，從受害者視角捕捉異常轉帳特徵（如異於日常頻率、小額測試），前端即時主動示警，模型精確率逾五成。", "category": "阻詐", "pdfPage": "最新蒐集"}, {"id": 136, "sector": "銀行業", "company": "臺灣中小企業銀行", "holding": "未歸類", "scenario": "「天眼識詐模型」：運用 AI 與深度學習分析帳戶交易頻率與金流特徵，即時發出警示輔助行員關懷提問，異常帳戶偵測率達七成。", "category": "阻詐", "pdfPage": "最新蒐集"}, {"id": 137, "sector": "銀行業", "company": "元大銀行", "holding": "元大金", "scenario": "「元先生」雙腦智能客服：結合諮詢腦（FAQ）與查詢腦（NLU）之雙腦 AI，支援多意圖識別，回答精準度達 9 成以上。", "category": "智能客服", "pdfPage": "2"}, {"id": 138, "sector": "銀行業", "company": "華南銀行", "holding": "華南金", "scenario": "資訊單位導入 GitHub Copilot 協作代理人，協助工程師進行程式碼建議、弱點修補與單元測試生成。", "category": "程式助手", "pdfPage": "2"}, {"id": 139, "sector": "銀行業", "company": "國泰世華銀行", "holding": "國泰金", "scenario": "GAIA 2.0 智慧文檔處理（IDP）：以多代理（Multi-Agent）架構自動摘要聯貸合約與法規關鍵風險。", "category": "生成式AI", "pdfPage": "2"}, {"id": 140, "sector": "銀行業", "company": "台新銀行", "holding": "台新新光金", "scenario": "「AI企業徵信平台」：運用 AI 於企業徵信與授信評估，自動辨識財力文件、驗證數據並產製報告，提升報告產製時效與風險辨識。", "category": "生成式AI", "pdfPage": "1"}, {"id": 141, "sector": "銀行業", "company": "台新銀行", "holding": "台新新光金", "scenario": "「RICHIE 智慧推薦引擎」：於 Richart App 中透過 AI 分析客戶行為與交易紀錄，主動提供個人化金融服務與理財建議。", "category": "App", "pdfPage": "1"}, {"id": 142, "sector": "證券期貨業", "company": "永豐金證券", "holding": "永豐金", "scenario": "大戶投 App 導入自主開發 AI 智能引擎與 RAG 技術，推出個人化智能庫存日報與情緒雷達，根據用戶持股盤前自動整理相關新聞與觀點。", "category": "App", "pdfPage": "5"}, {"id": 143, "sector": "證券期貨業", "company": "元大證券", "holding": "元大金", "scenario": "導入 AI 威脅辨識與自動化資安應變防禦系統，將資安防禦從被動防禦提升至主動預警。", "category": "其它", "pdfPage": "最新蒐集"}], "sources": [{"id": 1, "sector": "銀行業", "company": "富邦金控", "holding": "富邦金", "pdfPage": "1", "count": 3}, {"id": 2, "sector": "銀行業", "company": "臺灣金控", "holding": "臺灣金", "pdfPage": "1", "count": 1}, {"id": 3, "sector": "銀行業", "company": "玉山金控", "holding": "玉山金", "pdfPage": "1", "count": 1}, {"id": 4, "sector": "銀行業", "company": "王道銀行", "holding": "未歸類", "pdfPage": "1", "count": 1}, {"id": 5, "sector": "銀行業", "company": "連線銀行", "holding": "未歸類", "pdfPage": "1", "count": 1}, {"id": 6, "sector": "銀行業", "company": "台新銀行", "holding": "台新新光金", "pdfPage": "1", "count": 5}, {"id": 7, "sector": "銀行業", "company": "彰化銀行", "holding": "未歸類", "pdfPage": "1", "count": 1}, {"id": 8, "sector": "銀行業", "company": "將來銀行", "holding": "未歸類", "pdfPage": "1", "count": 1}, {"id": 9, "sector": "銀行業", "company": "渣打銀行", "holding": "未歸類", "pdfPage": "1", "count": 1}, {"id": 10, "sector": "銀行業", "company": "華南銀行", "holding": "華南金", "pdfPage": "2", "count": 6}, {"id": 11, "sector": "銀行業", "company": "台中銀行", "holding": "未歸類", "pdfPage": "2", "count": 1}, {"id": 12, "sector": "銀行業", "company": "臺灣銀行", "holding": "臺灣金", "pdfPage": "2", "count": 1}, {"id": 13, "sector": "銀行業", "company": "玉山銀行", "holding": "玉山金", "pdfPage": "2", "count": 1}, {"id": 14, "sector": "銀行業", "company": "元大銀行", "holding": "元大金", "pdfPage": "2", "count": 2}, {"id": 15, "sector": "銀行業", "company": "國泰世華銀行", "holding": "國泰金", "pdfPage": "2", "count": 3}, {"id": 16, "sector": "銀行業", "company": "滙豐銀行", "holding": "未歸類", "pdfPage": "2", "count": 1}, {"id": 17, "sector": "銀行業", "company": "臺灣中小企銀", "holding": "未歸類", "pdfPage": "2", "count": 1}, {"id": 18, "sector": "銀行業", "company": "中國信託銀行", "holding": "中信金", "pdfPage": "2", "count": 3}, {"id": 19, "sector": "銀行業", "company": "台北富邦銀行", "holding": "富邦金", "pdfPage": "2–3", "count": 5}, {"id": 20, "sector": "銀行業", "company": "樂天銀行", "holding": "未歸類", "pdfPage": "3", "count": 1}, {"id": 21, "sector": "銀行業", "company": "全盈支付", "holding": "未歸類", "pdfPage": "3", "count": 1}, {"id": 22, "sector": "銀行業", "company": "全支付公司", "holding": "未歸類", "pdfPage": "3", "count": 2}, {"id": 23, "sector": "銀行業", "company": "金融研訓院", "holding": "未歸類", "pdfPage": "3", "count": 1}, {"id": 24, "sector": "銀行業", "company": "存保公司", "holding": "未歸類", "pdfPage": "3", "count": 4}, {"id": 25, "sector": "銀行業", "company": "聯卡中心", "holding": "未歸類", "pdfPage": "3", "count": 2}, {"id": 26, "sector": "保險業", "company": "國泰人壽", "holding": "國泰金", "pdfPage": "3", "count": 4}, {"id": 27, "sector": "保險業", "company": "新光人壽", "holding": "台新新光金", "pdfPage": "3", "count": 3}, {"id": 28, "sector": "保險業", "company": "友邦人壽", "holding": "未歸類", "pdfPage": "3", "count": 1}, {"id": 29, "sector": "保險業", "company": "台灣人壽", "holding": "中信金", "pdfPage": "3", "count": 2}, {"id": 30, "sector": "保險業", "company": "富邦人壽", "holding": "富邦金", "pdfPage": "3–4", "count": 6}, {"id": 31, "sector": "保險業", "company": "元大人壽", "holding": "元大金", "pdfPage": "4", "count": 2}, {"id": 32, "sector": "保險業", "company": "凱基人壽", "holding": "凱基金", "pdfPage": "4", "count": 2}, {"id": 33, "sector": "保險業", "company": "全球人壽", "holding": "未歸類", "pdfPage": "4", "count": 1}, {"id": 34, "sector": "保險業", "company": "南山人壽", "holding": "未歸類", "pdfPage": "4", "count": 4}, {"id": 35, "sector": "保險業", "company": "保誠人壽", "holding": "未歸類", "pdfPage": "4", "count": 1}, {"id": 36, "sector": "保險業", "company": "科隆再保公司", "holding": "未歸類", "pdfPage": "4", "count": 1}, {"id": 37, "sector": "保險業", "company": "中信產險", "holding": "中信金", "pdfPage": "4", "count": 1}, {"id": 38, "sector": "保險業", "company": "科法斯產險", "holding": "未歸類", "pdfPage": "4", "count": 1}, {"id": 39, "sector": "保險業", "company": "國泰產險", "holding": "國泰金", "pdfPage": "4", "count": 1}, {"id": 40, "sector": "保險業", "company": "富邦產險", "holding": "富邦金", "pdfPage": "4", "count": 1}, {"id": 41, "sector": "保險業", "company": "新安東京產險", "holding": "未歸類", "pdfPage": "4", "count": 1}, {"id": 42, "sector": "保險業", "company": "兆豐產險", "holding": "兆豐金", "pdfPage": "4", "count": 2}, {"id": 43, "sector": "保險業", "company": "富邦綜合保險代理人股份有限公司", "holding": "富邦金", "pdfPage": "4", "count": 1}, {"id": 44, "sector": "保險業", "company": "和安保險代理人股份有限公司", "holding": "未歸類", "pdfPage": "5", "count": 2}, {"id": 45, "sector": "保險業", "company": "遠傳保險代理人股份有限公司", "holding": "未歸類", "pdfPage": "5", "count": 1}, {"id": 46, "sector": "保險業", "company": "智匯保險經紀人股份有限公司", "holding": "未歸類", "pdfPage": "5", "count": 2}, {"id": 47, "sector": "保險業", "company": "錠嵂保險經紀人股份有限公司", "holding": "未歸類", "pdfPage": "5", "count": 3}, {"id": 48, "sector": "保險業", "company": "公勝保險經紀人股份有限公司", "holding": "未歸類", "pdfPage": "5", "count": 4}, {"id": 49, "sector": "保險業", "company": "美商達信保險經紀人股份有限公司台灣分公司", "holding": "未歸類", "pdfPage": "5", "count": 1}, {"id": 50, "sector": "保險業", "company": "永達保險經紀人股份有限公司", "holding": "未歸類", "pdfPage": "5", "count": 1}, {"id": 51, "sector": "保險業", "company": "財團法人汽車交通事故特別補償基金", "holding": "未歸類", "pdfPage": "5", "count": 2}, {"id": 52, "sector": "證券期貨業", "company": "口袋證券", "holding": "未歸類", "pdfPage": "5", "count": 2}, {"id": 53, "sector": "證券期貨業", "company": "大昌證券", "holding": "未歸類", "pdfPage": "5", "count": 1}, {"id": 54, "sector": "證券期貨業", "company": "統一證券", "holding": "未歸類", "pdfPage": "5", "count": 1}, {"id": 55, "sector": "證券期貨業", "company": "凱基證券", "holding": "凱基金", "pdfPage": "5", "count": 1}, {"id": 56, "sector": "證券期貨業", "company": "富邦證券", "holding": "富邦金", "pdfPage": "5", "count": 1}, {"id": 57, "sector": "證券期貨業", "company": "華南證券", "holding": "華南金", "pdfPage": "5", "count": 1}, {"id": 58, "sector": "證券期貨業", "company": "永豐金證券", "holding": "永豐金", "pdfPage": "5", "count": 2}, {"id": 59, "sector": "證券期貨業", "company": "玉山證券", "holding": "玉山金", "pdfPage": "5–6", "count": 1}, {"id": 60, "sector": "證券期貨業", "company": "國泰證券", "holding": "國泰金", "pdfPage": "6", "count": 1}, {"id": 61, "sector": "證券期貨業", "company": "德信證券", "holding": "未歸類", "pdfPage": "6", "count": 1}, {"id": 62, "sector": "證券期貨業", "company": "台新證券", "holding": "台新新光金", "pdfPage": "6", "count": 1}, {"id": 63, "sector": "證券期貨業", "company": "群益期貨", "holding": "未歸類", "pdfPage": "6", "count": 4}, {"id": 64, "sector": "證券期貨業", "company": "統一期貨", "holding": "未歸類", "pdfPage": "6", "count": 1}, {"id": 65, "sector": "證券期貨業", "company": "富邦期貨", "holding": "富邦金", "pdfPage": "6", "count": 1}, {"id": 66, "sector": "證券期貨業", "company": "景順投信", "holding": "未歸類", "pdfPage": "6", "count": 1}, {"id": 67, "sector": "證券期貨業", "company": "摩根投信", "holding": "未歸類", "pdfPage": "6", "count": 4}, {"id": 68, "sector": "證券期貨業", "company": "瑞銀投信", "holding": "未歸類", "pdfPage": "6", "count": 1}, {"id": 69, "sector": "證券期貨業", "company": "群益投信", "holding": "未歸類", "pdfPage": "6", "count": 1}, {"id": 70, "sector": "證券期貨業", "company": "聯博投信", "holding": "未歸類", "pdfPage": "7", "count": 2}, {"id": 71, "sector": "證券期貨業", "company": "復華投信", "holding": "未歸類", "pdfPage": "7", "count": 1}, {"id": 72, "sector": "證券期貨業", "company": "野村投信", "holding": "未歸類", "pdfPage": "7", "count": 1}, {"id": 73, "sector": "證券期貨業", "company": "東方匯理投信", "holding": "未歸類", "pdfPage": "7", "count": 2}, {"id": 74, "sector": "證券期貨業", "company": "富達投信", "holding": "未歸類", "pdfPage": "7", "count": 1}, {"id": 75, "sector": "證券期貨業", "company": "路博邁投信", "holding": "未歸類", "pdfPage": "7", "count": 1}, {"id": 76, "sector": "證券期貨業", "company": "富蘭克林投顧", "holding": "未歸類", "pdfPage": "7", "count": 1}, {"id": 77, "sector": "證券期貨業", "company": "法盛投顧", "holding": "未歸類", "pdfPage": "7", "count": 1}, {"id": 78, "sector": "證券期貨業", "company": "阿爾發投顧", "holding": "未歸類", "pdfPage": "7", "count": 1}, {"id": 79, "sector": "證券期貨業", "company": "證券交易所", "holding": "未歸類", "pdfPage": "7", "count": 1}, {"id": 80, "sector": "證券期貨業", "company": "期貨交易所", "holding": "未歸類", "pdfPage": "7", "count": 1}, {"id": 81, "sector": "銀行業", "company": "臺灣中小企業銀行", "holding": "未歸類", "pdfPage": "最新蒐集", "count": 2}, {"id": 82, "sector": "證券期貨業", "company": "元大證券", "holding": "元大金", "pdfPage": "最新蒐集", "count": 1}], "categories": [{"category": "RAG/KM", "principle": "結合文件／知識檢索與生成回答。", "boundary": "台中銀行、口袋證券原文明示 RAG；華南銀行、國泰世華銀行員工助手、達信、聯博依用途推定，並非技術驗證。", "count": 10}, {"category": "語音質檢/應用", "principle": "語音轉文字、文字轉語音、錄音／語音質檢，以及明示語音辨識、IVR、語音機器人或語音自助服務的應用。", "boundary": "語音相關用途優先於 RPA、智能客服等分類；錄音質檢不須明示轉文字即可納入。語音服務不代表已驗證 STT／TTS 技術；僅通話摘要或 AI 播報且未明示語音轉換／質檢者不逕行納入。", "count": 10}, {"category": "生成式AI", "principle": "內容、摘要、報告、影音生成，以及明示 LLM 的內容處理；程式／SQL 開發輔助另歸程式助手。", "boundary": "亦包含依角色對練、報告產出等用途推定者；不是每項都由原文明示生成式技術。", "count": 32}, {"category": "比對", "principle": "以法規關聯、威脅情資或文件適法性比較為主要用途。", "boundary": "不將所有風險模型、審查、保單健診或 eKYC 一律視為比對。", "count": 3}, {"category": "阻詐", "principle": "明確用於詐欺偵測、識詐、聯防或阻擋詐騙。", "boundary": "一般風險評級、反洗錢、異常交易、資安及理賠異常，不在未明示詐欺時直接歸入。", "count": 14}, {"category": "M365 Copilot", "principle": "原文提及 Microsoft／微軟 Copilot 或 M365 Copilot 的辦公與生產力應用。", "boundary": "將僅稱 Copilot 的辦公應用一併歸此；明示程式開發用途者優先歸程式助手。不憑 Copilot 名稱推定為 GitHub Copilot，版本與授權以原文為準。", "count": 9}, {"category": "AI Agent", "principle": "原文明確稱為 AI 代理人。", "boundary": "目前無場景歸入此類；不因名稱含「助理」「機器人」或「AI 投資長」就推定為自主代理。", "count": 0}, {"category": "OCR", "principle": "原文明確使用 AI OCR 進行文件或表單辨識及欄位擷取。", "boundary": "LLM 單據萃取、AI 審票未明示 OCR 者不自行推定。", "count": 2}, {"category": "智能客服", "principle": "以對客服務、諮詢問答、語音對話、IVR 或電訪機器人為主要用途。", "boundary": "對客服務原則歸此；明示語音辨識、IVR、語音機器人、語音自助服務或語音質檢者，優先歸語音質檢/應用；內部助理不直接歸客服。", "count": 12}, {"category": "程式助手", "principle": "GitHub Copilot 或其它輔助程式／SQL 撰寫、軟體開發、編譯、測試修復或 debug 的應用。", "boundary": "明示程式開發用途者優先歸此，含混合辦公用途及 Text-to-SQL；僅提供 API 或泛稱支援開發團隊不足以判入。現有場景未明示 GitHub Copilot。", "count": 5}, {"category": "RPA", "principle": "依指定口徑，場景明示 RPA 或流程自動化即歸此，含徵審自動化；語音質檢／應用優先另分類。", "boundary": "本分類採用途口徑，不代表均採傳統 RPA 技術；語音自動化質檢改歸語音質檢/應用。僅自動生成、摘要、辨識、設控或泛稱效率提升，不直接判入。", "count": 6}, {"category": "模型訓練", "principle": "依指定口徑，將本次調整前類別為「其它」，且場景文字含「模型」的項目歸入。", "boundary": "依文字條件分類，包含模型預測、排序及風險應用；不代表原文已明示模型訓練用途。", "count": 6}, {"category": "App", "principle": "場景描述與 App 有關者歸入此類。", "boundary": "場景描述只要提及「App」即歸入此類；亦可由使用者手動將場景類別指定為 App，不以描述是否提及「App」為限。", "count": 3}, {"category": "其它", "principle": "預測、排序、評分、基礎架構，或資訊不足的應用；明示 RPA／流程自動化者另歸 RPA；本次原為其它且場景含「模型」者改歸模型訓練。", "boundary": "保留原文概括敘述，不自行補寫不存在的細節；「其它」不代表不使用 AI。", "count": 31}], "holdings": [{"holding": "元大金", "keyword1": "元大", "keyword2": "", "count": 5}, {"holding": "富邦金", "keyword1": "富邦", "keyword2": "", "count": 18}, {"holding": "國泰金", "keyword1": "國泰", "keyword2": "國泰世華", "count": 9}, {"holding": "中信金", "keyword1": "中信", "keyword2": "中國信託、台灣人壽", "count": 6}, {"holding": "凱基金", "keyword1": "凱基", "keyword2": "開發", "count": 3}, {"holding": "永豐金", "keyword1": "永豐", "keyword2": "", "count": 2}, {"holding": "台新新光金", "keyword1": "台新", "keyword2": "新光", "count": 9}, {"holding": "玉山金", "keyword1": "玉山", "keyword2": "", "count": 3}, {"holding": "兆豐金", "keyword1": "兆豐", "keyword2": "", "count": 2}, {"holding": "第一金", "keyword1": "第一", "keyword2": "", "count": 0}, {"holding": "華南金", "keyword1": "華南", "keyword2": "", "count": 7}, {"holding": "合庫金", "keyword1": "合庫", "keyword2": "", "count": 0}, {"holding": "國票金", "keyword1": "國票", "keyword2": "", "count": 0}, {"holding": "臺灣金", "keyword1": "臺銀", "keyword2": "臺灣銀行、臺灣金控", "count": 2}, {"holding": "未歸類", "keyword1": "未符合上述關鍵字", "keyword2": "", "count": 77}], "notes": [{"title": "整理單位", "content": "共 82 個業者／周邊單位、143 筆場景；保留原文業別及出現順序，不依業者名稱重新推定監理業別。"}, {"title": "拆分原則", "content": "每列為一個可獨立辨識的用途；同一產品若涵蓋不同功能可拆列。同一 Copilot 辦公套件的常見工作則合併敘述，筆數不等於系統數或成熟度。 全盈支付依指定將軟體開發、資料庫語言審查及白箱測試風險修復合併為一筆，歸類為程式助手。 富邦證券依指定將 AI 投資助理的市場問答、美股法說會摘要及每日盤前資訊播報合併為一筆，歸類為生成式AI。 永豐金證券依指定將個股 AI 市場輿情分析及每日投資早報合併為一筆，歸類為生成式AI。 統一期貨依指定將資料整理、簡報生成及複雜文件處理合併為一筆，歸類為 M365 Copilot。 富邦期貨依指定將「富邦 AI PRO」投資問答、法說會摘要、AI 主播盤前播報及個人化資訊推送合併為一筆，並依使用者指定改歸 App。 聯博投信依指定將 ABAI 的文件資料聊天查詢、資料抽取、文件比較、圖表生成、Text-to-SQL 及安全 API 支援合併為一筆，歸類為其它；其餘場景保留。"}, {"title": "單一分類", "content": "每筆只選一個主要類別；語音轉文字、文字轉語音、錄音／語音質檢及明示語音辨識／服務者優先歸語音質檢/應用；其後依 RPA／流程自動化、程式助手及其餘主要用途分類。"}, {"title": "推定標註", "content": "主表部分列依用途推定技術類別；RAG 等標籤是整理判斷，不代表對業者技術架構進行查證。"}, {"title": "產品名稱", "content": "除原文明示 M365 者外，Copilot 的版本與授權不明；純辦公用途歸 M365 Copilot，明示程式開發用途歸程式助手；本次未將任何場景自行推定為 GitHub Copilot。"}, {"title": "資料限制", "content": "原文未詳述的場景仍予保留並註明；未引入外部資料。原文所列精準度、減量比例等為業者自行提供，未獨立驗證。"}, {"title": "來源回查", "content": "請於「來源索引」以業者查找 PDF 頁碼；跨頁項目標為 2–3、3–4、5–6。PDF 頁序與本附件印刷頁碼一致。"}, {"title": "使用方式", "content": "主表可依業別、業者及類別篩選；來源索引與本表的場景筆數以公式連結主表，後續修改分類時會重新計算。"}]};
 
     // Color mappings for sectors & categories
     const DEFAULT_SECTOR_PALETTE = [
@@ -613,11 +665,68 @@
       "AI Agent": { color: "#94a3b8", badgeBg: "bg-gray-100", badgeText: "text-gray-500", badgeBorder: "border-gray-200" }
     };
 
+    const HOLDING_PALETTE = {
+      "元大金": "#2563eb",     // 指定：藍色
+      "國泰金": "#22c55e",     // 指定：亮綠色
+      "玉山金": "#86efac",     // 指定：淺綠色
+      "富邦金": "#7c3aed",     // 紫色
+      "台新新光金": "#e11d48", // 玫瑰紅
+      "華南金": "#ea580c",     // 橘紅色
+      "中信金": "#0d9488",     // 藍綠色
+      "凱基金": "#d97706",     // 琥珀金
+      "永豐金": "#db2777",     // 桃紅色
+      "兆豐金": "#9333ea",     // 深紫羅蘭
+      "臺灣金": "#b45309",     // 古銅棕
+      "第一金": "#eab308",     // 金黃色
+      "合庫金": "#06b6d4",     // 青色
+      "國票金": "#c026d3",     // 洋紅色
+      "未歸類": "#94a3b8",     // 灰石色
+      "未分類": "#94a3b8"
+    };
+    const FALLBACK_HOLDING_COLORS = ["#6366f1", "#f97316", "#14b8a6", "#ec4899", "#8b5cf6", "#f59e0b", "#06b6d4"];
+    function getHoldingDotColor(hName, idx = 0) {
+      if (HOLDING_PALETTE[hName]) return HOLDING_PALETTE[hName];
+      return FALLBACK_HOLDING_COLORS[idx % FALLBACK_HOLDING_COLORS.length];
+    }
+
+    // 針對白底大字標題優化視覺對比度之所屬金控文字顏色（與快速篩選圓點色系一致且清晰易讀）
+    const HOLDING_TEXT_PALETTE = {
+      "元大金": "#2563eb",     // 藍色
+      "國泰金": "#16a34a",     // 亮綠色（白底清晰對比）
+      "玉山金": "#10b981",     // 淺綠色/翡翠綠（維持淺綠視覺且白底清晰可讀）
+      "富邦金": "#7c3aed",     // 紫色
+      "台新新光金": "#e11d48", // 玫瑰紅
+      "華南金": "#ea580c",     // 橘紅色
+      "中信金": "#0d9488",     // 藍綠色
+      "凱基金": "#d97706",     // 琥珀金
+      "永豐金": "#db2777",     // 桃紅色
+      "兆豐金": "#9333ea",     // 深紫羅蘭
+      "臺灣金": "#b45309",     // 古銅棕
+      "第一金": "#ca8a04",     // 金黃色
+      "合庫金": "#0891b2",     // 青色
+      "國票金": "#c026d3",     // 洋紅色
+      "未歸類": "#475569",     // 深灰石色
+      "未分類": "#475569"
+    };
+    function getHoldingTextColor(hName, idx = 0) {
+      if (HOLDING_TEXT_PALETTE[hName]) return HOLDING_TEXT_PALETTE[hName];
+      return getHoldingDotColor(hName, idx);
+    }
+
+
+    // Helper: Check if a holding value represents unclassified ("未歸類" or "未分類")
+    function isUnclassifiedHolding(h) {
+      if (!h) return true;
+      const val = String(h).trim();
+      return val === "" || val === "未歸類" || val === "未分類";
+    }
+
     // Application State
     const state = {
       activeTab: "dashboard",
       sector: "ALL",
       category: "ALL",
+      holding: "ALL",
       company: "ALL",
       pdfPage: "ALL",
       keyword: "",
@@ -632,6 +741,7 @@
     let categoryChartInstance = null;
     let rightChartInstance = null;
     const categoryInfoMap = {};
+    const holdingInfoMap = {};
 
     // Dynamically retrieve unique sectors actually present in Excel data
     function getActiveSectors() {
@@ -662,20 +772,31 @@
 
     // Recompute all counts directly from RAW_DATA.scenarios so nothing is hardcoded and uncached Excel formulas never cause 0 counts
     function recomputeDerivedData() {
-      // 1. Sync sources with scenarios and compute exact counts per company
+      if (!RAW_DATA.holdings) {
+        RAW_DATA.holdings = [];
+      }
+
+      // 1. Sync sources with scenarios and compute exact counts & holding per company
       const existingSourceMap = {};
       RAW_DATA.sources.forEach(src => {
         existingSourceMap[`${src.sector}||${src.company}`] = src;
         src.count = 0;
+        if (!src.holding) src.holding = "未歸類";
       });
 
       RAW_DATA.scenarios.forEach(s => {
+        if (!s.holding || !String(s.holding).trim()) {
+          s.holding = "未歸類";
+        } else {
+          s.holding = String(s.holding).trim();
+        }
         const key = `${s.sector}||${s.company}`;
         if (!existingSourceMap[key]) {
           const newSrc = {
             id: RAW_DATA.sources.length + 1,
             sector: s.sector,
             company: s.company,
+            holding: s.holding,
             pdfPage: s.pdfPage || "最新蒐集",
             count: 0
           };
@@ -683,6 +804,9 @@
           existingSourceMap[key] = newSrc;
         }
         existingSourceMap[key].count += 1;
+        if (s.holding && (!existingSourceMap[key].holding || isUnclassifiedHolding(existingSourceMap[key].holding))) {
+          existingSourceMap[key].holding = s.holding;
+        }
       });
 
       // Keep only sources that exist in the Excel data
@@ -709,13 +833,32 @@
         }
       });
 
-      // 3. Dynamically update all global UI badges and titles from actual Excel data
+      // 3. Recompute holding counts directly from scenarios
+      Object.keys(holdingInfoMap).forEach(k => delete holdingInfoMap[k]);
+      RAW_DATA.holdings.forEach(h => {
+        h.count = RAW_DATA.scenarios.filter(s => s.holding === h.holding).length;
+        holdingInfoMap[h.holding] = h;
+      });
+
+      RAW_DATA.scenarios.forEach(s => {
+        if (s.holding && !holdingInfoMap[s.holding]) {
+          const newH = {
+            holding: s.holding,
+            keyword1: isUnclassifiedHolding(s.holding) ? "未符合金控關鍵字" : s.holding.replace("金", ""),
+            keyword2: "",
+            count: RAW_DATA.scenarios.filter(item => item.holding === s.holding).length
+          };
+          RAW_DATA.holdings.push(newH);
+          holdingInfoMap[s.holding] = newH;
+        }
+      });
+
+      // 4. Dynamically update all global UI badges and titles from actual Excel data
       const totalScenarios = RAW_DATA.scenarios.length;
       const totalSources = RAW_DATA.sources.length;
       const totalCategories = RAW_DATA.categories.length;
       const activeSectors = getActiveSectors();
 
-      // Update methodology note "整理單位" dynamically so it always reflects the actual Excel counts
       const unitNoteText = `共 ${totalSources} 個業者／周邊單位、${totalScenarios} 筆場景；保留原文業別及出現順序，不依業者名稱重新推定監理業別。`;
       const existingUnitNote = RAW_DATA.notes.find(n => n.title === "整理單位");
       if (existingUnitNote) {
@@ -726,7 +869,7 @@
 
       document.getElementById("headerSummaryBadge").textContent = `${totalSources} 家機構 · ${totalScenarios} 筆場景`;
       document.getElementById("headerSubtitleText").textContent =
-        `涵蓋${activeSectors.join("、")}及周邊單位之 AI 應用場景分類與來源索引分析`;
+        `涵蓋${activeSectors.join("、")}及周邊單位之 AI 應用場景分類、所屬金控與來源索引分析`;
       document.getElementById("tabBtn-institutions").textContent = `機構來源索引 (${totalSources})`;
       document.getElementById("kpiCategoryTotalLabel").textContent = `/ ${totalCategories} 類定義`;
       document.getElementById("sortDefaultOpt").textContent = `原始檔案順序 (編號 1–${totalScenarios})`;
@@ -734,6 +877,19 @@
       document.getElementById("matrixSummaryBadge").textContent = `總計 ${totalScenarios} 筆場景 · ${totalCategories} 大分類`;
       document.getElementById("institutionsDirTitle").textContent = `金融機構與周邊單位來源索引 (共 ${totalSources} 家)`;
       document.getElementById("definitionsHeaderTitle").textContent = `台灣金融業 AI 應用｜${totalCategories} 大類別判斷原則與界線說明`;
+    }
+
+    // Helper: Sort holding objects (classified holdings sorted by count desc first, unclassified at the end)
+    function getSortedHoldings(customCountsMap = null) {
+      return [...RAW_DATA.holdings].sort((a, b) => {
+        const unA = isUnclassifiedHolding(a.holding) ? 1 : 0;
+        const unB = isUnclassifiedHolding(b.holding) ? 1 : 0;
+        if (unA !== unB) return unA - unB;
+        const cntA = customCountsMap ? (customCountsMap[a.holding] || 0) : a.count;
+        const cntB = customCountsMap ? (customCountsMap[b.holding] || 0) : b.count;
+        if (cntB !== cntA) return cntB - cntA;
+        return b.count - a.count;
+      });
     }
 
     // Helper: Toast
@@ -750,7 +906,7 @@
       }, 2600);
     }
 
-    // Initialize Dropdown 1 (金融業別篩選) - 顯示實際業別數量 (例如 3)，而非場景筆數
+    // Initialize Dropdowns
     function populateInitialDropdowns() {
       const sectorSelect = document.getElementById("filterSector");
       sectorSelect.replaceChildren();
@@ -772,11 +928,11 @@
       updateDynamicDropdowns();
     }
 
-    // Dynamically update Dropdown 1, 2, 3 based on current selections
+    // Dynamically update Dropdown 1, 2, 3, 4 based on current selections
     function updateDynamicDropdowns() {
       const activeSectors = getActiveSectors();
 
-      // 0. Update Sector Dropdown counts dynamically when category/company is filtered
+      // 1. Update Sector Dropdown (1. 金融業別篩選)
       const sectorSelect = document.getElementById("filterSector");
       const prevSector = state.sector;
       sectorSelect.replaceChildren();
@@ -795,13 +951,14 @@
       });
       sectorSelect.value = activeSectors.includes(prevSector) ? prevSector : "ALL";
 
-      // 1. Update Category Dropdown (2. AI 應用類別篩選)
+      // 2. Update Category Dropdown (2. AI 應用類別篩選)
       const catSelect = document.getElementById("filterCategory");
       const prevCat = state.category;
-      catSelect.innerHTML = "";
+      catSelect.replaceChildren();
 
       const baseForCat = RAW_DATA.scenarios.filter(s =>
         (state.sector === "ALL" || s.sector === state.sector) &&
+        (state.holding === "ALL" || s.holding === state.holding) &&
         (state.company === "ALL" || s.company === state.company) &&
         (state.pdfPage === "ALL" || s.pdfPage === state.pdfPage)
       );
@@ -821,11 +978,54 @@
       });
       catSelect.value = sortedCats.some(c => c.category === prevCat) ? prevCat : "ALL";
 
-      // 2. Update Company Dropdown (3. 金融機構 (業者) 篩選)
-      // 依據前兩者「1. 金融業別」與「2. AI 應用類別」篩選後動態調整家數，並移除 0 筆的業者
+      // 3. Update Holding Dropdown (3. 所屬金控篩選)
+      // 依據「1.金融業別」、「2.AI應用類別」、「4.金融機構 (業者) 篩選」動態計算家數，並移除 0 筆的金控選項
+      const holdingSelect = document.getElementById("filterHolding");
+      const prevHolding = state.holding;
+      holdingSelect.replaceChildren();
+
+      const baseForHolding = RAW_DATA.scenarios.filter(s =>
+        (state.sector === "ALL" || s.sector === state.sector) &&
+        (state.category === "ALL" || s.category === state.category) &&
+        (state.company === "ALL" || s.company === state.company) &&
+        (state.pdfPage === "ALL" || s.pdfPage === state.pdfPage)
+      );
+
+      const holdingCountsMap = {};
+      baseForHolding.forEach(s => {
+        holdingCountsMap[s.holding] = (holdingCountsMap[s.holding] || 0) + 1;
+      });
+
+      const eligibleHoldingsWithCnt = getSortedHoldings(holdingCountsMap)
+        .map(h => ({
+          ...h,
+          dynamicCnt: holdingCountsMap[h.holding] || 0
+        }))
+        .filter(h => h.dynamicCnt > 0);
+
+      const allHoldOpt = document.createElement("option");
+      allHoldOpt.value = "ALL";
+      allHoldOpt.textContent = `全部所屬金控 (${eligibleHoldingsWithCnt.length}家)`;
+      holdingSelect.appendChild(allHoldOpt);
+
+      eligibleHoldingsWithCnt.forEach(h => {
+        const opt = document.createElement("option");
+        opt.value = h.holding;
+        opt.textContent = `${h.holding} (${h.dynamicCnt}筆)`;
+        holdingSelect.appendChild(opt);
+      });
+      if (eligibleHoldingsWithCnt.some(h => h.holding === prevHolding)) {
+        holdingSelect.value = prevHolding;
+      } else {
+        state.holding = "ALL";
+        holdingSelect.value = "ALL";
+      }
+
+      // 4. Update Company Dropdown (4. 金融機構 (業者) 篩選)
+      // 依據前項「金融業別」、「AI 應用類別」及「所屬金控」篩選後動態調整家數，並移除 0 筆的業者
       const compSelect = document.getElementById("filterCompany");
       const prevComp = state.company;
-      compSelect.innerHTML = "";
+      compSelect.replaceChildren();
 
       const eligibleSourcesWithCnt = RAW_DATA.sources
         .filter(src => state.sector === "ALL" || src.sector === state.sector)
@@ -834,6 +1034,7 @@
             s.sector === src.sector &&
             s.company === src.company &&
             (state.category === "ALL" || s.category === state.category) &&
+            (state.holding === "ALL" || s.holding === state.holding) &&
             (state.pdfPage === "ALL" || s.pdfPage === state.pdfPage)
           ).length;
           return { ...src, dynamicCnt };
@@ -866,10 +1067,11 @@
       let list = RAW_DATA.scenarios.filter(item => {
         if (state.sector !== "ALL" && item.sector !== state.sector) return false;
         if (state.category !== "ALL" && item.category !== state.category) return false;
+        if (state.holding !== "ALL" && item.holding !== state.holding) return false;
         if (state.company !== "ALL" && item.company !== state.company) return false;
         if (state.pdfPage !== "ALL" && item.pdfPage !== state.pdfPage) return false;
         if (kw) {
-          const hay = `${item.sector} ${item.company} ${item.category} ${item.scenario}`.toLowerCase();
+          const hay = `${item.sector} ${item.holding} ${item.company} ${item.category} ${item.scenario}`.toLowerCase();
           if (!hay.includes(kw)) return false;
         }
         return true;
@@ -877,6 +1079,13 @@
 
       if (state.sortBy === "sector") {
         list.sort((a, b) => a.sector.localeCompare(b.sector, "zh-Hant") || a.id - b.id);
+      } else if (state.sortBy === "holding") {
+        list.sort((a, b) => {
+          const unA = isUnclassifiedHolding(a.holding) ? 1 : 0;
+          const unB = isUnclassifiedHolding(b.holding) ? 1 : 0;
+          if (unA !== unB) return unA - unB;
+          return a.holding.localeCompare(b.holding, "zh-Hant") || a.id - b.id;
+        });
       } else if (state.sortBy === "company") {
         list.sort((a, b) => a.company.localeCompare(b.company, "zh-Hant") || a.id - b.id);
       } else if (state.sortBy === "category") {
@@ -893,10 +1102,10 @@
       container.innerHTML = "";
 
       const totalAll = RAW_DATA.scenarios.length;
-      const hasFilter = state.sector !== "ALL" || state.category !== "ALL" || state.company !== "ALL" || state.pdfPage !== "ALL" || state.keyword.trim() !== "";
+      const hasFilter = state.sector !== "ALL" || state.category !== "ALL" || state.holding !== "ALL" || state.company !== "ALL" || state.pdfPage !== "ALL" || state.keyword.trim() !== "";
 
       if (!hasFilter) {
-        container.innerHTML = `<span class="text-xs text-slate-500 font-medium">目前篩選狀態：顯示全部 <strong class="text-slate-800">${totalAll}</strong> 筆 AI 應用場景（可透過上方下拉選單或點擊圖表進行互動篩選）</span>`;
+        container.innerHTML = `<span class="text-xs text-slate-500 font-medium">目前篩選狀態：顯示全部 <strong class="text-slate-800">${totalAll}</strong> 筆 AI 應用場景（可透過上方下拉選單、金控與類別快速標籤或圖表互動篩選）</span>`;
         return;
       }
 
@@ -919,6 +1128,9 @@
       }
       if (state.category !== "ALL") {
         addChip("類別", state.category, () => { state.category = "ALL"; document.getElementById("filterCategory").value = "ALL"; syncAll(); });
+      }
+      if (state.holding !== "ALL") {
+        addChip("所屬金控", state.holding, () => { state.holding = "ALL"; document.getElementById("filterHolding").value = "ALL"; syncAll(); });
       }
       if (state.company !== "ALL") {
         addChip("機構", state.company, () => { state.company = "ALL"; document.getElementById("filterCompany").value = "ALL"; syncAll(); });
@@ -997,18 +1209,108 @@
       }
     }
 
-    // Render Category Quick Pills & Definition Callout
-    function renderCategoryPills() {
-      const container = document.getElementById("categoryPillsContainer");
-      container.innerHTML = "";
+    // Render Holding Quick-Filter Pills & Banner
+    function renderHoldingPills() {
+      const container = document.getElementById("holdingPillsContainer");
+      container.replaceChildren();
 
       const baseScenarios = RAW_DATA.scenarios.filter(item => {
         if (state.sector !== "ALL" && item.sector !== state.sector) return false;
+        if (state.category !== "ALL" && item.category !== state.category) return false;
         if (state.company !== "ALL" && item.company !== state.company) return false;
         if (state.pdfPage !== "ALL" && item.pdfPage !== state.pdfPage) return false;
         if (state.keyword.trim() !== "") {
           const kw = state.keyword.trim().toLowerCase();
-          const hay = `${item.sector} ${item.company} ${item.category} ${item.scenario}`.toLowerCase();
+          const hay = `${item.sector} ${item.holding} ${item.company} ${item.category} ${item.scenario}`.toLowerCase();
+          if (!hay.includes(kw)) return false;
+        }
+        return true;
+      });
+
+      const counts = {};
+      baseScenarios.forEach(s => { counts[s.holding] = (counts[s.holding] || 0) + 1; });
+
+      // "ALL" pill
+      const allBtn = document.createElement("button");
+      allBtn.type = "button";
+      const isAll = state.holding === "ALL";
+      allBtn.className = `px-3 py-1.5 rounded-lg text-xs font-semibold transition border ${isAll
+        ? "bg-slate-900 text-white border-slate-900 shadow-sm"
+        : "bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100"
+        }`;
+      allBtn.textContent = `全部金控 (${baseScenarios.length})`;
+      allBtn.addEventListener("click", () => {
+        state.holding = "ALL";
+        document.getElementById("filterHolding").value = "ALL";
+        syncAll();
+      });
+      container.appendChild(allBtn);
+
+      const sortedHoldings = getSortedHoldings();
+      sortedHoldings.forEach((hObj, idx) => {
+        const hName = hObj.holding;
+        const cnt = counts[hName] || 0;
+        const isSelected = state.holding === hName;
+        const unclass = isUnclassifiedHolding(hName);
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = `inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition border ${isSelected
+          ? "bg-amber-600 text-white border-amber-600 shadow-sm ring-2 ring-amber-500/30"
+          : cnt > 0
+            ? unclass
+              ? "bg-slate-50 text-slate-600 border-slate-200 hover:border-slate-400 hover:bg-slate-100"
+              : "bg-white text-slate-700 border-slate-200 hover:border-amber-300 hover:bg-amber-50/50"
+            : "bg-slate-50 text-slate-400 border-slate-200/60"
+          }`;
+        const baseDotColor = getHoldingDotColor(hName, idx);
+        const dotColor = isSelected ? "#ffffff" : baseDotColor;
+        btn.innerHTML = `<span class="w-2.5 h-2.5 rounded-full shrink-0" style="background-color:${dotColor}"></span><span>${hName}</span><span class="${isSelected ? 'text-amber-100' : 'text-slate-400'}">(${cnt})</span>`;
+        btn.addEventListener("click", () => {
+          state.holding = state.holding === hName ? "ALL" : hName;
+          document.getElementById("filterHolding").value = state.holding;
+          syncAll();
+        });
+        container.appendChild(btn);
+      });
+
+      // Holding Callout Banner
+      const banner = document.getElementById("holdingDefinitionBanner");
+      const hint = document.getElementById("selectedHoldingHint");
+      if (state.holding !== "ALL" && holdingInfoMap[state.holding]) {
+        const info = holdingInfoMap[state.holding];
+        const kwText = [info.keyword1, info.keyword2].filter(Boolean).join("、");
+        hint.textContent = `目前鎖定金控：${state.holding}（全體共 ${info.count} 筆）`;
+        banner.classList.remove("hidden");
+        banner.innerHTML = `
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
+            <span><strong class="text-amber-950">【${info.holding}】</strong>歸類條件：${kwText || "依機構名稱歸類"}（全體共 <strong>${info.count}</strong> 筆場景，目前篩選符合 <strong>${counts[state.holding] || 0}</strong> 筆）</span>
+            <button type="button" id="clearHoldingBannerBtn" class="text-xs text-amber-800 font-semibold hover:underline self-start sm:self-auto">取消金控鎖定</button>
+          </div>
+        `;
+        document.getElementById("clearHoldingBannerBtn").addEventListener("click", () => {
+          state.holding = "ALL";
+          document.getElementById("filterHolding").value = "ALL";
+          syncAll();
+        });
+      } else {
+        hint.textContent = "點擊任一金控標籤可立即篩選並更新下方明細列表";
+        banner.classList.add("hidden");
+      }
+    }
+
+    // Render Category Quick Pills & Definition Callout
+    function renderCategoryPills() {
+      const container = document.getElementById("categoryPillsContainer");
+      container.replaceChildren();
+
+      const baseScenarios = RAW_DATA.scenarios.filter(item => {
+        if (state.sector !== "ALL" && item.sector !== state.sector) return false;
+        if (state.holding !== "ALL" && item.holding !== state.holding) return false;
+        if (state.company !== "ALL" && item.company !== state.company) return false;
+        if (state.pdfPage !== "ALL" && item.pdfPage !== state.pdfPage) return false;
+        if (state.keyword.trim() !== "") {
+          const kw = state.keyword.trim().toLowerCase();
+          const hay = `${item.sector} ${item.holding} ${item.company} ${item.category} ${item.scenario}`.toLowerCase();
           if (!hay.includes(kw)) return false;
         }
         return true;
@@ -1022,8 +1324,8 @@
       allBtn.type = "button";
       const isAll = state.category === "ALL";
       allBtn.className = `px-3 py-1.5 rounded-lg text-xs font-semibold transition border ${isAll
-          ? "bg-slate-900 text-white border-slate-900 shadow-sm"
-          : "bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100"
+        ? "bg-slate-900 text-white border-slate-900 shadow-sm"
+        : "bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100"
         }`;
       allBtn.textContent = `全部類別 (${baseScenarios.length})`;
       allBtn.addEventListener("click", () => {
@@ -1041,10 +1343,10 @@
         const btn = document.createElement("button");
         btn.type = "button";
         btn.className = `inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition border ${isSelected
-            ? "bg-indigo-600 text-white border-indigo-600 shadow-sm ring-2 ring-indigo-500/30"
-            : cnt > 0
-              ? "bg-white text-slate-700 border-slate-200 hover:border-indigo-300 hover:bg-indigo-50/40"
-              : "bg-slate-50 text-slate-400 border-slate-200/60"
+          ? "bg-indigo-600 text-white border-indigo-600 shadow-sm ring-2 ring-indigo-500/30"
+          : cnt > 0
+            ? "bg-white text-slate-700 border-slate-200 hover:border-indigo-300 hover:bg-indigo-50/40"
+            : "bg-slate-50 text-slate-400 border-slate-200/60"
           }`;
         const dotColor = CATEGORY_PALETTE[cat] ? CATEGORY_PALETTE[cat].color : "#64748b";
         btn.innerHTML = `<span class="w-2 h-2 rounded-full shrink-0" style="background-color:${isSelected ? '#ffffff' : dotColor}"></span><span>${cat}</span><span class="${isSelected ? 'text-indigo-100' : 'text-slate-400'}">(${cnt})</span>`;
@@ -1094,11 +1396,12 @@
 
       const baseForChart = RAW_DATA.scenarios.filter(item => {
         if (state.sector !== "ALL" && item.sector !== state.sector) return false;
+        if (state.holding !== "ALL" && item.holding !== state.holding) return false;
         if (state.company !== "ALL" && item.company !== state.company) return false;
         if (state.pdfPage !== "ALL" && item.pdfPage !== state.pdfPage) return false;
         if (state.keyword.trim() !== "") {
           const kw = state.keyword.trim().toLowerCase();
-          const hay = `${item.sector} ${item.company} ${item.category} ${item.scenario}`.toLowerCase();
+          const hay = `${item.sector} ${item.holding} ${item.company} ${item.category} ${item.scenario}`.toLowerCase();
           if (!hay.includes(kw)) return false;
         }
         return true;
@@ -1238,8 +1541,8 @@
         const card = document.createElement("button");
         card.type = "button";
         card.className = `p-2 rounded-lg border text-left transition ${isSelected
-            ? "bg-indigo-50/80 border-indigo-400 ring-1 ring-indigo-400"
-            : "bg-slate-50/70 border-slate-200/80 hover:bg-slate-100"
+          ? "bg-indigo-50/80 border-indigo-400 ring-1 ring-indigo-400"
+          : "bg-slate-50/70 border-slate-200/80 hover:bg-slate-100"
           }`;
         card.innerHTML = `
           <div class="flex items-center gap-1.5">
@@ -1382,8 +1685,11 @@
         cardView.classList.add("hidden");
         emptyState.classList.remove("hidden");
         const catInfo = categoryInfoMap[state.category];
+        const holdInfo = holdingInfoMap[state.holding];
         if (catInfo && catInfo.count === 0) {
           document.getElementById("emptyStateHint").textContent = `備註：依分類說明，「${state.category}」類別在全體 ${RAW_DATA.scenarios.length} 筆資料中為 0 筆（${catInfo.boundary}）。`;
+        } else if (holdInfo && holdInfo.count === 0) {
+          document.getElementById("emptyStateHint").textContent = `備註：目前資料中尚無歸屬於「${state.holding}」之 AI 應用場景（全體共 0 筆）。`;
         } else {
           document.getElementById("emptyStateHint").textContent = "請嘗試放寬下拉選單篩選條件或清除搜尋關鍵字";
         }
@@ -1406,15 +1712,22 @@
         tr.className = "hover:bg-indigo-50/40 cursor-pointer transition";
         const secStyle = SECTOR_COLORS[item.sector] || { light: "#f1f5f9", text: "#334155" };
         const catStyle = CATEGORY_PALETTE[item.category] || CATEGORY_PALETTE["其它"];
+        const unclass = isUnclassifiedHolding(item.holding);
 
         tr.innerHTML = `
           <td class="py-3 px-4 text-center text-xs font-mono text-slate-400">${item.id}</td>
+          <td class="py-3 px-4 font-semibold text-slate-800">${item.company}</td>
+          <td class="py-3 px-4">
+            ${unclass
+              ? `<span class="text-xs text-slate-400">${item.holding || "未歸類"}</span>`
+              : `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-50 text-amber-800 border border-amber-200/80">${item.holding}</span>`
+            }
+          </td>
           <td class="py-3 px-4">
             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold" style="background-color:${secStyle.light};color:${secStyle.text}">
               ${item.sector}
             </span>
           </td>
-          <td class="py-3 px-4 font-semibold text-slate-800">${item.company}</td>
           <td class="py-3 px-4">
             <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold border ${catStyle.badgeBg} ${catStyle.badgeText} ${catStyle.badgeBorder}">
               ${item.category}
@@ -1433,13 +1746,17 @@
         card.className = "bg-white rounded-xl p-4 border border-slate-200/90 shadow-sm hover:shadow-md hover:border-indigo-300 cursor-pointer transition flex flex-col justify-between";
         const secStyle = SECTOR_COLORS[item.sector] || { light: "#f1f5f9", text: "#334155" };
         const catStyle = CATEGORY_PALETTE[item.category] || CATEGORY_PALETTE["其它"];
+        const unclass = isUnclassifiedHolding(item.holding);
 
         card.innerHTML = `
           <div>
             <div class="flex items-center justify-between gap-2 mb-2.5">
-              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold" style="background-color:${secStyle.light};color:${secStyle.text}">
-                ${item.sector}
-              </span>
+              <div class="flex items-center flex-wrap gap-1.5">
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold" style="background-color:${secStyle.light};color:${secStyle.text}">
+                  ${item.sector}
+                </span>
+                ${!unclass ? `<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-amber-50 text-amber-800 border border-amber-200/80">${item.holding}</span>` : ""}
+              </div>
               <span class="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-semibold border ${catStyle.badgeBg} ${catStyle.badgeText} ${catStyle.badgeBorder}">
                 ${item.category}
               </span>
@@ -1527,11 +1844,13 @@
           const cat = btn.getAttribute("data-cat");
           state.sector = sec;
           state.category = cat;
+          state.holding = "ALL";
           state.company = "ALL";
           state.pdfPage = "ALL";
           document.getElementById("filterSector").value = sec;
           updateDynamicDropdowns();
           document.getElementById("filterCategory").value = cat;
+          document.getElementById("filterHolding").value = "ALL";
           switchTab("dashboard");
           syncAll();
           showToast(`已套用篩選：${sec} × ${cat}`);
@@ -1542,65 +1861,158 @@
     // Render Institutions Directory (Tab 3 - Sources)
     function renderInstitutionsDirectory() {
       const grid = document.getElementById("institutionsGrid");
-      grid.innerHTML = "";
+      grid.replaceChildren();
 
-      let list = [...RAW_DATA.sources].filter(src => {
-        if (state.sector !== "ALL" && src.sector !== state.sector) return false;
-        if (state.pdfPage !== "ALL" && src.pdfPage !== state.pdfPage) return false;
-        if (state.keyword.trim() !== "") {
-          const kw = state.keyword.trim().toLowerCase();
-          if (!src.company.toLowerCase().includes(kw) && !src.sector.toLowerCase().includes(kw)) return false;
-        }
-        return true;
+      const kw = state.keyword.trim().toLowerCase();
+
+      // 依據上方所有篩選條件（業別、AI 應用類別、所屬金控、金融機構、關鍵字）動態篩選機構
+      let list = RAW_DATA.sources
+        .filter(src => {
+          if (state.sector !== "ALL" && src.sector !== state.sector) return false;
+          if (state.holding !== "ALL" && src.holding !== state.holding) return false;
+          if (state.company !== "ALL" && src.company !== state.company) return false;
+          if (state.pdfPage !== "ALL" && src.pdfPage !== state.pdfPage) return false;
+          return true;
+        })
+        .map(src => {
+          const matchingScenarios = RAW_DATA.scenarios.filter(s => {
+            if (s.company !== src.company || s.sector !== src.sector) return false;
+            if (state.category !== "ALL" && s.category !== state.category) return false;
+            if (state.holding !== "ALL" && s.holding !== state.holding) return false;
+            if (state.pdfPage !== "ALL" && s.pdfPage !== state.pdfPage) return false;
+            if (kw) {
+              const hay = `${s.sector} ${s.holding} ${s.company} ${s.category} ${s.scenario}`.toLowerCase();
+              if (!hay.includes(kw)) return false;
+            }
+            return true;
+          });
+          return {
+            ...src,
+            matchingScenarios,
+            matchCount: matchingScenarios.length
+          };
+        })
+        .filter(src => src.matchCount > 0);
+
+      // 動態更新「金融機構與周邊單位來源索引 (共 X 家)」與分頁標籤數字
+      document.getElementById("institutionsDirTitle").textContent = `金融機構與周邊單位來源索引 (共 ${list.length} 家)`;
+      document.getElementById("tabBtn-institutions").textContent = `機構來源索引 (${list.length})`;
+
+      if (list.length === 0) {
+        grid.innerHTML = `
+          <div class="py-12 px-4 text-center">
+            <p class="text-sm font-semibold text-slate-700">找不到符合目前篩選條件的金融機構</p>
+            <p class="text-xs text-slate-500 mt-1">請嘗試放寬上方「業別、AI 應用類別、所屬金控、金融機構」篩選條件或清除關鍵字</p>
+          </div>
+        `;
+        return;
+      }
+
+      // Precompute holding sort order map
+      const holdingRankMap = {};
+      const holdingColorIdxMap = {};
+      getSortedHoldings().forEach((h, idx) => {
+        holdingRankMap[h.holding] = idx;
+        holdingColorIdxMap[h.holding] = idx;
       });
 
       if (state.instSort === "countDesc") {
-        list.sort((a, b) => b.count - a.count || a.id - b.id);
+        list.sort((a, b) => b.matchCount - a.matchCount || a.id - b.id);
+      } else if (state.instSort === "holding") {
+        list.sort((a, b) => {
+          const unA = isUnclassifiedHolding(a.holding) ? 1 : 0;
+          const unB = isUnclassifiedHolding(b.holding) ? 1 : 0;
+          if (unA !== unB) return unA - unB;
+          const rankA = holdingRankMap[a.holding] ?? 999;
+          const rankB = holdingRankMap[b.holding] ?? 999;
+          if (rankA !== rankB) return rankA - rankB;
+          return (a.holding || "").localeCompare(b.holding || "", "zh-Hant") || (b.matchCount - a.matchCount) || (a.id - b.id);
+        });
       } else if (state.instSort === "sector") {
-        list.sort((a, b) => a.sector.localeCompare(b.sector, "zh-Hant") || b.count - a.count);
+        list.sort((a, b) => a.sector.localeCompare(b.sector, "zh-Hant") || b.matchCount - a.matchCount || a.id - b.id);
       } else {
         list.sort((a, b) => a.id - b.id);
       }
 
-      list.forEach(src => {
-        const compScenarios = RAW_DATA.scenarios.filter(s => s.company === src.company && s.sector === src.sector);
-        const cats = [...new Set(compScenarios.map(s => s.category))];
-        const secStyle = SECTOR_COLORS[src.sector] || { light: "#f1f5f9", text: "#334155" };
+      // 依所屬金控分組顯示（已歸類金控依目前排序優先呈現，未歸類置於最後）
+      const groupMap = new Map();
+      const classifiedHoldingsOrder = [];
+      const unclassifiedHoldingsOrder = [];
 
-        const card = document.createElement("div");
-        card.className = "p-4 rounded-xl border border-slate-200 hover:border-indigo-400 hover:shadow-md transition bg-slate-50/40 flex flex-col justify-between cursor-pointer";
-        card.innerHTML = `
-          <div>
-            <div class="flex items-center justify-between gap-2 mb-2">
-              <span class="px-2 py-0.5 rounded-full text-[11px] font-semibold" style="background-color:${secStyle.light};color:${secStyle.text}">
-                ${src.sector}
-              </span>
-              <span class="text-xs font-bold text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded-md border border-indigo-200">
-                ${compScenarios.length} 筆場景
-              </span>
-            </div>
-            <h3 class="text-sm font-bold text-slate-900 mb-2">${src.company}</h3>
-            <div class="flex flex-wrap gap-1">
-              ${cats.map(c => `<span class="px-2 py-0.5 rounded text-[11px] bg-white border border-slate-200 text-slate-600">${c}</span>`).join("")}
-            </div>
-          </div>
-          <div class="mt-3 pt-2 border-t border-slate-200/70 flex items-center justify-between text-[11px] text-slate-500">
-            <span>來源頁碼：${src.pdfPage.includes("最新") ? src.pdfPage : `PDF 第 ${src.pdfPage} 頁`}</span>
-            <span class="text-indigo-600 font-semibold">點擊篩選 →</span>
-          </div>
+      list.forEach(src => {
+        const hKey = src.holding || "未歸類";
+        if (!groupMap.has(hKey)) {
+          groupMap.set(hKey, []);
+          if (isUnclassifiedHolding(hKey)) {
+            unclassifiedHoldingsOrder.push(hKey);
+          } else {
+            classifiedHoldingsOrder.push(hKey);
+          }
+        }
+        groupMap.get(hKey).push(src);
+      });
+
+      const finalGroupOrder = [...classifiedHoldingsOrder, ...unclassifiedHoldingsOrder];
+
+      finalGroupOrder.forEach((hName, gIdx) => {
+        const groupItems = groupMap.get(hName) || [];
+        const colorIdx = holdingColorIdxMap[hName] ?? gIdx;
+        const headingColor = getHoldingTextColor(hName, colorIdx);
+        const dotColor = getHoldingDotColor(hName, colorIdx);
+
+        const groupSection = document.createElement("div");
+        groupSection.className = "space-y-3";
+
+        const headerDiv = document.createElement("div");
+        headerDiv.className = "flex items-baseline gap-2 pb-1";
+        headerDiv.innerHTML = `
+          <h3 class="text-xl sm:text-2xl font-bold tracking-tight" style="color:${headingColor}">${hName}</h3>
         `;
-        card.addEventListener("click", () => {
-          state.sector = src.sector;
-          state.company = src.company;
-          state.category = "ALL";
-          document.getElementById("filterSector").value = src.sector;
-          updateDynamicDropdowns();
-          document.getElementById("filterCompany").value = src.company;
-          switchTab("dashboard");
-          syncAll();
-          showToast(`已篩選機構：${src.company} (${compScenarios.length}筆)`);
+        groupSection.appendChild(headerDiv);
+
+        const cardsGrid = document.createElement("div");
+        cardsGrid.className = "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5";
+
+        groupItems.forEach(src => {
+          const cats = [...new Set(src.matchingScenarios.map(s => s.category))];
+          const secStyle = SECTOR_COLORS[src.sector] || { light: "#f1f5f9", text: "#334155" };
+
+          const card = document.createElement("div");
+          card.className = "p-4 rounded-xl border border-slate-200 hover:border-indigo-400 hover:shadow-md transition bg-slate-50/40 flex flex-col justify-between cursor-pointer";
+          card.innerHTML = `
+            <div>
+              <div class="flex items-center justify-between gap-2 mb-2">
+                <span class="px-2 py-0.5 rounded-full text-[11px] font-semibold" style="background-color:${secStyle.light};color:${secStyle.text}">
+                  ${src.sector}
+                </span>
+                <span class="text-xs font-bold text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded-md border border-indigo-200 shrink-0">
+                  ${src.matchCount} 筆場景
+                </span>
+              </div>
+              <h4 class="text-sm font-bold text-slate-900 mb-2">${src.company}</h4>
+              <div class="flex flex-wrap gap-1">
+                ${cats.map(c => `<span class="px-2 py-0.5 rounded text-[11px] bg-white border border-slate-200 text-slate-600">${c}</span>`).join("")}
+              </div>
+            </div>
+            <div class="mt-3 pt-2 border-t border-slate-200/70 flex items-center justify-end text-[11px] text-slate-500">
+              <span class="text-indigo-600 font-semibold">點擊篩選 →</span>
+            </div>
+          `;
+          card.addEventListener("click", () => {
+            state.sector = src.sector;
+            state.company = src.company;
+            document.getElementById("filterSector").value = src.sector;
+            updateDynamicDropdowns();
+            document.getElementById("filterCompany").value = src.company;
+            switchTab("dashboard");
+            syncAll();
+            showToast(`已篩選機構：${src.company} (${src.matchCount}筆)`);
+          });
+          cardsGrid.appendChild(card);
         });
-        grid.appendChild(card);
+
+        groupSection.appendChild(cardsGrid);
+        grid.appendChild(groupSection);
       });
     }
 
@@ -1635,6 +2047,7 @@
         btn.addEventListener("click", () => {
           const cat = btn.getAttribute("data-def-cat");
           state.sector = "ALL";
+          state.holding = "ALL";
           state.company = "ALL";
           state.pdfPage = "ALL";
           state.category = cat;
@@ -1645,6 +2058,49 @@
           syncAll();
         });
       });
+
+      // Render Holdings Table
+      const holdingsTbody = document.getElementById("holdingsTableBody");
+      if (holdingsTbody) {
+        holdingsTbody.innerHTML = "";
+        RAW_DATA.holdings.forEach(h => {
+          const unclass = isUnclassifiedHolding(h.holding);
+          const tr = document.createElement("tr");
+          tr.className = "hover:bg-slate-50";
+          tr.innerHTML = `
+            <td class="py-3 px-4 font-bold">
+              <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold border ${unclass ? 'bg-slate-100 text-slate-600 border-slate-300' : 'bg-amber-50 text-amber-800 border-amber-200'}">
+                ${h.holding}
+              </span>
+            </td>
+            <td class="py-3 px-4 text-slate-800 font-medium">${h.keyword1 || "-"}</td>
+            <td class="py-3 px-4 text-slate-600 text-xs">${h.keyword2 || "-"}</td>
+            <td class="py-3 px-4 text-center font-bold text-slate-900">${h.count} 筆</td>
+            <td class="py-3 px-4 text-center">
+              <button type="button" data-def-hold="${h.holding}" class="px-2.5 py-1 rounded-lg text-xs font-semibold text-amber-700 bg-amber-50 hover:bg-amber-100 transition">
+                查看 (${h.count})
+              </button>
+            </td>
+          `;
+          holdingsTbody.appendChild(tr);
+        });
+
+        holdingsTbody.querySelectorAll("button[data-def-hold]").forEach(btn => {
+          btn.addEventListener("click", () => {
+            const hName = btn.getAttribute("data-def-hold");
+            state.sector = "ALL";
+            state.category = "ALL";
+            state.company = "ALL";
+            state.pdfPage = "ALL";
+            state.holding = hName;
+            document.getElementById("filterSector").value = "ALL";
+            updateDynamicDropdowns();
+            document.getElementById("filterHolding").value = hName;
+            switchTab("dashboard");
+            syncAll();
+          });
+        });
+      }
 
       const notesGrid = document.getElementById("methodologyNotesGrid");
       notesGrid.innerHTML = "";
@@ -1668,6 +2124,14 @@
       state.modalCompany = item.company;
 
       document.getElementById("modalSectorBadge").textContent = item.sector;
+      const holdingBadge = document.getElementById("modalHoldingBadge");
+      if (!isUnclassifiedHolding(item.holding)) {
+        holdingBadge.textContent = item.holding;
+        holdingBadge.classList.remove("hidden");
+      } else {
+        holdingBadge.classList.add("hidden");
+      }
+
       document.getElementById("modalCompanyTitle").textContent = item.company;
       const catBadge = document.getElementById("modalCategoryBadge");
       catBadge.className = `px-2.5 py-1 rounded-md text-xs font-bold border ${catStyle.badgeBg} ${catStyle.badgeText} ${catStyle.badgeBorder}`;
@@ -1725,6 +2189,7 @@
       const filtered = getFilteredScenarios();
       renderActiveFilterBadges(filtered.length);
       renderKPIs(filtered);
+      renderHoldingPills();
       renderCategoryPills();
       renderCharts(filtered);
       renderScenariosList(filtered);
@@ -1738,11 +2203,12 @@
         showToast("目前無篩選結果可供匯出");
         return;
       }
-      const headers = ["編號", "業別", "業者", "類別", "場景", "PDF頁碼"];
+      const headers = ["序號", "金融機構 (業者)", "所屬金控", "業別", "AI 應用類別", "AI 場景與應用內容", "PDF頁碼"];
       const rows = filtered.map(s => [
         s.id,
-        `"${s.sector.replace(/"/g, '""')}"`,
         `"${s.company.replace(/"/g, '""')}"`,
+        `"${(s.holding || '未歸類').replace(/"/g, '""')}"`,
+        `"${s.sector.replace(/"/g, '""')}"`,
         `"${s.category.replace(/"/g, '""')}"`,
         `"${s.scenario.replace(/"/g, '""')}"`,
         `"${s.pdfPage.replace(/"/g, '""')}"`
@@ -1764,7 +2230,7 @@
     function applyWorkbookData(arrayBuffer, sourceLabel) {
       const workbook = XLSX.read(arrayBuffer, { type: 'array' });
 
-      // 1. 解析「來源索引」工作表（取得業別、業者、PDF頁碼，筆數統一由 AI應用場景 動態統計）
+      // 1. 解析「來源索引」工作表（取得業別、業者、PDF頁碼，筆數與所屬金控統一由 AI應用場景 動態統計）
       const wsSources = workbook.Sheets['來源索引'];
       const sourcesJson = wsSources ? XLSX.utils.sheet_to_json(wsSources) : [];
       const pageMap = {};
@@ -1775,10 +2241,10 @@
           const company = String(row['業者'] || '').trim();
           const pdfPage = String(row['PDF頁碼'] || '').trim();
           pageMap[`${sector}||${company}`] = pdfPage;
-          return { id: idx + 1, sector, company, pdfPage, count: 0 };
+          return { id: idx + 1, sector, company, holding: '未歸類', pdfPage, count: 0 };
         });
 
-      // 2. 解析「AI應用場景」工作表
+      // 2. 解析「AI應用場景」工作表（包含新增之「所屬金控」欄位）
       const wsScenarios = workbook.Sheets['AI應用場景'];
       const scenariosJson = wsScenarios ? XLSX.utils.sheet_to_json(wsScenarios) : [];
       RAW_DATA.scenarios = scenariosJson
@@ -1786,23 +2252,28 @@
         .map((row, idx) => {
           const sector = String(row['業別'] || '').trim();
           const company = String(row['業者'] || '').trim();
+          const holdingRaw = String(row['所屬金控'] || '').trim();
+          const holding = holdingRaw || '未歸類';
           return {
             id: idx + 1,
             sector,
             company,
+            holding,
             scenario: String(row['場景'] || '').trim(),
             category: String(row['類別'] || '').trim(),
             pdfPage: pageMap[`${sector}||${company}`] || '最新蒐集'
           };
         });
 
-      // 3. 解析「分類說明」工作表（動態讀取直到「合計場景」或空列）
+      // 3. 解析「分類說明」工作表（同時讀取左側類別說明與右側所屬金控歸類表）
       const wsCats = workbook.Sheets['分類說明'];
       if (wsCats) {
         const catRows = XLSX.utils.sheet_to_json(wsCats, { header: 1 });
         RAW_DATA.categories = [];
+        RAW_DATA.holdings = [];
         RAW_DATA.notes = [];
 
+        // 左側：AI 應用類別
         let rIdx = 4;
         while (rIdx < catRows.length) {
           const row = catRows[rIdx];
@@ -1816,6 +2287,24 @@
             count: 0
           });
           rIdx++;
+        }
+
+        // 右側：所屬金控（Cols F, G, H => index 5, 6, 7）
+        let hIdx = 4;
+        while (hIdx < catRows.length) {
+          const row = catRows[hIdx];
+          if (!row) break;
+          const kw1 = String(row[5] || '').trim();
+          const kw2 = String(row[6] || '').trim();
+          const hName = String(row[7] || '').trim();
+          if (!hName || kw1 === '合計場景') break;
+          RAW_DATA.holdings.push({
+            holding: hName,
+            keyword1: kw1,
+            keyword2: kw2,
+            count: 0
+          });
+          hIdx++;
         }
 
         for (let r = rIdx + 1; r < catRows.length; r++) {
@@ -1833,6 +2322,7 @@
       // Reset filters and recompute all derived counts dynamically
       state.sector = "ALL";
       state.category = "ALL";
+      state.holding = "ALL";
       state.company = "ALL";
       state.pdfPage = "ALL";
       recomputeDerivedData();
@@ -1891,21 +2381,57 @@
       document.getElementById("tabBtn-institutions").addEventListener("click", () => switchTab("institutions"));
       document.getElementById("tabBtn-definitions").addEventListener("click", () => switchTab("definitions"));
 
+      // Helper to clear incompatible child selections when a filter changes
+      function reconcileFilterState(changedKey) {
+        const matches = (sec, cat, hold, comp) => RAW_DATA.scenarios.some(s =>
+          (sec === "ALL" || s.sector === sec) &&
+          (cat === "ALL" || s.category === cat) &&
+          (hold === "ALL" || s.holding === hold) &&
+          (comp === "ALL" || s.company === comp)
+        );
+        if (changedKey === "sector" || changedKey === "category") {
+          if (state.company !== "ALL" && !matches(state.sector, state.category, "ALL", state.company)) {
+            state.company = "ALL";
+          }
+          if (state.holding !== "ALL" && !matches(state.sector, state.category, state.holding, state.company)) {
+            state.holding = "ALL";
+          }
+        } else if (changedKey === "holding") {
+          if (state.company !== "ALL" && !matches(state.sector, state.category, state.holding, state.company)) {
+            state.company = "ALL";
+          }
+        } else if (changedKey === "company") {
+          if (state.holding !== "ALL" && !matches(state.sector, state.category, state.holding, state.company)) {
+            state.holding = "ALL";
+          }
+        }
+      }
+
       // Dropdown 1: Sector
       document.getElementById("filterSector").addEventListener("change", (e) => {
         state.sector = e.target.value;
+        reconcileFilterState("sector");
         syncAll();
       });
 
       // Dropdown 2: Category
       document.getElementById("filterCategory").addEventListener("change", (e) => {
         state.category = e.target.value;
+        reconcileFilterState("category");
         syncAll();
       });
 
-      // Dropdown 3: Company
+      // Dropdown 3: Holding (所屬金控)
+      document.getElementById("filterHolding").addEventListener("change", (e) => {
+        state.holding = e.target.value;
+        reconcileFilterState("holding");
+        syncAll();
+      });
+
+      // Dropdown 4: Company
       document.getElementById("filterCompany").addEventListener("change", (e) => {
         state.company = e.target.value;
+        reconcileFilterState("company");
         syncAll();
       });
 
@@ -1933,6 +2459,7 @@
       const resetAll = () => {
         state.sector = "ALL";
         state.category = "ALL";
+        state.holding = "ALL";
         state.company = "ALL";
         state.pdfPage = "ALL";
         state.keyword = "";
@@ -1941,6 +2468,7 @@
         document.getElementById("clearKeywordBtn").classList.add("hidden");
         updateDynamicDropdowns();
         document.getElementById("filterCategory").value = "ALL";
+        document.getElementById("filterHolding").value = "ALL";
         document.getElementById("filterCompany").value = "ALL";
         syncAll();
         showToast(`已重置所有篩選條件（顯示全部 ${RAW_DATA.scenarios.length} 筆場景）`);
@@ -2019,6 +2547,7 @@
         if (state.modalCompany) {
           state.sector = "ALL";
           state.category = "ALL";
+          state.holding = "ALL";
           state.company = state.modalCompany;
           document.getElementById("filterSector").value = "ALL";
           updateDynamicDropdowns();
