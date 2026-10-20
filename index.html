@@ -69,11 +69,20 @@
               <h1 class="text-lg sm:text-xl font-bold tracking-tight text-white">台灣金融業 AI 場景應用互動儀表板</h1>
               <span id="headerSummaryBadge"
                 class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-500/30 text-indigo-200 border border-indigo-400/30">
-                82 家機構 · 143 筆場景
+                資料載入中...
               </span>
+              <label for="excelFileInput" title="手動載入本機 Excel 檔案 (.xlsx)"
+                class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-600 cursor-pointer transition">
+                <svg class="w-3.5 h-3.5 text-indigo-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                </svg>
+                <span>載入 Excel</span>
+              </label>
+              <input id="excelFileInput" type="file" accept=".xlsx,.xls" class="hidden" />
             </div>
-            <p class="text-xs sm:text-sm text-slate-300 mt-0.5">
-              涵蓋銀行業、保險業、證券期貨業及周邊單位之 AI 應用場景分類與來源索引分析
+            <p id="headerSubtitleText" class="text-xs sm:text-sm text-slate-300 mt-0.5">
+              涵蓋各金融業別及周邊單位之 AI 應用場景分類與來源索引分析
             </p>
           </div>
         </div>
@@ -91,7 +100,7 @@
           </button>
           <button id="tabBtn-institutions" type="button"
             class="px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition-all text-slate-300 hover:text-white">
-            機構來源索引 (82)
+            機構來源索引
           </button>
           <button id="tabBtn-definitions" type="button"
             class="px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition-all text-slate-300 hover:text-white">
@@ -114,7 +123,7 @@
           </label>
           <select id="filterSector"
             class="w-full rounded-lg border border-slate-300 bg-slate-50 px-3 py-2 text-sm text-slate-800 font-medium focus:border-indigo-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition">
-            <option value="ALL">全部業別 (143)</option>
+            <option value="ALL">全部業別</option>
           </select>
         </div>
 
@@ -125,7 +134,7 @@
           </label>
           <select id="filterCategory"
             class="w-full rounded-lg border border-slate-300 bg-slate-50 px-3 py-2 text-sm text-slate-800 font-medium focus:border-indigo-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition">
-            <option value="ALL">全部應用類別 (143筆)</option>
+            <option value="ALL">全部應用類別</option>
           </select>
         </div>
 
@@ -136,7 +145,7 @@
           </label>
           <select id="filterCompany"
             class="w-full rounded-lg border border-slate-300 bg-slate-50 px-3 py-2 text-sm text-slate-800 font-medium focus:border-indigo-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition">
-            <option value="ALL">全部金融機構 (82家)</option>
+            <option value="ALL">全部金融機構</option>
           </select>
         </div>
 
@@ -166,7 +175,7 @@
       <!-- Active Filter Bar & Action Buttons -->
       <div class="flex flex-wrap items-center justify-between gap-2 mt-3 pt-2.5 border-t border-slate-100">
         <div class="flex flex-wrap items-center gap-1.5" id="activeFiltersContainer">
-          <span class="text-xs text-slate-500 font-medium">目前篩選狀態：顯示全部 143 筆 AI 應用場景</span>
+          <span class="text-xs text-slate-500 font-medium">目前篩選狀態：載入中...</span>
         </div>
         <div class="flex items-center gap-2">
           <button id="resetFiltersBtn" type="button"
@@ -200,11 +209,11 @@
         <div>
           <p class="text-xs font-semibold uppercase tracking-wider text-slate-500">符合篩選場景數</p>
           <div class="mt-1 flex items-baseline gap-2">
-            <span id="kpiScenarioCount" class="text-2xl sm:text-3xl font-bold text-slate-900">143</span>
+            <span id="kpiScenarioCount" class="text-2xl sm:text-3xl font-bold text-slate-900">--</span>
             <span id="kpiScenarioPct"
-              class="text-xs font-semibold px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700">佔全體 100%</span>
+              class="text-xs font-semibold px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700">--</span>
           </div>
-          <p id="kpiScenarioSub" class="text-xs text-slate-500 mt-1.5">全體總計 143 筆獨立 AI 應用場景</p>
+          <p id="kpiScenarioSub" class="text-xs text-slate-500 mt-1.5">資料計算中...</p>
         </div>
         <div class="w-10 h-10 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -219,10 +228,10 @@
         <div>
           <p class="text-xs font-semibold uppercase tracking-wider text-slate-500">涵蓋 AI 應用類別</p>
           <div class="mt-1 flex items-baseline gap-2">
-            <span id="kpiCategoryCount" class="text-2xl sm:text-3xl font-bold text-slate-900">13</span>
-            <span id="kpiCategoryTotalLabel" class="text-xs text-slate-500 font-medium">/ 14 類定義</span>
+            <span id="kpiCategoryCount" class="text-2xl sm:text-3xl font-bold text-slate-900">--</span>
+            <span id="kpiCategoryTotalLabel" class="text-xs text-slate-500 font-medium">/ -- 類定義</span>
           </div>
-          <p id="kpiCategorySub" class="text-xs text-slate-500 mt-1.5">13 類有實際案例（AI Agent 為 0 筆）</p>
+          <p id="kpiCategorySub" class="text-xs text-slate-500 mt-1.5">資料計算中...</p>
         </div>
         <div class="w-10 h-10 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -237,11 +246,11 @@
         <div>
           <p class="text-xs font-semibold uppercase tracking-wider text-slate-500">涵蓋金融機構 / 單位</p>
           <div class="mt-1 flex items-baseline gap-2">
-            <span id="kpiCompanyCount" class="text-2xl sm:text-3xl font-bold text-slate-900">82</span>
+            <span id="kpiCompanyCount" class="text-2xl sm:text-3xl font-bold text-slate-900">--</span>
             <span id="kpiAvgPerCompany"
-              class="text-xs font-semibold px-2 py-0.5 rounded-full bg-amber-50 text-amber-700">平均 1.74 筆/家</span>
+              class="text-xs font-semibold px-2 py-0.5 rounded-full bg-amber-50 text-amber-700">--</span>
           </div>
-          <p id="kpiCompanySub" class="text-xs text-slate-500 mt-1.5">銀行 26 家 · 保險 26 家 · 證期 30 家</p>
+          <p id="kpiCompanySub" class="text-xs text-slate-500 mt-1.5">資料計算中...</p>
         </div>
         <div class="w-10 h-10 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center shrink-0">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -257,11 +266,11 @@
           <p class="text-xs font-semibold uppercase tracking-wider text-slate-500">最大宗應用類別</p>
           <div class="mt-1 flex items-baseline gap-2">
             <span id="kpiTopCategoryName"
-              class="text-xl sm:text-2xl font-bold text-indigo-700 truncate max-w-[160px]">生成式AI</span>
+              class="text-xl sm:text-2xl font-bold text-indigo-700 truncate max-w-[160px]">--</span>
             <span id="kpiTopCategoryCount"
-              class="text-xs font-semibold px-2 py-0.5 rounded-full bg-rose-50 text-rose-700">32 筆</span>
+              class="text-xs font-semibold px-2 py-0.5 rounded-full bg-rose-50 text-rose-700">--</span>
           </div>
-          <p id="kpiTopCategorySub" class="text-xs text-slate-500 mt-1.5">佔目前篩選場景之 22.4%</p>
+          <p id="kpiTopCategorySub" class="text-xs text-slate-500 mt-1.5">資料計算中...</p>
         </div>
         <div class="w-10 h-10 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center shrink-0">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -285,7 +294,7 @@
                 各 AI 應用類別場景數量分布
                 <span class="text-xs font-normal text-slate-500">(點擊長條可快速篩選類別)</span>
               </h2>
-              <p class="text-xs text-slate-500 mt-0.5">統計各技術與應用類別之場景筆數（含 0 筆之 AI Agent 類別）</p>
+              <p class="text-xs text-slate-500 mt-0.5">統計各技術與應用類別之場景筆數</p>
             </div>
             <div class="flex items-center bg-slate-100 p-0.5 rounded-lg self-start sm:self-auto">
               <button id="catChartModeTotal" type="button"
@@ -308,7 +317,7 @@
           <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-4">
             <div>
               <h2 id="rightChartTitle" class="text-base font-bold text-slate-900">
-                三大金融業別場景佔比
+                金融業別場景佔比
               </h2>
               <p id="rightChartSubtitle" class="text-xs text-slate-500 mt-0.5">點擊圖表區塊可篩選對應業別或機構</p>
             </div>
@@ -354,7 +363,7 @@
             <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
               AI 應用場景明細列表
               <span id="tableCountBadge"
-                class="px-2.5 py-0.5 text-xs font-semibold rounded-full bg-slate-100 text-slate-700">共 143 筆</span>
+                class="px-2.5 py-0.5 text-xs font-semibold rounded-full bg-slate-100 text-slate-700">--</span>
             </h2>
             <p class="text-xs text-slate-500 mt-0.5">點擊任一列可檢視該場景之完整分類原則與業者資訊</p>
           </div>
@@ -363,7 +372,7 @@
             <label for="sortSelect" class="text-xs font-medium text-slate-600">排序：</label>
             <select id="sortSelect"
               class="rounded-lg border border-slate-300 bg-slate-50 px-2.5 py-1.5 text-xs text-slate-800 font-medium focus:border-indigo-500 focus:outline-none">
-              <option id="sortDefaultOpt" value="default">原始檔案順序 (編號 1–143)</option>
+              <option id="sortDefaultOpt" value="default">原始檔案順序</option>
               <option value="sector">依金融業別排序</option>
               <option value="company">依機構名稱筆畫/字母</option>
               <option value="category">依 AI 應用類別排序</option>
@@ -433,7 +442,7 @@
           </div>
           <span id="matrixSummaryBadge"
             class="text-xs font-medium text-indigo-700 bg-indigo-50 px-3 py-1 rounded-full border border-indigo-200">
-            總計 143 筆場景 · 14 大分類
+            載入中...
           </span>
         </div>
         <div class="overflow-x-auto custom-scrollbar">
@@ -448,7 +457,7 @@
       <div class="bg-white rounded-xl border border-slate-200/80 shadow-sm overflow-hidden">
         <div class="p-5 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div>
-            <h2 id="institutionsDirTitle" class="text-base font-bold text-slate-900">金融機構與周邊單位來源索引 (共 82 家)</h2>
+            <h2 id="institutionsDirTitle" class="text-base font-bold text-slate-900">金融機構與周邊單位來源索引</h2>
             <p class="text-xs text-slate-500 mt-0.5">對應 Excel「來源索引」工作表，點擊任一機構可立即篩選並檢視其申報之 AI 場景</p>
           </div>
           <div class="flex items-center gap-2">
@@ -471,7 +480,7 @@
       <!-- Category Definitions Table -->
       <div class="bg-white rounded-xl border border-slate-200/80 shadow-sm overflow-hidden">
         <div class="p-5 border-b border-slate-200">
-          <h2 id="definitionsHeaderTitle" class="text-base font-bold text-slate-900">台灣金融業 AI 應用｜14 大類別判斷原則與界線說明</h2>
+          <h2 id="definitionsHeaderTitle" class="text-base font-bold text-slate-900">台灣金融業 AI 應用｜類別判斷原則與界線說明</h2>
           <p class="text-xs text-slate-500 mt-0.5">完整收錄附件 Excel「分類說明」工作表之分類標準、界線注意事項與筆數統計</p>
         </div>
         <div class="overflow-x-auto custom-scrollbar">
@@ -569,10 +578,18 @@
   </div>
 
   <script>
-    // Embedded Workbook Data (Fallback when local Excel is not fetched via HTTP)
+    // Embedded Initial Data (Fallback when opened without HTTP server; overridden dynamically by 金融業AI場景應用.xlsx)
     let RAW_DATA = {"scenarios": [{"id": 1, "sector": "銀行業", "company": "富邦金控", "scenario": "智能法遵系統：蒐集外規異動資訊，自動判讀內外規及相關單位關聯，輔助法遵檢視與派發作業。", "category": "比對", "pdfPage": "1"}, {"id": 2, "sector": "銀行業", "company": "富邦金控", "scenario": "端點偵測及回應（EDR）資安監控分析：即時監控電腦活動，交叉比對威脅情資。", "category": "比對", "pdfPage": "1"}, {"id": 3, "sector": "銀行業", "company": "富邦金控", "scenario": "網路偵測與回應（NDR）：即時側錄與截取網路流量，以機器學習解析異常行為。", "category": "其它", "pdfPage": "1"}, {"id": 4, "sector": "銀行業", "company": "臺灣金控", "scenario": "導入微軟 Copilot，協助文件撰寫、資料分析、簡報製作、資訊摘要及報告初稿，並支援會議紀錄、信件與公文作業。", "category": "M365 Copilot", "pdfPage": "1"}, {"id": 5, "sector": "銀行業", "company": "玉山金控", "scenario": "「金融無塵室」計畫：應用同態加密與雙盲技術，在安全合規環境促成跨行庫、跨產業資料協作，強化聯防識詐。", "category": "阻詐", "pdfPage": "1"}, {"id": 6, "sector": "銀行業", "company": "王道銀行", "scenario": "智能客服。", "category": "智能客服", "pdfPage": "1"}, {"id": 7, "sector": "銀行業", "company": "連線銀行", "scenario": "防詐預警：已發展四個預警模型，其中兩個具每小時自動 BLOCK 機制。", "category": "阻詐", "pdfPage": "1"}, {"id": 8, "sector": "銀行業", "company": "台新銀行", "scenario": "防範詐騙：以圖演算法追蹤多層次金流與可疑帳戶，結合機器學習辨識詐騙模式。", "category": "阻詐", "pdfPage": "1"}, {"id": 9, "sector": "銀行業", "company": "台新銀行", "scenario": "智能質檢：導入 ASR 語音辨識與 LLM，建構自動化質檢流程，實現音檔轉譯文本等作業。", "category": "語音質檢/應用", "pdfPage": "1"}, {"id": 10, "sector": "銀行業", "company": "台新銀行", "scenario": "智能小幫手：建立智能知識管理平台，提供內部員工語意式智能搜尋問答（原文未明示 RAG）。", "category": "RAG/KM", "pdfPage": "1"}, {"id": 11, "sector": "銀行業", "company": "彰化銀行", "scenario": "「鷹眼 AI 防詐模型」：搭配「疑似不法顯屬異常」兩項 Rule-based 風險態樣指標，每日自動設控高風險存款帳戶，並保留人工審核、介入及解控救濟機制。", "category": "阻詐", "pdfPage": "1"}, {"id": 12, "sector": "銀行業", "company": "將來銀行", "scenario": "「AI 小將」文字客服：提供 24×7 服務，涵蓋既有產品，原文載明覆蓋率（精準度）達 97.6%。", "category": "智能客服", "pdfPage": "1"}, {"id": 13, "sector": "銀行業", "company": "渣打銀行", "scenario": "YODA 銀行內部智能助理機器人：協助員工快速找到所需資訊（原文未明示 RAG 或自主代理機制）。", "category": "RAG/KM", "pdfPage": "1"}, {"id": 14, "sector": "銀行業", "company": "華南銀行", "scenario": "AI 助理系統：快速檢索銀行核心知識並生成摘要（依檢索結合生成的用途判為 RAG）。", "category": "RAG/KM", "pdfPage": "2"}, {"id": 15, "sector": "銀行業", "company": "華南銀行", "scenario": "「雷神識詐」：鎖定異常帳戶以防範詐騙。", "category": "阻詐", "pdfPage": "2"}, {"id": 16, "sector": "銀行業", "company": "華南銀行", "scenario": "AML 風險評級：對案件進行風險分級，提升審查效率。", "category": "其它", "pdfPage": "2"}, {"id": 17, "sector": "銀行業", "company": "華南銀行", "scenario": "智能 IVR：透過語音辨識判斷並完成客戶意圖。", "category": "語音質檢/應用", "pdfPage": "2"}, {"id": 18, "sector": "銀行業", "company": "華南銀行", "scenario": "AI 代理人：運用於投研報告及產經週報，協助掌握全球市場動態與產業趨勢。", "category": "生成式AI", "pdfPage": "2"}, {"id": 19, "sector": "銀行業", "company": "台中銀行", "scenario": "知識檢索平台：以 RAG 整合行內規章，跨部門定位文件片段，並結合生成式 AI 自動彙整、即時產出重點答案。", "category": "RAG/KM", "pdfPage": "2"}, {"id": 20, "sector": "銀行業", "company": "臺灣銀行", "scenario": "導入 Copilot，協助文件撰寫、資料分析、簡報製作、資訊摘要及報告初稿，並支援會議紀錄、信件與公文作業。", "category": "M365 Copilot", "pdfPage": "2"}, {"id": 21, "sector": "銀行業", "company": "玉山銀行", "scenario": "信貸流程導入 Proxy Income 財力評估模型與自動報價系統，實現數據驅動風險定價，提升徵審自動化時效。", "category": "RPA", "pdfPage": "2"}, {"id": 22, "sector": "銀行業", "company": "元大銀行", "scenario": "「天網防詐模型」：訓練 AI 辨識客戶交易行為是否涉及詐騙並提前預警。", "category": "阻詐", "pdfPage": "2"}, {"id": 23, "sector": "銀行業", "company": "國泰世華銀行", "scenario": "員工 AI 助手：結合生成式 AI 與知識管理，協助查詢作業規範、業務知識及常見問題（依知識查詢結合生成的用途判為 RAG）。", "category": "RAG/KM", "pdfPage": "2"}, {"id": 24, "sector": "銀行業", "company": "國泰世華銀行", "scenario": "智能客服「阿發」：結合生成式 AI、官網公開資訊及 FAQ 檢索資料庫，供客戶查找銀行業務與服務資訊。", "category": "智能客服", "pdfPage": "2"}, {"id": 25, "sector": "銀行業", "company": "滙豐銀行", "scenario": "AI Markets：以自然語言處理（NLP）及大型語言模型（LLM）等技術，支援機構投資人與全球市場互動。", "category": "生成式AI", "pdfPage": "2"}, {"id": 26, "sector": "銀行業", "company": "臺灣中小企銀", "scenario": "行動銀行智能語音小幫手 i-Money：結合 NLU、語音辨識與 API，提供功能導航、帳務查詢、轉帳及近 50 項生活繳費等語音對話服務。", "category": "語音質檢/應用", "pdfPage": "2"}, {"id": 27, "sector": "銀行業", "company": "中國信託銀行", "scenario": "智能客服「小 C」。", "category": "智能客服", "pdfPage": "2"}, {"id": 28, "sector": "銀行業", "company": "中國信託銀行", "scenario": "分行 AI 審票（原文未交代具體辨識或比對技術）。", "category": "其它", "pdfPage": "2"}, {"id": 29, "sector": "銀行業", "company": "中國信託銀行", "scenario": "防詐應用（原文未詳述）。", "category": "阻詐", "pdfPage": "2"}, {"id": 30, "sector": "銀行業", "company": "台北富邦銀行", "scenario": "即時意圖偵測模型。", "category": "模型訓練", "pdfPage": "2–3"}, {"id": 31, "sector": "銀行業", "company": "台北富邦銀行", "scenario": "跨產品偏好排序模型。", "category": "模型訓練", "pdfPage": "2–3"}, {"id": 32, "sector": "銀行業", "company": "台北富邦銀行", "scenario": "情境偏好排序模型。", "category": "模型訓練", "pdfPage": "2–3"}, {"id": 33, "sector": "銀行業", "company": "台北富邦銀行", "scenario": "產品意圖預測模型。", "category": "模型訓練", "pdfPage": "2–3"}, {"id": 34, "sector": "銀行業", "company": "台北富邦銀行", "scenario": "鷹眼防詐模型。", "category": "阻詐", "pdfPage": "2–3"}, {"id": 35, "sector": "銀行業", "company": "樂天銀行", "scenario": "於鷹眼聯盟會議分享應用與成效（原文未詳述實際場景與技術，但有鷹眼就歸類為阻詐）。", "category": "阻詐", "pdfPage": "3"}, {"id": 36, "sector": "銀行業", "company": "全盈支付", "scenario": "導入 AI 助理，協助軟體開發、資料庫語言審查及白箱測試風險修復，兼顧服務功能發展與資安風險控管。", "category": "程式助手", "pdfPage": "3"}, {"id": 37, "sector": "銀行業", "company": "全支付公司", "scenario": "程式碼除錯：以 AI 檢驗 code 內容 bug，提升程式正確性。", "category": "程式助手", "pdfPage": "3"}, {"id": 38, "sector": "銀行業", "company": "全支付公司", "scenario": "內部教育訓練：以 AI 調整、檢核或生成內部訓練內容，降低人力耗費並提升訓練成效。", "category": "生成式AI", "pdfPage": "3"}, {"id": 39, "sector": "銀行業", "company": "金融研訓院", "scenario": "AI 線上面試輔助口試（原文未交代具體技術）。", "category": "其它", "pdfPage": "3"}, {"id": 40, "sector": "銀行業", "company": "存保公司", "scenario": "開發存保專屬 AI 應答助理，應用於內部知識問答（原文未明示 RAG）。", "category": "RAG/KM", "pdfPage": "3"}, {"id": 41, "sector": "銀行業", "company": "存保公司", "scenario": "使用 AI 工具製作內部文件等非機敏資料業務。", "category": "生成式AI", "pdfPage": "3"}, {"id": 42, "sector": "銀行業", "company": "存保公司", "scenario": "使用 AI 工具進行工作流程自動化等非機敏資料業務。", "category": "RPA", "pdfPage": "3"}, {"id": 43, "sector": "銀行業", "company": "存保公司", "scenario": "建置地端 AI 基礎架構及封閉式 AI 平台，應用於機敏資料業務（原文未詳列業務）。", "category": "其它", "pdfPage": "3"}, {"id": 44, "sector": "銀行業", "company": "聯卡中心", "scenario": "TRACE 詐欺偵測：依持卡人過去交易行為變數評分，於交易當下產生風險預測分數，協助發卡機構評估風險。", "category": "阻詐", "pdfPage": "3"}, {"id": 45, "sector": "銀行業", "company": "聯卡中心", "scenario": "AML 系統：執行未知風險異常交易態樣分析預測概念驗證，辨識監控人員尚未發現的異常態樣。", "category": "其它", "pdfPage": "3"}, {"id": 46, "sector": "保險業", "company": "國泰人壽", "scenario": "AI Coach：以 LLM 模擬虛擬客戶並扮演多元角色，供業務員與客服進行技巧對練。", "category": "生成式AI", "pdfPage": "3"}, {"id": 47, "sector": "保險業", "company": "國泰人壽", "scenario": "理賠 AI 系統：以 LLM 輔助理賠單據資訊萃取。", "category": "生成式AI", "pdfPage": "3"}, {"id": 48, "sector": "保險業", "company": "國泰人壽", "scenario": "理賠 AI 系統：以機器學習預測異常風險，輔助理賠人員決策（原文未限定為詐欺風險）。", "category": "其它", "pdfPage": "3"}, {"id": 49, "sector": "保險業", "company": "國泰人壽", "scenario": "「泰好客 Cathay AIM」：以機器學習預測近期各類商品高購買力客戶，輔助業務員拜訪行銷。", "category": "其它", "pdfPage": "3"}, {"id": 50, "sector": "保險業", "company": "新光人壽", "scenario": "理賠防詐模型。", "category": "阻詐", "pdfPage": "3"}, {"id": 51, "sector": "保險業", "company": "新光人壽", "scenario": "LLM 法扣系統（原文未進一步說明）。", "category": "生成式AI", "pdfPage": "3"}, {"id": 52, "sector": "保險業", "company": "新光人壽", "scenario": "語音辨識應用。", "category": "語音質檢/應用", "pdfPage": "3"}, {"id": 53, "sector": "保險業", "company": "友邦人壽", "scenario": "運用 Copilot 生成式 AI 協助文件撰寫、資料整理及程式開發，採人機協作以確保決策品質與合規性。", "category": "程式助手", "pdfPage": "3"}, {"id": 54, "sector": "保險業", "company": "台灣人壽", "scenario": "高齡錄音質檢系統（原文未明示語音轉文字流程）。", "category": "語音質檢/應用", "pdfPage": "3"}, {"id": 55, "sector": "保險業", "company": "台灣人壽", "scenario": "語音機器人電訪系統。", "category": "語音質檢/應用", "pdfPage": "3"}, {"id": 56, "sector": "保險業", "company": "富邦人壽", "scenario": "AI 協助核保員與理賠員進行文件重點摘要。", "category": "生成式AI", "pdfPage": "3–4"}, {"id": 57, "sector": "保險業", "company": "富邦人壽", "scenario": "AI 輔助職業／手術代碼判斷。", "category": "其它", "pdfPage": "3–4"}, {"id": 58, "sector": "保險業", "company": "富邦人壽", "scenario": "AI 輔助產出商品開發文件。", "category": "生成式AI", "pdfPage": "3–4"}, {"id": 59, "sector": "保險業", "company": "富邦人壽", "scenario": "AI 智能客服，提供客戶即時問答。", "category": "智能客服", "pdfPage": "3–4"}, {"id": 60, "sector": "保險業", "company": "富邦人壽", "scenario": "AI 輔助 IT 人員程式碼編譯（原文未明示程式碼生成）。", "category": "程式助手", "pdfPage": "3–4"}, {"id": 61, "sector": "保險業", "company": "富邦人壽", "scenario": "AI 應用於風險管理與法遵（原文未詳述具體功能）。", "category": "其它", "pdfPage": "3–4"}, {"id": 62, "sector": "保險業", "company": "元大人壽", "scenario": "通路行為風險模型：預測業務員風險；原文載明約減少 74% 需進階審查資料量，並捕捉約 70% 異常業務員。", "category": "模型訓練", "pdfPage": "4"}, {"id": 63, "sector": "保險業", "company": "元大人壽", "scenario": "理賠詐欺風險模型：預測理賠申請風險；原文載明約減少 96% 需進階審查資料量，並捕捉約 95% 疑似理賠詐欺案件。", "category": "阻詐", "pdfPage": "4"}, {"id": 64, "sector": "保險業", "company": "凱基人壽", "scenario": "保險商品輔銷文件（如商品簡介）合規預審：進行適法性比對。", "category": "比對", "pdfPage": "4"}, {"id": 65, "sector": "保險業", "company": "凱基人壽", "scenario": "保險商品輔銷文件合規預審：生成預審檢核報告。", "category": "生成式AI", "pdfPage": "4"}, {"id": 66, "sector": "保險業", "company": "全球人壽", "scenario": "與清大產學合作建置「AI 智能語音質檢」系統，全面檢視新契約電訪品質（原文未明示語音轉文字流程）。", "category": "語音質檢/應用", "pdfPage": "4"}, {"id": 67, "sector": "保險業", "company": "南山人壽", "scenario": "AI 輔助核保流程（原文未詳述技術）。", "category": "其它", "pdfPage": "4"}, {"id": 68, "sector": "保險業", "company": "南山人壽", "scenario": "AI 輔助理賠流程（原文未詳述技術）。", "category": "其它", "pdfPage": "4"}, {"id": 69, "sector": "保險業", "company": "南山人壽", "scenario": "業務員 AI 智能對練（依角色對練用途判為生成式 AI）。", "category": "生成式AI", "pdfPage": "4"}, {"id": 70, "sector": "保險業", "company": "南山人壽", "scenario": "法遵 AI 智能助理（原文未明示 RAG 或自主代理機制）。", "category": "其它", "pdfPage": "4"}, {"id": 71, "sector": "保險業", "company": "保誠人壽", "scenario": "AI 核保：識別低風險客戶，結合簡化醫療問卷、交叉銷售及再次銷售以提升客戶體驗。", "category": "其它", "pdfPage": "4"}, {"id": 72, "sector": "保險業", "company": "科隆再保公司", "scenario": "台灣分公司僅於內部作業使用 AI（原文未詳述場景）。", "category": "其它", "pdfPage": "4"}, {"id": 73, "sector": "保險業", "company": "中信產險", "scenario": "投保文件智能辨識平台：以 AI OCR 結合電腦視覺與機器學習，自動辨識身分證件、行車執照與投保文件並擷取欄位，串接核保與核對機制。", "category": "OCR", "pdfPage": "4"}, {"id": 74, "sector": "保險業", "company": "科法斯產險", "scenario": "導入 Microsoft Copilot，支援文件撰寫、資料摘要及內部溝通，並應用於風險管理與合規作業。", "category": "M365 Copilot", "pdfPage": "4"}, {"id": 75, "sector": "保險業", "company": "國泰產險", "scenario": "「CarTech 智能車險加值服務」：結合車聯網數據、AI 風險預測、駕駛行為管理及顧問式損害防阻服務，以預防風險為核心。", "category": "其它", "pdfPage": "4"}, {"id": 76, "sector": "保險業", "company": "富邦產險", "scenario": "語音自助服務：優化智能留單、保單查詢、智能補發及理賠進度查詢。", "category": "語音質檢/應用", "pdfPage": "4"}, {"id": 77, "sector": "保險業", "company": "新安東京產險", "scenario": "以客戶風險模型輔助核保作業。", "category": "模型訓練", "pdfPage": "4"}, {"id": 78, "sector": "保險業", "company": "兆豐產險", "scenario": "智能客服。", "category": "智能客服", "pdfPage": "4"}, {"id": 79, "sector": "保險業", "company": "兆豐產險", "scenario": "機器人流程自動化（RPA）。", "category": "RPA", "pdfPage": "4"}, {"id": 80, "sector": "保險業", "company": "富邦綜合保險代理人股份有限公司", "scenario": "以大型語言模型產出過往通話摘要、總結客戶需求，協助業務同仁及客服人員快速掌握歷史互動與客戶想法。", "category": "生成式AI", "pdfPage": "4"}, {"id": 81, "sector": "保險業", "company": "和安保險代理人股份有限公司", "scenario": "推動「全員數位化」，導入 Gemini、Canva AI 等生成式工具製作會議資料、簡報與 DM。", "category": "生成式AI", "pdfPage": "5"}, {"id": 82, "sector": "保險業", "company": "和安保險代理人股份有限公司", "scenario": "將 RPA 導入日常行政作業，減少重複、低價值作業。", "category": "RPA", "pdfPage": "5"}, {"id": 83, "sector": "保險業", "company": "遠傳保險代理人股份有限公司", "scenario": "以 AI 分析客戶資料庫，進行精準行銷。", "category": "其它", "pdfPage": "5"}, {"id": 84, "sector": "保險業", "company": "智匯保險經紀人股份有限公司", "scenario": "保單健診（原文未交代比對機制）。", "category": "其它", "pdfPage": "5"}, {"id": 85, "sector": "保險業", "company": "智匯保險經紀人股份有限公司", "scenario": "智能客服。", "category": "智能客服", "pdfPage": "5"}, {"id": 86, "sector": "保險業", "company": "錠嵂保險經紀人股份有限公司", "scenario": "保單健診（原文未交代比對機制）。", "category": "其它", "pdfPage": "5"}, {"id": 87, "sector": "保險業", "company": "錠嵂保險經紀人股份有限公司", "scenario": "智能客服。", "category": "智能客服", "pdfPage": "5"}, {"id": 88, "sector": "保險業", "company": "錠嵂保險經紀人股份有限公司", "scenario": "考照教練（原文未詳述技術）。", "category": "其它", "pdfPage": "5"}, {"id": 89, "sector": "保險業", "company": "公勝保險經紀人股份有限公司", "scenario": "內部 KM 知識管理應用（原文未明示 RAG）。", "category": "RAG/KM", "pdfPage": "5"}, {"id": 90, "sector": "保險業", "company": "公勝保險經紀人股份有限公司", "scenario": "內部流程自動化。", "category": "RPA", "pdfPage": "5"}, {"id": 91, "sector": "保險業", "company": "公勝保險經紀人股份有限公司", "scenario": "內部生成應用。", "category": "生成式AI", "pdfPage": "5"}, {"id": 92, "sector": "保險業", "company": "公勝保險經紀人股份有限公司", "scenario": "子公司財富規劃建議模組。", "category": "其它", "pdfPage": "5"}, {"id": 93, "sector": "保險業", "company": "美商達信保險經紀人股份有限公司台灣分公司", "scenario": "支援多國語言，提供答案理由與來源（如內部文件）；依文件來源問答用途推定為 RAG，原文未明示技術。", "category": "RAG/KM", "pdfPage": "5"}, {"id": 94, "sector": "保險業", "company": "永達保險經紀人股份有限公司", "scenario": "機器人流程自動化：應用於內部行政作業流程，提升效率與生產力。", "category": "RPA", "pdfPage": "5"}, {"id": 95, "sector": "保險業", "company": "財團法人汽車交通事故特別補償基金", "scenario": "以生成式 AI 服務自動將會議錄音檔轉成文字。", "category": "語音質檢/應用", "pdfPage": "5"}, {"id": 96, "sector": "保險業", "company": "財團法人汽車交通事故特別補償基金", "scenario": "以生成式 AI 擷取會議重點摘要，並自動生成符合內部會議紀錄格式的電子檔。", "category": "生成式AI", "pdfPage": "5"}, {"id": 97, "sector": "證券期貨業", "company": "口袋證券", "scenario": "導入 OpenAI 大型語言模型並結合 RAG，整理股票客觀公開資訊。", "category": "RAG/KM", "pdfPage": "5"}, {"id": 98, "sector": "證券期貨業", "company": "口袋證券", "scenario": "以大型語言模型結合 RAG 提供智能客服，協助投資人取得公開資訊。", "category": "智能客服", "pdfPage": "5"}, {"id": 99, "sector": "證券期貨業", "company": "大昌證券", "scenario": "行銷內容生成。", "category": "生成式AI", "pdfPage": "5"}, {"id": 100, "sector": "證券期貨業", "company": "統一證券", "scenario": "總公司部分人員導入 M365 Copilot，並舉辦黑客松競賽，改善內部作業流程與工作效率。", "category": "M365 Copilot", "pdfPage": "5"}, {"id": 101, "sector": "證券期貨業", "company": "凱基證券", "scenario": "eKYC：於線上開戶及額度調整流程，以監督式機器學習分析結構化客戶資料進行風險推估；非生成式 AI，額度結果供參考並由人工最終審核。", "category": "其它", "pdfPage": "5"}, {"id": 102, "sector": "證券期貨業", "company": "富邦證券", "scenario": "AI 投資助理：解析市場動態並回答投資問題、快速摘要美股法說會重點，以及提供每日 AI 盤前資訊播報（原文未交代語音合成技術）。", "category": "生成式AI", "pdfPage": "5"}, {"id": 103, "sector": "證券期貨業", "company": "華南證券", "scenario": "「AI 投資早報」：整合全球市場動態產出早報，遵循 AI 輔助、人工定稿，並經專業團隊深度審核。", "category": "生成式AI", "pdfPage": "5"}, {"id": 104, "sector": "證券期貨業", "company": "永豐金證券", "scenario": "個股 AI 市場輿情分析及每日投資早報（原文未詳述輿情分析技術；依指定整合為一筆，歸類為生成式AI）。", "category": "生成式AI", "pdfPage": "5"}, {"id": 105, "sector": "證券期貨業", "company": "玉山證券", "scenario": "ETF 智能投資策略互動平台：透過趣味問答與角色互動，即時生成個人化 ETF 投資組合建議。", "category": "生成式AI", "pdfPage": "5–6"}, {"id": 106, "sector": "證券期貨業", "company": "國泰證券", "scenario": "「庫存管家」：以客戶持股為核心，透過 AI 提供個人化推播，協助掌握庫存狀況。", "category": "其它", "pdfPage": "6"}, {"id": 107, "sector": "證券期貨業", "company": "德信證券", "scenario": "財經知識內容教育（原文未詳述生成或問答技術）。", "category": "其它", "pdfPage": "6"}, {"id": 108, "sector": "證券期貨業", "company": "台新證券", "scenario": "智能客服。", "category": "智能客服", "pdfPage": "6"}, {"id": 109, "sector": "證券期貨業", "company": "群益期貨", "scenario": "智能客服。", "category": "智能客服", "pdfPage": "6"}, {"id": 110, "sector": "證券期貨業", "company": "群益期貨", "scenario": "知識管理（原文未明示 RAG）。", "category": "RAG/KM", "pdfPage": "6"}, {"id": 111, "sector": "證券期貨業", "company": "群益期貨", "scenario": "文件分析（原文未交代具體技術）。", "category": "生成式AI", "pdfPage": "6"}, {"id": 112, "sector": "證券期貨業", "company": "群益期貨", "scenario": "風險控管；配合資訊安全與內控制度，符合金融監理要求。", "category": "其它", "pdfPage": "6"}, {"id": 113, "sector": "證券期貨業", "company": "統一期貨", "scenario": "以 AI 自動整理資料、生成簡報及處理複雜文件，減少重複性作業、提升工作效率與品質，並透過人機協作加速工作流程（原文未詳述文件處理技術；依指定歸類為 M365 Copilot）。", "category": "M365 Copilot", "pdfPage": "6"}, {"id": 114, "sector": "證券期貨業", "company": "富邦期貨", "scenario": "「富邦 AI PRO App」：內建 AI 投資助理，即時解析市場訊息並回答投資問題；快速彙整法說會重點；透過 AI 主播每日播報盤前焦點資訊（原文未交代語音合成技術）；並依個人偏好推送個股新聞事件、盤勢摘要與策略資訊。", "category": "App", "pdfPage": "6"}, {"id": 115, "sector": "證券期貨業", "company": "景順投信", "scenario": "Copilot M365 結合 Teams、Outlook、Word、Excel 及 PowerPoint：產出會議紀錄與行動項目、摘要郵件與建議回覆、撰寫文件、分析數據及生成簡報。", "category": "M365 Copilot", "pdfPage": "6"}, {"id": 116, "sector": "證券期貨業", "company": "摩根投信", "scenario": "內部影音生成，支援部門日常流程與專業工作。", "category": "生成式AI", "pdfPage": "6"}, {"id": 117, "sector": "證券期貨業", "company": "摩根投信", "scenario": "內部資訊分析整理。", "category": "生成式AI", "pdfPage": "6"}, {"id": 118, "sector": "證券期貨業", "company": "摩根投信", "scenario": "交易執行優化輔助。", "category": "其它", "pdfPage": "6"}, {"id": 119, "sector": "證券期貨業", "company": "摩根投信", "scenario": "員工通用 AI 生產力輔助工具（原文未詳述功能，判斷為M365 Copilot）。", "category": "M365 Copilot", "pdfPage": "6"}, {"id": 120, "sector": "證券期貨業", "company": "瑞銀投信", "scenario": "導入微軟 Copilot，協助產出文件草稿、簡報大綱與會議摘要；僅作為決策支援，最終決策由具資格人員審核確認。", "category": "M365 Copilot", "pdfPage": "6"}, {"id": 121, "sector": "證券期貨業", "company": "群益投信", "scenario": "即時負面新聞自動化：爬取公開新聞內文，以 LLM 判別新聞中的嫌疑人名並自動建檔。", "category": "生成式AI", "pdfPage": "6"}, {"id": 122, "sector": "證券期貨業", "company": "聯博投信", "scenario": "ABAI：透過單一 API 提供員工閉源與開源大型語言模型環境，支援 GPT、Gemini 等模型及內部投資、通路、營運需求。", "category": "生成式AI", "pdfPage": "7"}, {"id": 123, "sector": "證券期貨業", "company": "聯博投信", "scenario": "ABAI：可存取文件與資料並提供聊天查詢（依文件資料問答用途推定涉及 RAG，原文未明示技術）；以大型語言模型環境提供資料抽取，並提供文件比較、圖表生成及 Text-to-SQL 功能，以及透過安全 API 支援量化研究與開發團隊。", "category": "其它", "pdfPage": "7"}, {"id": 124, "sector": "證券期貨業", "company": "復華投信", "scenario": "AI OCR 表單辨識。", "category": "OCR", "pdfPage": "7"}, {"id": 125, "sector": "證券期貨業", "company": "野村投信", "scenario": "依基金經理人決定的投資策略，輔助生成「四大投資流程」之投資分析報告，減輕文書負擔。", "category": "生成式AI", "pdfPage": "7"}, {"id": 126, "sector": "證券期貨業", "company": "東方匯理投信", "scenario": "以集團 Alto Studio AI 進行文件資料匯總。", "category": "生成式AI", "pdfPage": "7"}, {"id": 127, "sector": "證券期貨業", "company": "東方匯理投信", "scenario": "以集團 Alto Studio AI 進行文件翻譯。", "category": "生成式AI", "pdfPage": "7"}, {"id": 128, "sector": "證券期貨業", "company": "富達投信", "scenario": "導入 Microsoft Copilot，協助日常文件生成、會議重點整理、資料分析及郵件撰寫。", "category": "M365 Copilot", "pdfPage": "7"}, {"id": 129, "sector": "證券期貨業", "company": "路博邁投信", "scenario": "僅運用內部聊天機器人支援行政處理與分析作業（非對客客服，原文未明示 RAG）。", "category": "其它", "pdfPage": "7"}, {"id": 130, "sector": "證券期貨業", "company": "富蘭克林投顧", "scenario": "以 AI 製作廣告素材，於符合作業程序下減少時間與人工成本。", "category": "生成式AI", "pdfPage": "7"}, {"id": 131, "sector": "證券期貨業", "company": "法盛投顧", "scenario": "使用母公司 BPCE Group 開發部署的 AI 工具，僅支援台灣員工行政與日常作業，如文書撰寫、資料整理及會議紀錄，不用於客戶溝通。", "category": "生成式AI", "pdfPage": "7"}, {"id": 132, "sector": "證券期貨業", "company": "阿爾發投顧", "scenario": "「AI 投資長（CIO）」：結合外部專業顧問團隊、專業理財顧問及 24H 智慧監控，提供策略配置、信託規劃與員工福儲等機構資產管理服務（原文未明示自主 AI Agent）。", "category": "其它", "pdfPage": "7"}, {"id": 133, "sector": "證券期貨業", "company": "證券交易所", "scenario": "以語音轉文字等 AI 技術提升市場監理作業效率。", "category": "語音質檢/應用", "pdfPage": "7"}, {"id": 134, "sector": "證券期貨業", "company": "期貨交易所", "scenario": "以機器學習異常偵測演算法，辨識疑似異常交易委託行為，輔助市場監理。", "category": "其它", "pdfPage": "7"}, {"id": 135, "sector": "銀行業", "company": "臺灣中小企業銀行", "scenario": "「AI 模型投資阻詐示警服務」：結合警政署 165 數據與機器學習，從受害者視角捕捉異常轉帳特徵（如異於日常頻率、小額測試），前端即時主動示警，模型精確率逾五成。", "category": "阻詐", "pdfPage": "最新蒐集"}, {"id": 136, "sector": "銀行業", "company": "臺灣中小企業銀行", "scenario": "「天眼識詐模型」：運用 AI 與深度學習分析帳戶交易頻率與金流特徵，即時發出警示輔助行員關懷提問，異常帳戶偵測率達七成。", "category": "阻詐", "pdfPage": "最新蒐集"}, {"id": 137, "sector": "銀行業", "company": "元大銀行", "scenario": "「元先生」雙腦智能客服：結合諮詢腦（FAQ）與查詢腦（NLU）之雙腦 AI，支援多意圖識別，回答精準度達 9 成以上。", "category": "智能客服", "pdfPage": "2"}, {"id": 138, "sector": "銀行業", "company": "華南銀行", "scenario": "資訊單位導入 GitHub Copilot 協作代理人，協助工程師進行程式碼建議、弱點修補與單元測試生成。", "category": "程式助手", "pdfPage": "2"}, {"id": 139, "sector": "銀行業", "company": "國泰世華銀行", "scenario": "GAIA 2.0 智慧文檔處理（IDP）：以多代理（Multi-Agent）架構自動摘要聯貸合約與法規關鍵風險。", "category": "生成式AI", "pdfPage": "2"}, {"id": 140, "sector": "銀行業", "company": "台新銀行", "scenario": "「AI企業徵信平台」：運用 AI 於企業徵信與授信評估，自動辨識財力文件、驗證數據並產製報告，提升報告產製時效與風險辨識。", "category": "生成式AI", "pdfPage": "1"}, {"id": 141, "sector": "銀行業", "company": "台新銀行", "scenario": "「RICHIE 智慧推薦引擎」：於 Richart App 中透過 AI 分析客戶行為與交易紀錄，主動提供個人化金融服務與理財建議。", "category": "App", "pdfPage": "1"}, {"id": 142, "sector": "證券期貨業", "company": "永豐金證券", "scenario": "大戶投 App 導入自主開發 AI 智能引擎與 RAG 技術，推出個人化智能庫存日報與情緒雷達，根據用戶持股盤前自動整理相關新聞與觀點。", "category": "App", "pdfPage": "5"}, {"id": 143, "sector": "證券期貨業", "company": "元大證券", "scenario": "導入 AI 威脅辨識與自動化資安應變防禦系統，將資安防禦從被動防禦提升至主動預警。", "category": "其它", "pdfPage": "最新蒐集"}], "sources": [{"id": 1, "sector": "銀行業", "company": "富邦金控", "pdfPage": "1", "count": 3}, {"id": 2, "sector": "銀行業", "company": "臺灣金控", "pdfPage": "1", "count": 1}, {"id": 3, "sector": "銀行業", "company": "玉山金控", "pdfPage": "1", "count": 1}, {"id": 4, "sector": "銀行業", "company": "王道銀行", "pdfPage": "1", "count": 1}, {"id": 5, "sector": "銀行業", "company": "連線銀行", "pdfPage": "1", "count": 1}, {"id": 6, "sector": "銀行業", "company": "台新銀行", "pdfPage": "1", "count": 5}, {"id": 7, "sector": "銀行業", "company": "彰化銀行", "pdfPage": "1", "count": 1}, {"id": 8, "sector": "銀行業", "company": "將來銀行", "pdfPage": "1", "count": 1}, {"id": 9, "sector": "銀行業", "company": "渣打銀行", "pdfPage": "1", "count": 1}, {"id": 10, "sector": "銀行業", "company": "華南銀行", "pdfPage": "2", "count": 6}, {"id": 11, "sector": "銀行業", "company": "台中銀行", "pdfPage": "2", "count": 1}, {"id": 12, "sector": "銀行業", "company": "臺灣銀行", "pdfPage": "2", "count": 1}, {"id": 13, "sector": "銀行業", "company": "玉山銀行", "pdfPage": "2", "count": 1}, {"id": 14, "sector": "銀行業", "company": "元大銀行", "pdfPage": "2", "count": 2}, {"id": 15, "sector": "銀行業", "company": "國泰世華銀行", "pdfPage": "2", "count": 3}, {"id": 16, "sector": "銀行業", "company": "滙豐銀行", "pdfPage": "2", "count": 1}, {"id": 17, "sector": "銀行業", "company": "臺灣中小企銀", "pdfPage": "2", "count": 1}, {"id": 18, "sector": "銀行業", "company": "中國信託銀行", "pdfPage": "2", "count": 3}, {"id": 19, "sector": "銀行業", "company": "台北富邦銀行", "pdfPage": "2–3", "count": 5}, {"id": 20, "sector": "銀行業", "company": "樂天銀行", "pdfPage": "3", "count": 1}, {"id": 21, "sector": "銀行業", "company": "全盈支付", "pdfPage": "3", "count": 1}, {"id": 22, "sector": "銀行業", "company": "全支付公司", "pdfPage": "3", "count": 2}, {"id": 23, "sector": "銀行業", "company": "金融研訓院", "pdfPage": "3", "count": 1}, {"id": 24, "sector": "銀行業", "company": "存保公司", "pdfPage": "3", "count": 4}, {"id": 25, "sector": "銀行業", "company": "聯卡中心", "pdfPage": "3", "count": 2}, {"id": 26, "sector": "保險業", "company": "國泰人壽", "pdfPage": "3", "count": 4}, {"id": 27, "sector": "保險業", "company": "新光人壽", "pdfPage": "3", "count": 3}, {"id": 28, "sector": "保險業", "company": "友邦人壽", "pdfPage": "3", "count": 1}, {"id": 29, "sector": "保險業", "company": "台灣人壽", "pdfPage": "3", "count": 2}, {"id": 30, "sector": "保險業", "company": "富邦人壽", "pdfPage": "3–4", "count": 6}, {"id": 31, "sector": "保險業", "company": "元大人壽", "pdfPage": "4", "count": 2}, {"id": 32, "sector": "保險業", "company": "凱基人壽", "pdfPage": "4", "count": 2}, {"id": 33, "sector": "保險業", "company": "全球人壽", "pdfPage": "4", "count": 1}, {"id": 34, "sector": "保險業", "company": "南山人壽", "pdfPage": "4", "count": 4}, {"id": 35, "sector": "保險業", "company": "保誠人壽", "pdfPage": "4", "count": 1}, {"id": 36, "sector": "保險業", "company": "科隆再保公司", "pdfPage": "4", "count": 1}, {"id": 37, "sector": "保險業", "company": "中信產險", "pdfPage": "4", "count": 1}, {"id": 38, "sector": "保險業", "company": "科法斯產險", "pdfPage": "4", "count": 1}, {"id": 39, "sector": "保險業", "company": "國泰產險", "pdfPage": "4", "count": 1}, {"id": 40, "sector": "保險業", "company": "富邦產險", "pdfPage": "4", "count": 1}, {"id": 41, "sector": "保險業", "company": "新安東京產險", "pdfPage": "4", "count": 1}, {"id": 42, "sector": "保險業", "company": "兆豐產險", "pdfPage": "4", "count": 2}, {"id": 43, "sector": "保險業", "company": "富邦綜合保險代理人股份有限公司", "pdfPage": "4", "count": 1}, {"id": 44, "sector": "保險業", "company": "和安保險代理人股份有限公司", "pdfPage": "5", "count": 2}, {"id": 45, "sector": "保險業", "company": "遠傳保險代理人股份有限公司", "pdfPage": "5", "count": 1}, {"id": 46, "sector": "保險業", "company": "智匯保險經紀人股份有限公司", "pdfPage": "5", "count": 2}, {"id": 47, "sector": "保險業", "company": "錠嵂保險經紀人股份有限公司", "pdfPage": "5", "count": 3}, {"id": 48, "sector": "保險業", "company": "公勝保險經紀人股份有限公司", "pdfPage": "5", "count": 4}, {"id": 49, "sector": "保險業", "company": "美商達信保險經紀人股份有限公司台灣分公司", "pdfPage": "5", "count": 1}, {"id": 50, "sector": "保險業", "company": "永達保險經紀人股份有限公司", "pdfPage": "5", "count": 1}, {"id": 51, "sector": "保險業", "company": "財團法人汽車交通事故特別補償基金", "pdfPage": "5", "count": 2}, {"id": 52, "sector": "證券期貨業", "company": "口袋證券", "pdfPage": "5", "count": 2}, {"id": 53, "sector": "證券期貨業", "company": "大昌證券", "pdfPage": "5", "count": 1}, {"id": 54, "sector": "證券期貨業", "company": "統一證券", "pdfPage": "5", "count": 1}, {"id": 55, "sector": "證券期貨業", "company": "凱基證券", "pdfPage": "5", "count": 1}, {"id": 56, "sector": "證券期貨業", "company": "富邦證券", "pdfPage": "5", "count": 1}, {"id": 57, "sector": "證券期貨業", "company": "華南證券", "pdfPage": "5", "count": 1}, {"id": 58, "sector": "證券期貨業", "company": "永豐金證券", "pdfPage": "5", "count": 2}, {"id": 59, "sector": "證券期貨業", "company": "玉山證券", "pdfPage": "5–6", "count": 1}, {"id": 60, "sector": "證券期貨業", "company": "國泰證券", "pdfPage": "6", "count": 1}, {"id": 61, "sector": "證券期貨業", "company": "德信證券", "pdfPage": "6", "count": 1}, {"id": 62, "sector": "證券期貨業", "company": "台新證券", "pdfPage": "6", "count": 1}, {"id": 63, "sector": "證券期貨業", "company": "群益期貨", "pdfPage": "6", "count": 4}, {"id": 64, "sector": "證券期貨業", "company": "統一期貨", "pdfPage": "6", "count": 1}, {"id": 65, "sector": "證券期貨業", "company": "富邦期貨", "pdfPage": "6", "count": 1}, {"id": 66, "sector": "證券期貨業", "company": "景順投信", "pdfPage": "6", "count": 1}, {"id": 67, "sector": "證券期貨業", "company": "摩根投信", "pdfPage": "6", "count": 4}, {"id": 68, "sector": "證券期貨業", "company": "瑞銀投信", "pdfPage": "6", "count": 1}, {"id": 69, "sector": "證券期貨業", "company": "群益投信", "pdfPage": "6", "count": 1}, {"id": 70, "sector": "證券期貨業", "company": "聯博投信", "pdfPage": "7", "count": 2}, {"id": 71, "sector": "證券期貨業", "company": "復華投信", "pdfPage": "7", "count": 1}, {"id": 72, "sector": "證券期貨業", "company": "野村投信", "pdfPage": "7", "count": 1}, {"id": 73, "sector": "證券期貨業", "company": "東方匯理投信", "pdfPage": "7", "count": 2}, {"id": 74, "sector": "證券期貨業", "company": "富達投信", "pdfPage": "7", "count": 1}, {"id": 75, "sector": "證券期貨業", "company": "路博邁投信", "pdfPage": "7", "count": 1}, {"id": 76, "sector": "證券期貨業", "company": "富蘭克林投顧", "pdfPage": "7", "count": 1}, {"id": 77, "sector": "證券期貨業", "company": "法盛投顧", "pdfPage": "7", "count": 1}, {"id": 78, "sector": "證券期貨業", "company": "阿爾發投顧", "pdfPage": "7", "count": 1}, {"id": 79, "sector": "證券期貨業", "company": "證券交易所", "pdfPage": "7", "count": 1}, {"id": 80, "sector": "證券期貨業", "company": "期貨交易所", "pdfPage": "7", "count": 1}, {"id": 81, "sector": "銀行業", "company": "臺灣中小企業銀行", "pdfPage": "最新蒐集", "count": 2}, {"id": 82, "sector": "證券期貨業", "company": "元大證券", "pdfPage": "最新蒐集", "count": 1}], "categories": [{"category": "RAG/KM", "principle": "結合文件／知識檢索與生成回答。", "boundary": "台中銀行、口袋證券原文明示 RAG；華南銀行、國泰世華銀行員工助手、達信、聯博依用途推定，並非技術驗證。", "count": 10}, {"category": "語音質檢/應用", "principle": "語音轉文字、文字轉語音、錄音／語音質檢，以及明示語音辨識、IVR、語音機器人或語音自助服務的應用。", "boundary": "語音相關用途優先於 RPA、智能客服等分類；錄音質檢不須明示轉文字即可納入。語音服務不代表已驗證 STT／TTS 技術；僅通話摘要或 AI 播報且未明示語音轉換／質檢者不逕行納入。", "count": 10}, {"category": "生成式AI", "principle": "內容、摘要、報告、影音生成，以及明示 LLM 的內容處理；程式／SQL 開發輔助另歸程式助手。", "boundary": "亦包含依角色對練、報告產出等用途推定者；不是每項都由原文明示生成式技術。", "count": 32}, {"category": "比對", "principle": "以法規關聯、威脅情資或文件適法性比較為主要用途。", "boundary": "不將所有風險模型、審查、保單健診或 eKYC 一律視為比對。", "count": 3}, {"category": "阻詐", "principle": "明確用於詐欺偵測、識詐、聯防或阻擋詐騙。", "boundary": "一般風險評級、反洗錢、異常交易、資安及理賠異常，不在未明示詐欺時直接歸入。", "count": 14}, {"category": "M365 Copilot", "principle": "原文提及 Microsoft／微軟 Copilot 或 M365 Copilot 的辦公與生產力應用。", "boundary": "將僅稱 Copilot 的辦公應用一併歸此；明示程式開發用途者優先歸程式助手。不憑 Copilot 名稱推定為 GitHub Copilot，版本與授權以原文為準。", "count": 9}, {"category": "AI Agent", "principle": "原文明確稱為 AI 代理人。", "boundary": "目前無場景歸入此類；不因名稱含「助理」「機器人」或「AI 投資長」就推定為自主代理。", "count": 0}, {"category": "OCR", "principle": "原文明確使用 AI OCR 進行文件或表單辨識及欄位擷取。", "boundary": "LLM 單據萃取、AI 審票未明示 OCR 者不自行推定。", "count": 2}, {"category": "智能客服", "principle": "以對客服務、諮詢問答、語音對話、IVR 或電訪機器人為主要用途。", "boundary": "對客服務原則歸此；明示語音辨識、IVR、語音機器人、語音自助服務或語音質檢者，優先歸語音質檢/應用；內部助理不直接歸客服。", "count": 12}, {"category": "程式助手", "principle": "GitHub Copilot 或其它輔助程式／SQL 撰寫、軟體開發、編譯、測試修復或 debug 的應用。", "boundary": "明示程式開發用途者優先歸此，含混合辦公用途及 Text-to-SQL；僅提供 API 或泛稱支援開發團隊不足以判入。現有場景未明示 GitHub Copilot。", "count": 5}, {"category": "RPA", "principle": "依指定口徑，場景明示 RPA 或流程自動化即歸此，含徵審自動化；語音質檢／應用優先另分類。", "boundary": "本分類採用途口徑，不代表均採傳統 RPA 技術；語音自動化質檢改歸語音質檢/應用。僅自動生成、摘要、辨識、設控或泛稱效率提升，不直接判入。", "count": 6}, {"category": "模型訓練", "principle": "依指定口徑，將本次調整前類別為「其它」，且場景文字含「模型」的項目歸入。", "boundary": "依文字條件分類，包含模型預測、排序及風險應用；不代表原文已明示模型訓練用途。", "count": 6}, {"category": "App", "principle": "場景描述與 App 有關者歸入此類。", "boundary": "場景描述只要提及「App」即歸入此類；亦可由使用者手動將場景類別指定為 App，不以描述是否提及「App」為限。", "count": 3}, {"category": "其它", "principle": "預測、排序、評分、基礎架構，或資訊不足的應用；明示 RPA／流程自動化者另歸 RPA；本次原為其它且場景含「模型」者改歸模型訓練。", "boundary": "保留原文概括敘述，不自行補寫不存在的細節；「其它」不代表不使用 AI。", "count": 31}], "notes": [{"title": "整理單位", "content": "共 82 個業者／周邊單位、143 筆場景；保留原文業別及出現順序，不依業者名稱重新推定監理業別。"}, {"title": "拆分原則", "content": "每列為一個可獨立辨識的用途；同一產品若涵蓋不同功能可拆列。同一 Copilot 辦公套件的常見工作則合併敘述，筆數不等於系統數或成熟度。 全盈支付依指定將軟體開發、資料庫語言審查及白箱測試風險修復合併為一筆，歸類為程式助手。 富邦證券依指定將 AI 投資助理的市場問答、美股法說會摘要及每日盤前資訊播報合併為一筆，歸類為生成式AI。 永豐金證券依指定將個股 AI 市場輿情分析及每日投資早報合併為一筆，歸類為生成式AI。 統一期貨依指定將資料整理、簡報生成及複雜文件處理合併為一筆，歸類為 M365 Copilot。 富邦期貨依指定將「富邦 AI PRO」投資問答、法說會摘要、AI 主播盤前播報及個人化資訊推送合併為一筆，並依使用者指定改歸 App。 聯博投信依指定將 ABAI 的文件資料聊天查詢、資料抽取、文件比較、圖表生成、Text-to-SQL 及安全 API 支援合併為一筆，歸類為其它；其餘場景保留。"}, {"title": "單一分類", "content": "每筆只選一個主要類別；語音轉文字、文字轉語音、錄音／語音質檢及明示語音辨識／服務者優先歸語音質檢/應用；其後依 RPA／流程自動化、程式助手及其餘主要用途分類。"}, {"title": "推定標註", "content": "主表部分列依用途推定技術類別；RAG 等標籤是整理判斷，不代表對業者技術架構進行查證。"}, {"title": "產品名稱", "content": "除原文明示 M365 者外，Copilot 的版本與授權不明；純辦公用途歸 M365 Copilot，明示程式開發用途歸程式助手；本次未將任何場景自行推定為 GitHub Copilot。"}, {"title": "資料限制", "content": "原文未詳述的場景仍予保留並註明；未引入外部資料。原文所列精準度、減量比例等為業者自行提供，未獨立驗證。"}, {"title": "來源回查", "content": "請於「來源索引」以業者查找 PDF 頁碼；跨頁項目標為 2–3、3–4、5–6。PDF 頁序與本附件印刷頁碼一致。"}, {"title": "使用方式", "content": "主表可依業別、業者及類別篩選；來源索引與本表的場景筆數以公式連結主表，後續修改分類時會重新計算。"}]};
 
     // Color mappings for sectors & categories
+    const DEFAULT_SECTOR_PALETTE = [
+      { bg: "#4f46e5", light: "#eef2ff", text: "#3730a3", border: "#c7d2fe" },
+      { bg: "#0284c7", light: "#f0f9ff", text: "#075985", border: "#bae6fd" },
+      { bg: "#0d9488", light: "#f0fdfa", text: "#115e59", border: "#99f6e4" },
+      { bg: "#d97706", light: "#fffbeb", text: "#92400e", border: "#fde68a" },
+      { bg: "#e11d48", light: "#fff1f2", text: "#9f1239", border: "#fecdd3" }
+    ];
+
     const SECTOR_COLORS = {
       "保險業": { bg: "#4f46e5", light: "#eef2ff", text: "#3730a3", border: "#c7d2fe" },
       "銀行業": { bg: "#0284c7", light: "#f0f9ff", text: "#075985", border: "#bae6fd" },
@@ -616,9 +633,36 @@
     let rightChartInstance = null;
     const categoryInfoMap = {};
 
-    // Recompute all counts directly from RAW_DATA.scenarios so openpyxl uncached formulas never cause 0 counts
+    // Dynamically retrieve unique sectors actually present in Excel data
+    function getActiveSectors() {
+      const preferredOrder = ["保險業", "銀行業", "證券期貨業"];
+      const sectorSet = new Set();
+      RAW_DATA.scenarios.forEach(s => {
+        if (s.sector) sectorSet.add(s.sector);
+      });
+      RAW_DATA.sources.forEach(src => {
+        if (src.sector) sectorSet.add(src.sector);
+      });
+      const list = Array.from(sectorSet);
+      list.sort((a, b) => {
+        const idxA = preferredOrder.indexOf(a);
+        const idxB = preferredOrder.indexOf(b);
+        if (idxA !== -1 && idxB !== -1) return idxA - idxB;
+        if (idxA !== -1) return -1;
+        if (idxB !== -1) return 1;
+        return a.localeCompare(b, "zh-Hant");
+      });
+      list.forEach((sec, idx) => {
+        if (!SECTOR_COLORS[sec]) {
+          SECTOR_COLORS[sec] = DEFAULT_SECTOR_PALETTE[idx % DEFAULT_SECTOR_PALETTE.length];
+        }
+      });
+      return list;
+    }
+
+    // Recompute all counts directly from RAW_DATA.scenarios so nothing is hardcoded and uncached Excel formulas never cause 0 counts
     function recomputeDerivedData() {
-      // 1. Ensure all companies in scenarios exist in sources and compute exact counts from scenarios
+      // 1. Sync sources with scenarios and compute exact counts per company
       const existingSourceMap = {};
       RAW_DATA.sources.forEach(src => {
         existingSourceMap[`${src.sector}||${src.company}`] = src;
@@ -641,6 +685,9 @@
         existingSourceMap[key].count += 1;
       });
 
+      // Keep only sources that exist in the Excel data
+      RAW_DATA.sources = RAW_DATA.sources.filter(src => src.company && src.sector);
+
       // 2. Recompute category counts directly from scenarios
       Object.keys(categoryInfoMap).forEach(k => delete categoryInfoMap[k]);
       RAW_DATA.categories.forEach(c => {
@@ -662,12 +709,24 @@
         }
       });
 
-      // 3. Update global UI labels with actual dynamic totals
+      // 3. Dynamically update all global UI badges and titles from actual Excel data
       const totalScenarios = RAW_DATA.scenarios.length;
       const totalSources = RAW_DATA.sources.length;
       const totalCategories = RAW_DATA.categories.length;
+      const activeSectors = getActiveSectors();
+
+      // Update methodology note "整理單位" dynamically so it always reflects the actual Excel counts
+      const unitNoteText = `共 ${totalSources} 個業者／周邊單位、${totalScenarios} 筆場景；保留原文業別及出現順序，不依業者名稱重新推定監理業別。`;
+      const existingUnitNote = RAW_DATA.notes.find(n => n.title === "整理單位");
+      if (existingUnitNote) {
+        existingUnitNote.content = unitNoteText;
+      } else {
+        RAW_DATA.notes.unshift({ title: "整理單位", content: unitNoteText });
+      }
 
       document.getElementById("headerSummaryBadge").textContent = `${totalSources} 家機構 · ${totalScenarios} 筆場景`;
+      document.getElementById("headerSubtitleText").textContent =
+        `涵蓋${activeSectors.join("、")}及周邊單位之 AI 應用場景分類與來源索引分析`;
       document.getElementById("tabBtn-institutions").textContent = `機構來源索引 (${totalSources})`;
       document.getElementById("kpiCategoryTotalLabel").textContent = `/ ${totalCategories} 類定義`;
       document.getElementById("sortDefaultOpt").textContent = `原始檔案順序 (編號 1–${totalScenarios})`;
@@ -691,17 +750,18 @@
       }, 2600);
     }
 
-    // Initialize Dropdown Options
+    // Initialize Dropdown 1 (金融業別篩選) - 顯示實際業別數量 (例如 3)，而非場景筆數
     function populateInitialDropdowns() {
       const sectorSelect = document.getElementById("filterSector");
       sectorSelect.replaceChildren();
+
+      const activeSectors = getActiveSectors();
       const allOption = document.createElement("option");
       allOption.value = "ALL";
-      allOption.textContent = `全部業別 (${RAW_DATA.scenarios.length}筆)`;
+      allOption.textContent = `全部業別 (${activeSectors.length})`;
       sectorSelect.appendChild(allOption);
 
-      const sectors = ["保險業", "銀行業", "證券期貨業"];
-      sectors.forEach(sec => {
+      activeSectors.forEach(sec => {
         const cnt = RAW_DATA.scenarios.filter(s => s.sector === sec).length;
         const opt = document.createElement("option");
         opt.value = sec;
@@ -712,9 +772,30 @@
       updateDynamicDropdowns();
     }
 
-    // Dynamically update Category and Company dropdown counts based on current selections
+    // Dynamically update Dropdown 1, 2, 3 based on current selections
     function updateDynamicDropdowns() {
-      // 1. Update Category Dropdown
+      const activeSectors = getActiveSectors();
+
+      // 0. Update Sector Dropdown counts dynamically when category/company is filtered
+      const sectorSelect = document.getElementById("filterSector");
+      const prevSector = state.sector;
+      sectorSelect.replaceChildren();
+
+      const allSecOpt = document.createElement("option");
+      allSecOpt.value = "ALL";
+      allSecOpt.textContent = `全部業別 (${activeSectors.length})`;
+      sectorSelect.appendChild(allSecOpt);
+
+      activeSectors.forEach(sec => {
+        const cnt = RAW_DATA.scenarios.filter(s => s.sector === sec).length;
+        const opt = document.createElement("option");
+        opt.value = sec;
+        opt.textContent = `${sec} (${cnt}筆)`;
+        sectorSelect.appendChild(opt);
+      });
+      sectorSelect.value = activeSectors.includes(prevSector) ? prevSector : "ALL";
+
+      // 1. Update Category Dropdown (2. AI 應用類別篩選)
       const catSelect = document.getElementById("filterCategory");
       const prevCat = state.category;
       catSelect.innerHTML = "";
@@ -740,37 +821,38 @@
       });
       catSelect.value = sortedCats.some(c => c.category === prevCat) ? prevCat : "ALL";
 
-      // 2. Update Company Dropdown filtered by selected Sector (and dynamically counting scenarios)
+      // 2. Update Company Dropdown (3. 金融機構 (業者) 篩選)
+      // 依據前兩者「1. 金融業別」與「2. AI 應用類別」篩選後動態調整家數，並移除 0 筆的業者
       const compSelect = document.getElementById("filterCompany");
       const prevComp = state.company;
       compSelect.innerHTML = "";
 
-      const eligibleSources = RAW_DATA.sources.filter(src =>
-        state.sector === "ALL" || src.sector === state.sector
-      );
+      const eligibleSourcesWithCnt = RAW_DATA.sources
+        .filter(src => state.sector === "ALL" || src.sector === state.sector)
+        .map(src => {
+          const dynamicCnt = RAW_DATA.scenarios.filter(s =>
+            s.sector === src.sector &&
+            s.company === src.company &&
+            (state.category === "ALL" || s.category === state.category) &&
+            (state.pdfPage === "ALL" || s.pdfPage === state.pdfPage)
+          ).length;
+          return { ...src, dynamicCnt };
+        })
+        .filter(src => src.dynamicCnt > 0);
 
       const allCompOpt = document.createElement("option");
       allCompOpt.value = "ALL";
-      allCompOpt.textContent = state.sector === "ALL"
-        ? `全部金融機構 (${eligibleSources.length}家)`
-        : `${state.sector}全部機構 (${eligibleSources.length}家)`;
+      allCompOpt.textContent = `全部金融機構 (${eligibleSourcesWithCnt.length}家)`;
       compSelect.appendChild(allCompOpt);
 
-      eligibleSources.forEach(src => {
-        // Dynamically count scenarios from RAW_DATA.scenarios so it is never 0 due to uncached Excel formulas
-        const dynamicCnt = RAW_DATA.scenarios.filter(s =>
-          s.sector === src.sector &&
-          s.company === src.company &&
-          (state.category === "ALL" || s.category === state.category)
-        ).length;
-
+      eligibleSourcesWithCnt.forEach(src => {
         const opt = document.createElement("option");
         opt.value = src.company;
-        opt.textContent = `${src.company} (${dynamicCnt}筆)`;
+        opt.textContent = `${src.company} (${src.dynamicCnt}筆)`;
         compSelect.appendChild(opt);
       });
 
-      if (eligibleSources.some(s => s.company === prevComp)) {
+      if (eligibleSourcesWithCnt.some(s => s.company === prevComp)) {
         compSelect.value = prevComp;
       } else {
         state.company = "ALL";
@@ -852,7 +934,7 @@
       }
     }
 
-    // Update KPI Cards
+    // Update KPI Cards dynamically
     function renderKPIs(filtered) {
       const totalAll = RAW_DATA.scenarios.length;
       const count = filtered.length;
@@ -865,11 +947,15 @@
 
       // Unique active categories
       const uniqueCats = new Set(filtered.map(s => s.category));
+      const zeroCats = RAW_DATA.categories.filter(c => c.count === 0).map(c => c.category);
       document.getElementById("kpiCategoryCount").textContent = uniqueCats.size;
-      document.getElementById("kpiCategorySub").textContent =
-        state.category !== "ALL"
-          ? `已鎖定單一類別：${state.category}`
-          : `涵蓋 ${uniqueCats.size} 個有案例之應用類別`;
+      if (state.category !== "ALL") {
+        document.getElementById("kpiCategorySub").textContent = `已鎖定單一類別：${state.category}`;
+      } else if (count === totalAll && zeroCats.length > 0) {
+        document.getElementById("kpiCategorySub").textContent = `${uniqueCats.size} 類有實際案例（${zeroCats.join("、")} 為 0 筆）`;
+      } else {
+        document.getElementById("kpiCategorySub").textContent = `涵蓋 ${uniqueCats.size} 個有案例之應用類別`;
+      }
 
       // Unique companies
       const uniqueComps = new Set(filtered.map(s => `${s.sector}||${s.company}`));
@@ -878,7 +964,9 @@
       document.getElementById("kpiCompanyCount").textContent = compCount;
       document.getElementById("kpiAvgPerCompany").textContent = `平均 ${avg} 筆/家`;
 
-      const secCounts = { "銀行業": 0, "保險業": 0, "證券期貨業": 0 };
+      const activeSectors = getActiveSectors();
+      const secCounts = {};
+      activeSectors.forEach(sec => { secCounts[sec] = 0; });
       const seenCompSec = new Set();
       filtered.forEach(s => {
         const key = `${s.sector}||${s.company}`;
@@ -888,7 +976,7 @@
         }
       });
       document.getElementById("kpiCompanySub").textContent =
-        `銀行 ${secCounts["銀行業"]} 家 · 保險 ${secCounts["保險業"]} 家 · 證期 ${secCounts["證券期貨業"]} 家`;
+        activeSectors.map(sec => `${sec.replace("證券期貨業", "證期").replace("業", "")} ${secCounts[sec] || 0} 家`).join(" · ");
 
       // Top category
       const catCounter = {};
@@ -996,6 +1084,8 @@
 
     // Render Charts
     function renderCharts(filtered) {
+      const activeSectors = getActiveSectors();
+
       // 1. Category Chart
       const ctxCat = document.getElementById("categoryChart").getContext("2d");
       if (categoryChartInstance) {
@@ -1080,12 +1170,11 @@
           }
         });
       } else {
-        const sectors = ["保險業", "銀行業", "證券期貨業"];
-        const datasets = sectors.map(sec => {
+        const datasets = activeSectors.map(sec => {
           return {
             label: sec,
             data: catOrder.map(c => baseForChart.filter(s => s.sector === sec && s.category === c).length),
-            backgroundColor: SECTOR_COLORS[sec].bg,
+            backgroundColor: SECTOR_COLORS[sec]?.bg || "#4f46e5",
             borderRadius: 4,
             barThickness: 15
           };
@@ -1136,14 +1225,13 @@
         rightChartInstance.destroy();
       }
 
-      const sectors = ["保險業", "銀行業", "證券期貨業"];
-      const sectorCounts = sectors.map(sec => filtered.filter(s => s.sector === sec).length);
+      const sectorCounts = activeSectors.map(sec => filtered.filter(s => s.sector === sec).length);
       const totalFiltered = filtered.length;
 
       // Render Mini Sector Breakdown Cards below right chart
       const miniSummary = document.getElementById("sectorMiniSummary");
       miniSummary.innerHTML = "";
-      sectors.forEach((sec, i) => {
+      activeSectors.forEach((sec, i) => {
         const cnt = sectorCounts[i];
         const pct = totalFiltered > 0 ? ((cnt / totalFiltered) * 100).toFixed(1) : "0.0";
         const isSelected = state.sector === sec;
@@ -1155,7 +1243,7 @@
           }`;
         card.innerHTML = `
           <div class="flex items-center gap-1.5">
-            <span class="w-2.5 h-2.5 rounded-full shrink-0" style="background-color:${SECTOR_COLORS[sec].bg}"></span>
+            <span class="w-2.5 h-2.5 rounded-full shrink-0" style="background-color:${SECTOR_COLORS[sec]?.bg || '#4f46e5'}"></span>
             <span class="text-xs font-bold text-slate-700 truncate">${sec}</span>
           </div>
           <div class="mt-1 flex items-baseline justify-between">
@@ -1172,16 +1260,16 @@
       });
 
       if (state.rightChartMode === "sector") {
-        document.getElementById("rightChartTitle").textContent = "三大金融業別場景佔比";
+        document.getElementById("rightChartTitle").textContent = `金融業別場景佔比 (${activeSectors.length} 大業別)`;
         document.getElementById("rightChartSubtitle").textContent = "點擊圓餅圖區塊或下方卡片可篩選特定業別";
 
         rightChartInstance = new Chart(ctxRight, {
           type: "doughnut",
           data: {
-            labels: sectors,
+            labels: activeSectors,
             datasets: [{
               data: sectorCounts,
-              backgroundColor: sectors.map(sec => SECTOR_COLORS[sec].bg),
+              backgroundColor: activeSectors.map(sec => SECTOR_COLORS[sec]?.bg || "#4f46e5"),
               borderWidth: 2,
               borderColor: "#ffffff",
               hoverOffset: 6
@@ -1194,7 +1282,7 @@
             onClick: (evt, elements) => {
               if (elements.length > 0) {
                 const idx = elements[0].index;
-                const clickedSec = sectors[idx];
+                const clickedSec = activeSectors[idx];
                 state.sector = state.sector === clickedSec ? "ALL" : clickedSec;
                 document.getElementById("filterSector").value = state.sector;
                 syncAll();
@@ -1293,8 +1381,9 @@
         tableView.classList.add("hidden");
         cardView.classList.add("hidden");
         emptyState.classList.remove("hidden");
-        if (state.category === "AI Agent") {
-          document.getElementById("emptyStateHint").textContent = `備註：依分類說明，「AI Agent」類別在全體 ${RAW_DATA.scenarios.length} 筆資料中為 0 筆（華南銀行 AI 代理人依投研報告產出用途歸類為生成式AI）。`;
+        const catInfo = categoryInfoMap[state.category];
+        if (catInfo && catInfo.count === 0) {
+          document.getElementById("emptyStateHint").textContent = `備註：依分類說明，「${state.category}」類別在全體 ${RAW_DATA.scenarios.length} 筆資料中為 0 筆（${catInfo.boundary}）。`;
         } else {
           document.getElementById("emptyStateHint").textContent = "請嘗試放寬下拉選單篩選條件或清除搜尋關鍵字";
         }
@@ -1368,14 +1457,11 @@
       });
     }
 
-    // Render Cross-Tab Heatmap Matrix (Tab 2)
+    // Render Cross-Tab Heatmap Matrix (Tab 2) dynamically for all active sectors
     function renderCrossMatrix() {
       const table = document.getElementById("crossMatrixTable");
-      const sectors = ["銀行業", "保險業", "證券期貨業"];
+      const sectors = getActiveSectors();
       const totalAll = RAW_DATA.scenarios.length || 1;
-      const bankCount = RAW_DATA.scenarios.filter(s => s.sector === "銀行業").length;
-      const insCount = RAW_DATA.scenarios.filter(s => s.sector === "保險業").length;
-      const secCount = RAW_DATA.scenarios.filter(s => s.sector === "證券期貨業").length;
 
       const sortedCats = [...RAW_DATA.categories].sort((a, b) => b.count - a.count);
 
@@ -1383,9 +1469,10 @@
         <thead>
           <tr class="bg-slate-50 border-b border-slate-200 text-xs font-bold text-slate-600 uppercase">
             <th class="py-3 px-4 text-left">AI 應用類別 \ 金融業別</th>
-            <th class="py-3 px-4 text-center">銀行業 (${bankCount})</th>
-            <th class="py-3 px-4 text-center">保險業 (${insCount})</th>
-            <th class="py-3 px-4 text-center">證券期貨業 (${secCount})</th>
+            ${sectors.map(sec => {
+              const secCnt = RAW_DATA.scenarios.filter(s => s.sector === sec).length;
+              return `<th class="py-3 px-4 text-center">${sec} (${secCnt})</th>`;
+            }).join("")}
             <th class="py-3 px-4 text-center bg-slate-100">合計筆數 (${RAW_DATA.scenarios.length})</th>
             <th class="py-3 px-4 text-center">全體佔比</th>
           </tr>
@@ -1673,29 +1760,17 @@
       showToast(`已成功匯出 ${filtered.length} 筆 AI 場景資料 CSV`);
     }
 
-    // 動態讀取同目錄下的 Excel 檔案（若於本機直接開啟或預覽環境無外部檔案，自動使用內建最新資料）
-    async function loadExcelAndInit() {
-      // First initialize immediately with embedded data so UI is never blank
-      recomputeDerivedData();
-      populateInitialDropdowns();
-      renderCrossMatrix();
-      renderDefinitionsAndNotes();
-      syncAll();
+    // Shared Workbook Parser (used by both automatic fetch and manual file input)
+    function applyWorkbookData(arrayBuffer, sourceLabel) {
+      const workbook = XLSX.read(arrayBuffer, { type: 'array' });
 
-      const excelFileName = '金融業AI場景應用.xlsx';
-      try {
-        const response = await fetch(excelFileName);
-        if (!response.ok) {
-          return;
-        }
-        const arrayBuffer = await response.arrayBuffer();
-        const workbook = XLSX.read(arrayBuffer, { type: 'array' });
-
-        // 1. 解析「來源索引」工作表（僅取業別、業者、PDF頁碼，筆數統一由 AI應用場景 動態統計）
-        const wsSources = workbook.Sheets['來源索引'];
-        const sourcesJson = XLSX.utils.sheet_to_json(wsSources);
-        const pageMap = {};
-        RAW_DATA.sources = sourcesJson.map((row, idx) => {
+      // 1. 解析「來源索引」工作表（取得業別、業者、PDF頁碼，筆數統一由 AI應用場景 動態統計）
+      const wsSources = workbook.Sheets['來源索引'];
+      const sourcesJson = wsSources ? XLSX.utils.sheet_to_json(wsSources) : [];
+      const pageMap = {};
+      RAW_DATA.sources = sourcesJson
+        .filter(row => row['業別'] && row['業者'])
+        .map((row, idx) => {
           const sector = String(row['業別'] || '').trim();
           const company = String(row['業者'] || '').trim();
           const pdfPage = String(row['PDF頁碼'] || '').trim();
@@ -1703,10 +1778,12 @@
           return { id: idx + 1, sector, company, pdfPage, count: 0 };
         });
 
-        // 2. 解析「AI應用場景」工作表
-        const wsScenarios = workbook.Sheets['AI應用場景'];
-        const scenariosJson = XLSX.utils.sheet_to_json(wsScenarios);
-        RAW_DATA.scenarios = scenariosJson.map((row, idx) => {
+      // 2. 解析「AI應用場景」工作表
+      const wsScenarios = workbook.Sheets['AI應用場景'];
+      const scenariosJson = wsScenarios ? XLSX.utils.sheet_to_json(wsScenarios) : [];
+      RAW_DATA.scenarios = scenariosJson
+        .filter(row => row['業別'] && row['業者'])
+        .map((row, idx) => {
           const sector = String(row['業別'] || '').trim();
           const company = String(row['業者'] || '').trim();
           return {
@@ -1719,8 +1796,9 @@
           };
         });
 
-        // 3. 解析「分類說明」工作表（動態讀取直到「合計場景」或空列，不寫死 17 列上限）
-        const wsCats = workbook.Sheets['分類說明'];
+      // 3. 解析「分類說明」工作表（動態讀取直到「合計場景」或空列）
+      const wsCats = workbook.Sheets['分類說明'];
+      if (wsCats) {
         const catRows = XLSX.utils.sheet_to_json(wsCats, { header: 1 });
         RAW_DATA.categories = [];
         RAW_DATA.notes = [];
@@ -1735,12 +1813,11 @@
             category: catName,
             principle: String(row[1] || '').trim(),
             boundary: String(row[2] || '').trim(),
-            count: 0 // 統一由 recomputeDerivedData() 根據實際場景計算
+            count: 0
           });
           rIdx++;
         }
 
-        // 解析整理口徑說明
         for (let r = rIdx + 1; r < catRows.length; r++) {
           const row = catRows[r];
           if (row && row[0]) {
@@ -1751,24 +1828,62 @@
             }
           }
         }
+      }
 
-        // 重新計算所有機構與類別筆數（解決 openpyxl 儲存後公式無快取值的問題）
-        recomputeDerivedData();
-        populateInitialDropdowns();
-        renderCrossMatrix();
-        renderDefinitionsAndNotes();
-        syncAll();
-        showToast(`已成功從 Excel 載入最新數據（共 ${RAW_DATA.scenarios.length} 筆場景）！`);
+      // Reset filters and recompute all derived counts dynamically
+      state.sector = "ALL";
+      state.category = "ALL";
+      state.company = "ALL";
+      state.pdfPage = "ALL";
+      recomputeDerivedData();
+      populateInitialDropdowns();
+      renderCrossMatrix();
+      renderDefinitionsAndNotes();
+      syncAll();
+      showToast(`已成功從 ${sourceLabel} 載入最新數據（${RAW_DATA.sources.length} 家機構 · ${RAW_DATA.scenarios.length} 筆場景）！`);
+    }
 
+    // 動態讀取同目錄下的 Excel 檔案（加時間戳避免瀏覽器快取舊檔）
+    async function loadExcelAndInit() {
+      // First initialize with embedded data so UI renders immediately
+      recomputeDerivedData();
+      populateInitialDropdowns();
+      renderCrossMatrix();
+      renderDefinitionsAndNotes();
+      syncAll();
+
+      const excelFileName = '金融業AI場景應用.xlsx';
+      try {
+        const response = await fetch(`${excelFileName}?t=${Date.now()}`, { cache: 'no-store' });
+        if (!response.ok) {
+          return;
+        }
+        const arrayBuffer = await response.arrayBuffer();
+        applyWorkbookData(arrayBuffer, excelFileName);
       } catch (error) {
-        // Running in standalone/Canvas preview without external xlsx file; fallback data is already active
-        console.info('使用內建最新同步資料進行展示。');
+        console.info('目前環境未透過 HTTP 伺服器讀取外部 Excel，已使用內建同步資料（亦可點擊頁首「載入 Excel」手動選取檔案）。');
       }
     }
 
     // Event Listeners Initialization
     window.addEventListener("DOMContentLoaded", () => {
       loadExcelAndInit();
+
+      // Manual Excel File Picker (works even on file:// without local server)
+      document.getElementById("excelFileInput").addEventListener("change", (e) => {
+        const file = e.target.files && e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (evt) => {
+          try {
+            applyWorkbookData(evt.target.result, file.name);
+          } catch (err) {
+            showToast(`讀取 Excel 失敗：${err.message}`);
+          }
+        };
+        reader.readAsArrayBuffer(file);
+        e.target.value = "";
+      });
 
       // Navigation Tabs
       document.getElementById("tabBtn-dashboard").addEventListener("click", () => switchTab("dashboard"));
