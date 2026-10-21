@@ -71,6 +71,14 @@
                 class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-500/30 text-indigo-200 border border-indigo-400/30">
                 資料載入中...
               </span>
+              <span id="headerScheduleBadge"
+                class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-500/20 text-emerald-300 border border-emerald-400/30"
+                title="自動追蹤排程運行中 (Cron: 0 9 * * *)">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                <span>每日 09:00 自動追蹤</span>
+                <span class="text-slate-400">·</span>
+                <span id="headerLastUpdateText">上次更新：2026-10-20</span>
+              </span>
               <label for="excelFileInput" title="手動載入本機 Excel 檔案 (.xlsx)"
                 class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-600 cursor-pointer transition">
                 <svg class="w-3.5 h-3.5 text-indigo-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -212,6 +220,42 @@
 
   <!-- Main Content Container -->
   <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+
+    <!-- 每日自動追蹤排程狀態與資料更新資訊區塊 -->
+    <section id="trackerScheduleBanner"
+      class="bg-gradient-to-r from-slate-900 via-indigo-950/90 to-slate-900 rounded-xl p-4 text-white shadow-sm border border-slate-700/80 flex flex-col md:flex-row md:items-center justify-between gap-3">
+      <div class="flex items-start sm:items-center gap-3">
+        <div class="w-9 h-9 rounded-lg bg-emerald-500/20 border border-emerald-400/30 flex items-center justify-center shrink-0">
+          <span class="relative flex h-2.5 w-2.5">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+          </span>
+        </div>
+        <div>
+          <div class="flex flex-wrap items-center gap-2">
+            <h2 class="text-sm font-bold text-white flex items-center gap-1.5">
+              <span>每日 AI 動態自動追蹤排程</span>
+            </h2>
+            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-400/30">
+              ● 運行中 (Cron: 0 9 * * *)
+            </span>
+          </div>
+          <p class="text-xs text-slate-300 mt-0.5">
+            系統每日上午 09:00 (台北時區) 自動執行 <span class="text-indigo-300 font-mono">tw-fin-ai-tracker</span>，主動檢索台灣 14 家金控及旗下子公司最新 AI 應用動態，並自動更新至資料庫。
+          </p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2.5 shrink-0 self-end md:self-auto text-xs">
+        <div class="bg-slate-800/80 px-3 py-1.5 rounded-lg border border-slate-700 text-right">
+          <span class="text-slate-400 block text-[10px]">上次更新日期</span>
+          <strong id="bannerLastUpdatedTime" class="text-amber-300 font-mono text-sm">2026-10-20</strong>
+        </div>
+        <div class="bg-slate-800/80 px-3 py-1.5 rounded-lg border border-slate-700 text-right">
+          <span class="text-slate-400 block text-[10px]">下次排程執行</span>
+          <strong class="text-emerald-300 font-mono text-sm">每日 09:00</strong>
+        </div>
+      </div>
+    </section>
 
     <!-- KPI Cards Row (Always Visible & Reactive) -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -878,6 +922,18 @@
       document.getElementById("matrixSummaryBadge").textContent = `總計 ${totalScenarios} 筆場景 · ${totalCategories} 大分類`;
       document.getElementById("institutionsDirTitle").textContent = `金融機構與周邊單位來源索引 (共 ${totalSources} 家)`;
       document.getElementById("definitionsHeaderTitle").textContent = `台灣金融業 AI 應用｜${totalCategories} 大類別判斷原則與界線說明`;
+
+      // 5. 動態更新上次資料更新時間
+      let latestDate = "2026-10-20";
+      RAW_DATA.scenarios.forEach(s => {
+        if (s.updateDate && String(s.updateDate) > latestDate) {
+          latestDate = String(s.updateDate);
+        }
+      });
+      const bannerTimeEl = document.getElementById("bannerLastUpdatedTime");
+      if (bannerTimeEl) bannerTimeEl.textContent = latestDate;
+      const headerTimeEl = document.getElementById("headerLastUpdateText");
+      if (headerTimeEl) headerTimeEl.textContent = `上次更新：${latestDate}`;
     }
 
     // Helper: Sort holding objects (classified holdings sorted by count desc first, unclassified at the end)
@@ -2245,7 +2301,7 @@
           return { id: idx + 1, sector, company, holding: '未歸類', pdfPage, count: 0 };
         });
 
-      // 2. 解析「AI應用場景」工作表（包含新增之「所屬金控」欄位）
+      // 2. 解析「AI應用場景」工作表（包含新增之「所屬金控」與「更新日期」欄位）
       const wsScenarios = workbook.Sheets['AI應用場景'];
       const scenariosJson = wsScenarios ? XLSX.utils.sheet_to_json(wsScenarios) : [];
       RAW_DATA.scenarios = scenariosJson
@@ -2255,6 +2311,8 @@
           const company = String(row['業者'] || '').trim();
           const holdingRaw = String(row['所屬金控'] || '').trim();
           const holding = holdingRaw || '未歸類';
+          let updateDate = String(row['更新日期'] || '').trim();
+          if (updateDate.includes('T')) updateDate = updateDate.split('T')[0];
           return {
             id: idx + 1,
             sector,
@@ -2262,6 +2320,7 @@
             holding,
             scenario: String(row['場景'] || '').trim(),
             category: String(row['類別'] || '').trim(),
+            updateDate: updateDate || '',
             pdfPage: pageMap[`${sector}||${company}`] || '最新蒐集'
           };
         });
