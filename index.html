@@ -766,6 +766,47 @@
       return val === "" || val === "未歸類" || val === "未分類";
     }
 
+    // Helper: 將 Excel 日期序號 (如 46315)、Date 物件或日期字串轉換為台灣台北時區 (Asia/Taipei) YYYY-MM-DD 格式
+    function formatToTaipeiDate(val) {
+      if (!val) return "";
+      if (typeof val === "number" || /^\d{5}(\.\d+)?$/.test(String(val).trim())) {
+        const num = Number(val);
+        const date = new Date(Math.round((num - 25569) * 86400 * 1000));
+        return date.toLocaleDateString("zh-TW", {
+          timeZone: "Asia/Taipei",
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit"
+        }).replace(/\//g, "-");
+      }
+      if (val instanceof Date) {
+        return val.toLocaleDateString("zh-TW", {
+          timeZone: "Asia/Taipei",
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit"
+        }).replace(/\//g, "-");
+      }
+      const str = String(val).trim();
+      if (str.includes("T")) {
+        const d = new Date(str);
+        if (!isNaN(d.getTime())) {
+          return d.toLocaleDateString("zh-TW", {
+            timeZone: "Asia/Taipei",
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit"
+          }).replace(/\//g, "-");
+        }
+        return str.split("T")[0];
+      }
+      const m = str.match(/^(\d{4})[-/](\d{1,2})[-/](\d{1,2})/);
+      if (m) {
+        return `${m[1]}-${m[2].padStart(2, "0")}-${m[3].padStart(2, "0")}`;
+      }
+      return str;
+    }
+
     // Application State
     const state = {
       activeTab: "dashboard",
@@ -923,11 +964,14 @@
       document.getElementById("institutionsDirTitle").textContent = `金融機構與周邊單位來源索引 (共 ${totalSources} 家)`;
       document.getElementById("definitionsHeaderTitle").textContent = `台灣金融業 AI 應用｜${totalCategories} 大類別判斷原則與界線說明`;
 
-      // 5. 動態更新上次資料更新時間
+      // 5. 動態更新上次資料更新時間（確保格式為正確的台灣台北日期 YYYY-MM-DD）
       let latestDate = "2026-10-20";
       RAW_DATA.scenarios.forEach(s => {
-        if (s.updateDate && String(s.updateDate) > latestDate) {
-          latestDate = String(s.updateDate);
+        const d = formatToTaipeiDate(s.updateDate);
+        if (d && /^\d{4}-\d{2}-\d{2}$/.test(d)) {
+          if (d > latestDate) {
+            latestDate = d;
+          }
         }
       });
       const bannerTimeEl = document.getElementById("bannerLastUpdatedTime");
@@ -2285,7 +2329,7 @@
 
     // Shared Workbook Parser (used by both automatic fetch and manual file input)
     function applyWorkbookData(arrayBuffer, sourceLabel) {
-      const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+      const workbook = XLSX.read(arrayBuffer, { type: 'array', cellDates: true });
 
       // 1. 解析「來源索引」工作表（取得業別、業者、PDF頁碼，筆數與所屬金控統一由 AI應用場景 動態統計）
       const wsSources = workbook.Sheets['來源索引'];
@@ -2311,8 +2355,7 @@
           const company = String(row['業者'] || '').trim();
           const holdingRaw = String(row['所屬金控'] || '').trim();
           const holding = holdingRaw || '未歸類';
-          let updateDate = String(row['更新日期'] || '').trim();
-          if (updateDate.includes('T')) updateDate = updateDate.split('T')[0];
+          let updateDate = formatToTaipeiDate(row['更新日期']);
           return {
             id: idx + 1,
             sector,
