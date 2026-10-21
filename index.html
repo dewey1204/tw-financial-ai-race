@@ -55,8 +55,8 @@
   <!-- Top Header Banner -->
   <header class="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white shadow-md sticky top-0 z-30">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-      <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <div class="flex items-start sm:items-center gap-3">
+      <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
+        <div class="flex items-start sm:items-center gap-3 min-w-0 flex-1">
           <div
             class="w-11 h-11 rounded-xl bg-indigo-500/20 border border-indigo-400/30 flex items-center justify-center shrink-0 shadow-inner">
             <svg class="w-6 h-6 text-indigo-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -64,15 +64,16 @@
                 d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
             </svg>
           </div>
-          <div>
+          <div class="min-w-0 flex-1">
             <div class="flex flex-wrap items-center gap-2">
-              <h1 class="text-lg sm:text-xl font-bold tracking-tight text-white">台灣金融業 AI 場景應用互動儀表板</h1>
+              <h1 class="text-lg sm:text-xl font-bold tracking-tight text-white whitespace-nowrap">台灣金融業 AI 場景應用互動儀表板
+              </h1>
               <span id="headerSummaryBadge"
-                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-500/30 text-indigo-200 border border-indigo-400/30">
+                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium whitespace-nowrap bg-indigo-500/30 text-indigo-200 border border-indigo-400/30">
                 資料載入中...
               </span>
               <span id="headerScheduleBadge"
-                class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-500/20 text-emerald-300 border border-emerald-400/30"
+                class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium whitespace-nowrap bg-emerald-500/20 text-emerald-300 border border-emerald-400/30"
                 title="自動追蹤排程運行中 (Cron: 0 9 * * *)">
                 <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
                 <span>每日 09:00 自動追蹤</span>
@@ -80,7 +81,7 @@
                 <span id="headerLastUpdateText">上次更新：2026-10-20</span>
               </span>
               <label for="excelFileInput" title="手動載入本機 Excel 檔案 (.xlsx)"
-                class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-600 cursor-pointer transition">
+                class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium whitespace-nowrap bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-600 cursor-pointer transition">
                 <svg class="w-3.5 h-3.5 text-indigo-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                     d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
@@ -95,23 +96,24 @@
           </div>
         </div>
 
-        <!-- Navigation Tabs -->
-        <nav class="flex items-center bg-slate-800/80 p-1 rounded-xl border border-slate-700/70 self-start md:self-auto"
+        <!-- Navigation Tabs (移除左方多餘空白擠壓，文字單行完整伸展) -->
+        <nav
+          class="flex items-center shrink-0 bg-slate-800/80 p-1 rounded-xl border border-slate-700/70 self-start lg:self-center overflow-x-auto max-w-full"
           aria-label="主要檢視分頁">
           <button id="tabBtn-dashboard" type="button"
-            class="px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition-all bg-indigo-600 text-white shadow-sm">
+            class="px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-medium whitespace-nowrap shrink-0 transition-all bg-indigo-600 text-white shadow-sm">
             總覽與圖表篩選
           </button>
           <button id="tabBtn-matrix" type="button"
-            class="px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition-all text-slate-300 hover:text-white">
+            class="px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-medium whitespace-nowrap shrink-0 transition-all text-slate-300 hover:text-white">
             交叉熱力矩陣
           </button>
           <button id="tabBtn-institutions" type="button"
-            class="px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition-all text-slate-300 hover:text-white">
+            class="px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-medium whitespace-nowrap shrink-0 transition-all text-slate-300 hover:text-white">
             機構來源索引
           </button>
           <button id="tabBtn-definitions" type="button"
-            class="px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition-all text-slate-300 hover:text-white">
+            class="px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-medium whitespace-nowrap shrink-0 transition-all text-slate-300 hover:text-white">
             分類定義與口徑
           </button>
         </nav>
@@ -221,42 +223,6 @@
   <!-- Main Content Container -->
   <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
 
-    <!-- 每日自動追蹤排程狀態與資料更新資訊區塊 
-    <section id="trackerScheduleBanner"
-      class="bg-gradient-to-r from-slate-900 via-indigo-950/90 to-slate-900 rounded-xl p-4 text-white shadow-sm border border-slate-700/80 flex flex-col md:flex-row md:items-center justify-between gap-3">
-      <div class="flex items-start sm:items-center gap-3">
-        <div class="w-9 h-9 rounded-lg bg-emerald-500/20 border border-emerald-400/30 flex items-center justify-center shrink-0">
-          <span class="relative flex h-2.5 w-2.5">
-            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-            <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
-          </span>
-        </div>
-        <div>
-          <div class="flex flex-wrap items-center gap-2">
-            <h2 class="text-sm font-bold text-white flex items-center gap-1.5">
-              <span>每日 AI 動態自動追蹤排程</span>
-            </h2>
-            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-400/30">
-              ● 運行中 (Cron: 0 9 * * *)
-            </span>
-          </div>
-          <p class="text-xs text-slate-300 mt-0.5">
-            系統每日上午 09:00 (台北時區) 自動執行 <span class="text-indigo-300 font-mono">tw-fin-ai-tracker</span>，主動檢索台灣 14 家金控及旗下子公司最新 AI 應用動態，並自動更新至資料庫。
-          </p>
-        </div>
-      </div>
-      <div class="flex items-center gap-2.5 shrink-0 self-end md:self-auto text-xs">
-        <div class="bg-slate-800/80 px-3 py-1.5 rounded-lg border border-slate-700 text-right">
-          <span class="text-slate-400 block text-[10px]">上次更新日期</span>
-          <strong id="bannerLastUpdatedTime" class="text-amber-300 font-mono text-sm">2026-10-20</strong>
-        </div>
-        <div class="bg-slate-800/80 px-3 py-1.5 rounded-lg border border-slate-700 text-right">
-          <span class="text-slate-400 block text-[10px]">下次排程執行</span>
-          <strong class="text-emerald-300 font-mono text-sm">每日 09:00</strong>
-        </div>
-      </div>
-    </section>-->
-
     <!-- KPI Cards Row (Always Visible & Reactive) -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
       <!-- KPI 1: Scenarios -->
@@ -342,8 +308,8 @@
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
         <!-- Chart 1: AI Category Distribution (7 cols) -->
-        <div class="lg:col-span-7 bg-white rounded-xl border border-slate-200/80 shadow-sm p-5 flex flex-col">
-          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-4">
+        <div class="lg:col-span-6 bg-white rounded-xl border border-slate-200/80 shadow-sm p-5 flex flex-col">
+          <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 mb-4">
             <div>
               <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
                 各 AI 應用類別場景數量分布
@@ -351,13 +317,13 @@
               </h2>
               <p class="text-xs text-slate-500 mt-0.5">統計各技術與應用類別之場景筆數</p>
             </div>
-            <div class="flex items-center bg-slate-100 p-0.5 rounded-lg self-start sm:self-auto">
+            <div class="flex items-center bg-slate-100 p-0.5 rounded-lg self-start sm:self-auto shrink-0">
               <button id="catChartModeTotal" type="button"
-                class="px-2.5 py-1 rounded-md text-xs font-medium bg-white text-slate-800 shadow-sm transition">
+                class="px-2.5 py-1 rounded-md text-xs font-medium whitespace-nowrap bg-white text-slate-800 shadow-sm transition">
                 總量排行
               </button>
               <button id="catChartModeStacked" type="button"
-                class="px-2.5 py-1 rounded-md text-xs font-medium text-slate-600 hover:text-slate-900 transition">
+                class="px-2.5 py-1 rounded-md text-xs font-medium whitespace-nowrap text-slate-600 hover:text-slate-900 transition">
                 依業別堆疊
               </button>
             </div>
@@ -367,23 +333,27 @@
           </div>
         </div>
 
-        <!-- Chart 2: Sector Distribution & Top Companies (5 cols) -->
-        <div class="lg:col-span-5 bg-white rounded-xl border border-slate-200/80 shadow-sm p-5 flex flex-col">
-          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-4">
-            <div>
+        <!-- Chart 2: Holding Rank / Top Companies / Sector Distribution (5 cols) -->
+        <div class="lg:col-span-6 bg-white rounded-xl border border-slate-200/80 shadow-sm p-5 flex flex-col">
+          <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 mb-4">
+            <div class="min-w-0">
               <h2 id="rightChartTitle" class="text-base font-bold text-slate-900">
-                金融業別場景佔比
+                所屬金控 AI 場景排行
               </h2>
-              <p id="rightChartSubtitle" class="text-xs text-slate-500 mt-0.5">點擊圖表區塊可篩選對應業別或機構</p>
+              <p id="rightChartSubtitle" class="text-xs text-slate-500 mt-0.5">依所屬金控統計場景數（點擊長條可篩選該金控）</p>
             </div>
-            <div class="flex items-center bg-slate-100 p-0.5 rounded-lg self-start sm:self-auto">
-              <button id="rightChartModeSector" type="button"
-                class="px-2.5 py-1 rounded-md text-xs font-medium bg-white text-slate-800 shadow-sm transition">
-                業別佔比
+            <div class="flex items-center bg-slate-100 p-0.5 rounded-lg self-start sm:self-auto shrink-0">
+              <button id="rightChartModeHolding" type="button"
+                class="px-2.5 py-1 rounded-md text-xs font-medium whitespace-nowrap bg-white text-slate-800 shadow-sm transition">
+                金控排行
               </button>
               <button id="rightChartModeTopComp" type="button"
-                class="px-2.5 py-1 rounded-md text-xs font-medium text-slate-600 hover:text-slate-900 transition">
-                機構排行 Top 12
+                class="px-2.5 py-1 rounded-md text-xs font-medium whitespace-nowrap text-slate-600 hover:text-slate-900 transition">
+                機構排行
+              </button>
+              <button id="rightChartModeSector" type="button"
+                class="px-2.5 py-1 rounded-md text-xs font-medium whitespace-nowrap text-slate-600 hover:text-slate-900 transition">
+                業別佔比
               </button>
             </div>
           </div>
@@ -396,7 +366,7 @@
         </div>
       </div>
 
-      <!-- Holding Quick-Filter Pills Bar (新增：於各類別快速篩選標籤之前) -->
+      <!-- Holding Quick-Filter Pills Bar -->
       <div class="bg-white rounded-xl border border-slate-200/80 shadow-sm p-4">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1 mb-2.5">
           <h3 class="text-xs font-bold uppercase tracking-wider text-slate-500">所屬金控快速篩選 (點擊快速切換金控並更新下方 AI 應用場景明細列表)
@@ -680,17 +650,17 @@
 
     // Color mappings for sectors & categories
     const DEFAULT_SECTOR_PALETTE = [
-      { bg: "#4f46e5", light: "#eef2ff", text: "#3730a3", border: "#c7d2fe" },
-      { bg: "#0284c7", light: "#f0f9ff", text: "#075985", border: "#bae6fd" },
-      { bg: "#0d9488", light: "#f0fdfa", text: "#115e59", border: "#99f6e4" },
+      { bg: "#e11d48", light: "#ffe4e6", text: "#9f1239", border: "#fecdd3" },
+      { bg: "#16a34a", light: "#dcfce7", text: "#166534", border: "#bbf7d0" },
+      { bg: "#2563eb", light: "#dbeafe", text: "#1e40af", border: "#bfdbfe" },
       { bg: "#d97706", light: "#fffbeb", text: "#92400e", border: "#fde68a" },
-      { bg: "#e11d48", light: "#fff1f2", text: "#9f1239", border: "#fecdd3" }
+      { bg: "#7c3aed", light: "#ede9fe", text: "#5b21b6", border: "#ddd6fe" }
     ];
 
     const SECTOR_COLORS = {
-      "保險業": { bg: "#4f46e5", light: "#eef2ff", text: "#3730a3", border: "#c7d2fe" },
-      "銀行業": { bg: "#0284c7", light: "#f0f9ff", text: "#075985", border: "#bae6fd" },
-      "證券期貨業": { bg: "#0d9488", light: "#f0fdfa", text: "#115e59", border: "#99f6e4" }
+      "保險業": { bg: "#e11d48", light: "#ffe4e6", text: "#9f1239", border: "#fecdd3" },
+      "銀行業": { bg: "#16a34a", light: "#dcfce7", text: "#166534", border: "#bbf7d0" },
+      "證券期貨業": { bg: "#2563eb", light: "#dbeafe", text: "#1e40af", border: "#bfdbfe" }
     };
 
     const CATEGORY_PALETTE = {
@@ -758,7 +728,6 @@
       return getHoldingDotColor(hName, idx);
     }
 
-
     // Helper: Check if a holding value represents unclassified ("未歸類" or "未分類")
     function isUnclassifiedHolding(h) {
       if (!h) return true;
@@ -807,7 +776,7 @@
       return str;
     }
 
-    // Application State
+    // Application State (預設顯示「金控排行」: rightChartMode = 'holding')
     const state = {
       activeTab: "dashboard",
       sector: "ALL",
@@ -819,7 +788,7 @@
       sortBy: "default",
       viewMode: "table", // 'table' | 'card'
       catChartMode: "total", // 'total' | 'stacked'
-      rightChartMode: "sector", // 'sector' | 'topComp'
+      rightChartMode: "holding", // 'holding' | 'topComp' | 'sector'
       instSort: "holding",
       modalCompany: null
     };
@@ -828,6 +797,32 @@
     let rightChartInstance = null;
     const categoryInfoMap = {};
     const holdingInfoMap = {};
+
+    // Helper to clear incompatible child selections when a filter changes
+    function reconcileFilterState(changedKey) {
+      const matches = (sec, cat, hold, comp) => RAW_DATA.scenarios.some(s =>
+        (sec === "ALL" || s.sector === sec) &&
+        (cat === "ALL" || s.category === cat) &&
+        (hold === "ALL" || s.holding === hold) &&
+        (comp === "ALL" || s.company === comp)
+      );
+      if (changedKey === "sector" || changedKey === "category") {
+        if (state.company !== "ALL" && !matches(state.sector, state.category, "ALL", state.company)) {
+          state.company = "ALL";
+        }
+        if (state.holding !== "ALL" && !matches(state.sector, state.category, state.holding, state.company)) {
+          state.holding = "ALL";
+        }
+      } else if (changedKey === "holding") {
+        if (state.company !== "ALL" && !matches(state.sector, state.category, state.holding, state.company)) {
+          state.company = "ALL";
+        }
+      } else if (changedKey === "company") {
+        if (state.holding !== "ALL" && !matches(state.sector, state.category, state.holding, state.company)) {
+          state.holding = "ALL";
+        }
+      }
+    }
 
     // Dynamically retrieve unique sectors actually present in Excel data
     function getActiveSectors() {
@@ -1368,6 +1363,7 @@
         btn.innerHTML = `<span class="w-2.5 h-2.5 rounded-full shrink-0" style="background-color:${dotColor}"></span><span>${hName}</span><span class="${isSelected ? 'text-amber-100' : 'text-slate-400'}">(${cnt})</span>`;
         btn.addEventListener("click", () => {
           state.holding = state.holding === hName ? "ALL" : hName;
+          reconcileFilterState("holding");
           document.getElementById("filterHolding").value = state.holding;
           syncAll();
         });
@@ -1453,6 +1449,7 @@
         btn.innerHTML = `<span class="w-2 h-2 rounded-full shrink-0" style="background-color:${isSelected ? '#ffffff' : dotColor}"></span><span>${cat}</span><span class="${isSelected ? 'text-indigo-100' : 'text-slate-400'}">(${cnt})</span>`;
         btn.addEventListener("click", () => {
           state.category = state.category === cat ? "ALL" : cat;
+          reconcileFilterState("category");
           document.getElementById("filterCategory").value = state.category;
           syncAll();
         });
@@ -1485,11 +1482,24 @@
       }
     }
 
-    // Render Charts
+    // Update Right Chart Mode Button Active Styles
+    function updateRightChartModeButtons() {
+      const btnHold = document.getElementById("rightChartModeHolding");
+      const btnTop = document.getElementById("rightChartModeTopComp");
+      const btnSec = document.getElementById("rightChartModeSector");
+      const activeClass = "px-2.5 py-1 rounded-md text-xs font-medium whitespace-nowrap bg-white text-slate-800 shadow-sm transition";
+      const inactiveClass = "px-2.5 py-1 rounded-md text-xs font-medium whitespace-nowrap text-slate-600 hover:text-slate-900 transition";
+      if (btnHold) btnHold.className = state.rightChartMode === "holding" ? activeClass : inactiveClass;
+      if (btnTop) btnTop.className = state.rightChartMode === "topComp" ? activeClass : inactiveClass;
+      if (btnSec) btnSec.className = state.rightChartMode === "sector" ? activeClass : inactiveClass;
+    }
+
+    // Render Charts (支援左圖「總量排行 / 依業別堆疊」與右圖「金控排行 / 機構排行 / 業別佔比」完整連動)
     function renderCharts(filtered) {
       const activeSectors = getActiveSectors();
+      updateRightChartModeButtons();
 
-      // 1. Category Chart
+      // 1. Left Chart: Category Chart
       const ctxCat = document.getElementById("categoryChart").getContext("2d");
       if (categoryChartInstance) {
         categoryChartInstance.destroy();
@@ -1543,9 +1553,12 @@
               if (elements.length > 0) {
                 const idx = elements[0].index;
                 const clickedCat = catOrder[idx];
-                state.category = state.category === clickedCat ? "ALL" : clickedCat;
-                document.getElementById("filterCategory").value = state.category;
-                syncAll();
+                setTimeout(() => {
+                  state.category = state.category === clickedCat ? "ALL" : clickedCat;
+                  reconcileFilterState("category");
+                  document.getElementById("filterCategory").value = state.category;
+                  syncAll();
+                }, 0);
               }
             },
             plugins: {
@@ -1575,10 +1588,11 @@
         });
       } else {
         const datasets = activeSectors.map(sec => {
+          const baseSecColor = SECTOR_COLORS[sec]?.bg || "#4f46e5";
           return {
             label: sec,
             data: catOrder.map(c => baseForChart.filter(s => s.sector === sec && s.category === c).length),
-            backgroundColor: SECTOR_COLORS[sec]?.bg || "#4f46e5",
+            backgroundColor: catOrder.map(c => (state.category === "ALL" || state.category === c) ? baseSecColor : baseSecColor + "40"),
             borderRadius: 4,
             barThickness: 15
           };
@@ -1598,9 +1612,12 @@
               if (elements.length > 0) {
                 const idx = elements[0].index;
                 const clickedCat = catOrder[idx];
-                state.category = state.category === clickedCat ? "ALL" : clickedCat;
-                document.getElementById("filterCategory").value = state.category;
-                syncAll();
+                setTimeout(() => {
+                  state.category = state.category === clickedCat ? "ALL" : clickedCat;
+                  reconcileFilterState("category");
+                  document.getElementById("filterCategory").value = state.category;
+                  syncAll();
+                }, 0);
               }
             },
             plugins: {
@@ -1623,7 +1640,7 @@
         });
       }
 
-      // 2. Right Chart: Sector Doughnut OR Top 12 Institutions Bar
+      // 2. Right Chart: 金控排行 ('holding') OR 機構排行 ('topComp') OR 業別佔比 ('sector')
       const ctxRight = document.getElementById("sectorOrCompanyChart").getContext("2d");
       if (rightChartInstance) {
         rightChartInstance.destroy();
@@ -1657,60 +1674,173 @@
         `;
         card.addEventListener("click", () => {
           state.sector = state.sector === sec ? "ALL" : sec;
+          reconcileFilterState("sector");
           document.getElementById("filterSector").value = state.sector;
           syncAll();
         });
         miniSummary.appendChild(card);
       });
 
-      if (state.rightChartMode === "sector") {
-        document.getElementById("rightChartTitle").textContent = `金融業別場景佔比 (${activeSectors.length} 大業別)`;
-        document.getElementById("rightChartSubtitle").textContent = "點擊圓餅圖區塊或下方卡片可篩選特定業別";
+      if (state.rightChartMode === "holding") {
+        // 金控排行：依照 Excel 檔內的「所屬金控」篩選，並隱藏「未歸類 / 未分類」，讓各大金控長條圖比例尺清晰好讀
+        const baseForHoldingChart = RAW_DATA.scenarios.filter(item => {
+          if (isUnclassifiedHolding(item.holding)) return false; // 隱藏「未歸類」與「未分類」
+          if (state.sector !== "ALL" && item.sector !== state.sector) return false;
+          if (state.category !== "ALL" && item.category !== state.category) return false;
+          if (state.company !== "ALL" && item.company !== state.company) return false;
+          if (state.pdfPage !== "ALL" && item.pdfPage !== state.pdfPage) return false;
+          if (state.keyword.trim() !== "") {
+            const kw = state.keyword.trim().toLowerCase();
+            const hay = `${item.sector} ${item.holding} ${item.company} ${item.category} ${item.scenario}`.toLowerCase();
+            if (!hay.includes(kw)) return false;
+          }
+          return true;
+        });
 
-        rightChartInstance = new Chart(ctxRight, {
-          type: "doughnut",
-          data: {
-            labels: activeSectors,
-            datasets: [{
-              data: sectorCounts,
-              backgroundColor: activeSectors.map(sec => SECTOR_COLORS[sec]?.bg || "#4f46e5"),
-              borderWidth: 2,
-              borderColor: "#ffffff",
-              hoverOffset: 6
-            }]
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            cutout: "62%",
-            onClick: (evt, elements) => {
-              if (elements.length > 0) {
-                const idx = elements[0].index;
-                const clickedSec = activeSectors[idx];
-                state.sector = state.sector === clickedSec ? "ALL" : clickedSec;
-                document.getElementById("filterSector").value = state.sector;
-                syncAll();
-              }
+        const holdCountMap = {};
+        baseForHoldingChart.forEach(s => {
+          const h = s.holding;
+          holdCountMap[h] = (holdCountMap[h] || 0) + 1;
+        });
+
+        // 只取出已歸類且有場景的金控，並由多到少排序
+        let holdEntries = Object.entries(holdCountMap).filter(p => p[1] > 0 && !isUnclassifiedHolding(p[0]));
+        holdEntries.sort((a, b) => {
+          if (b[1] !== a[1]) return b[1] - a[1];
+          return a[0].localeCompare(b[0], "zh-Hant");
+        });
+
+        const holdLabels = holdEntries.map(p => p[0]);
+        const holdVals = holdEntries.map(p => p[1]);
+        const isUnclassifiedSelected = state.holding !== "ALL" && isUnclassifiedHolding(state.holding);
+
+        if (state.catChartMode === "stacked") {
+          document.getElementById("rightChartTitle").textContent = "所屬金控 AI 場景排行 (依業別堆疊)";
+          document.getElementById("rightChartSubtitle").textContent = isUnclassifiedSelected
+            ? `目前鎖定「${state.holding}」（本圖僅排行已歸類金控，點擊任一金控長條可切換，或切至「機構排行 / 業別佔比」檢視）`
+            : "不含未歸類，與左圖同步依業別堆疊（點擊金控長條可單獨篩選該金控）";
+
+          const datasets = activeSectors.map(sec => {
+            const baseSecColor = SECTOR_COLORS[sec]?.bg || "#4f46e5";
+            return {
+              label: sec,
+              data: holdLabels.map(h => baseForHoldingChart.filter(s => s.holding === h && s.sector === sec).length),
+              backgroundColor: holdLabels.map(h => (state.holding === "ALL" || state.holding === h) ? baseSecColor : baseSecColor + "40"),
+              borderRadius: 4,
+              barThickness: 14
+            };
+          });
+
+          rightChartInstance = new Chart(ctxRight, {
+            type: "bar",
+            data: {
+              labels: holdLabels,
+              datasets: datasets
             },
-            plugins: {
-              legend: {
-                position: "right",
-                labels: { boxWidth: 12, padding: 14, font: { size: 12, weight: "600" } }
+            options: {
+              indexAxis: "y",
+              responsive: true,
+              maintainAspectRatio: false,
+              onClick: (evt, elements) => {
+                if (elements.length > 0) {
+                  const idx = elements[0].index;
+                  const clickedHold = holdLabels[idx];
+                  setTimeout(() => {
+                    state.holding = state.holding === clickedHold ? "ALL" : clickedHold;
+                    reconcileFilterState("holding");
+                    updateDynamicDropdowns();
+                    document.getElementById("filterHolding").value = state.holding;
+                    syncAll();
+                  }, 0);
+                }
               },
-              tooltip: {
-                callbacks: {
-                  label: (ctx) => {
-                    const val = ctx.parsed;
-                    const p = totalFiltered > 0 ? ((val / totalFiltered) * 100).toFixed(1) : "0.0";
-                    return ` ${ctx.label}: ${val} 筆 (${p}%)`;
+              plugins: {
+                legend: { position: "top", labels: { boxWidth: 11, font: { size: 11 } } },
+                tooltip: {
+                  callbacks: {
+                    afterBody: (items) => {
+                      if (!items.length) return "";
+                      const hName = holdLabels[items[0].dataIndex];
+                      return `該金控合計：${holdCountMap[hName] || 0} 筆`;
+                    }
                   }
+                }
+              },
+              scales: {
+                x: {
+                  stacked: true,
+                  beginAtZero: true,
+                  ticks: { precision: 0, font: { size: 10 } },
+                  grid: { color: "#f1f5f9" }
+                },
+                y: {
+                  stacked: true,
+                  ticks: { font: { size: 11, weight: "600" }, color: "#1e293b" },
+                  grid: { display: false }
                 }
               }
             }
-          }
-        });
-      } else {
-        document.getElementById("rightChartTitle").textContent = "場景數領先之金融機構 Top 12";
+          });
+        } else {
+          document.getElementById("rightChartTitle").textContent = "所屬金控 AI 場景排行";
+          document.getElementById("rightChartSubtitle").textContent = isUnclassifiedSelected
+            ? `目前鎖定「${state.holding}」（本圖僅排行已歸類金控，點擊任一金控長條可切換，或切至「機構排行 / 業別佔比」檢視）`
+            : "依所屬金控場景數由多到少排列，不含未歸類（點擊長條可篩選該金控）";
+
+          const holdColors = holdLabels.map((h, idx) => {
+            const baseCol = getHoldingDotColor(h, idx);
+            if (state.holding === "ALL" || state.holding === h) return baseCol;
+            return baseCol + "40";
+          });
+
+          rightChartInstance = new Chart(ctxRight, {
+            type: "bar",
+            data: {
+              labels: holdLabels,
+              datasets: [{
+                label: "場景筆數",
+                data: holdVals,
+                backgroundColor: holdColors,
+                borderRadius: 4,
+                barThickness: 14
+              }]
+            },
+            options: {
+              indexAxis: "y",
+              responsive: true,
+              maintainAspectRatio: false,
+              onClick: (evt, elements) => {
+                if (elements.length > 0) {
+                  const idx = elements[0].index;
+                  const clickedHold = holdLabels[idx];
+                  setTimeout(() => {
+                    state.holding = state.holding === clickedHold ? "ALL" : clickedHold;
+                    reconcileFilterState("holding");
+                    updateDynamicDropdowns();
+                    document.getElementById("filterHolding").value = state.holding;
+                    syncAll();
+                  }, 0);
+                }
+              },
+              plugins: {
+                legend: { display: false }
+              },
+              scales: {
+                x: {
+                  beginAtZero: true,
+                  ticks: { precision: 0, font: { size: 10 } },
+                  grid: { color: "#f1f5f9" }
+                },
+                y: {
+                  ticks: { font: { size: 11, weight: "600" }, color: "#1e293b" },
+                  grid: { display: false }
+                }
+              }
+            }
+          });
+        }
+      } else if (state.rightChartMode === "topComp") {
+        document.getElementById("rightChartTitle").textContent = "場景數領先之金融機構排行";
         document.getElementById("rightChartSubtitle").textContent = "點擊機構長條可單獨篩選該機構之 AI 應用場景";
 
         const compMap = {};
@@ -1747,10 +1877,13 @@
               if (elements.length > 0) {
                 const idx = elements[0].index;
                 const clickedComp = compLabels[idx];
-                state.company = state.company === clickedComp ? "ALL" : clickedComp;
-                updateDynamicDropdowns();
-                document.getElementById("filterCompany").value = state.company;
-                syncAll();
+                setTimeout(() => {
+                  state.company = state.company === clickedComp ? "ALL" : clickedComp;
+                  reconcileFilterState("company");
+                  updateDynamicDropdowns();
+                  document.getElementById("filterCompany").value = state.company;
+                  syncAll();
+                }, 0);
               }
             },
             plugins: {
@@ -1765,6 +1898,55 @@
               y: {
                 ticks: { font: { size: 11, weight: "600" }, color: "#1e293b" },
                 grid: { display: false }
+              }
+            }
+          }
+        });
+      } else {
+        document.getElementById("rightChartTitle").textContent = `金融業別場景佔比 (${activeSectors.length} 大業別)`;
+        document.getElementById("rightChartSubtitle").textContent = "點擊圓餅圖區塊或下方卡片可篩選特定業別";
+
+        rightChartInstance = new Chart(ctxRight, {
+          type: "doughnut",
+          data: {
+            labels: activeSectors,
+            datasets: [{
+              data: sectorCounts,
+              backgroundColor: activeSectors.map(sec => SECTOR_COLORS[sec]?.bg || "#4f46e5"),
+              borderWidth: 2,
+              borderColor: "#ffffff",
+              hoverOffset: 6
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            cutout: "62%",
+            onClick: (evt, elements) => {
+              if (elements.length > 0) {
+                const idx = elements[0].index;
+                const clickedSec = activeSectors[idx];
+                setTimeout(() => {
+                  state.sector = state.sector === clickedSec ? "ALL" : clickedSec;
+                  reconcileFilterState("sector");
+                  document.getElementById("filterSector").value = state.sector;
+                  syncAll();
+                }, 0);
+              }
+            },
+            plugins: {
+              legend: {
+                position: "right",
+                labels: { boxWidth: 12, padding: 14, font: { size: 12, weight: "600" } }
+              },
+              tooltip: {
+                callbacks: {
+                  label: (ctx) => {
+                    const val = ctx.parsed;
+                    const p = totalFiltered > 0 ? ((val / totalFiltered) * 100).toFixed(1) : "0.0";
+                    return ` ${ctx.label}: ${val} 筆 (${p}%)`;
+                  }
+                }
               }
             }
           }
@@ -1886,7 +2068,7 @@
       let html = `
         <thead>
           <tr class="bg-slate-50 border-b border-slate-200 text-xs font-bold text-slate-600 uppercase">
-            <th class="py-3 px-4 text-left">AI 應用類別 \ 金融業別</th>
+            <th class="py-3 px-4 text-left">AI 應用類別 \\ 金融業別</th>
             ${sectors.map(sec => {
         const secCnt = RAW_DATA.scenarios.filter(s => s.sector === sec).length;
         return `<th class="py-3 px-4 text-center">${sec} (${secCnt})</th>`;
@@ -2059,7 +2241,6 @@
         const groupItems = groupMap.get(hName) || [];
         const colorIdx = holdingColorIdxMap[hName] ?? gIdx;
         const headingColor = getHoldingTextColor(hName, colorIdx);
-        const dotColor = getHoldingDotColor(hName, colorIdx);
 
         const groupSection = document.createElement("div");
         groupSection.className = "space-y-3";
@@ -2220,11 +2401,14 @@
     function openScenarioModal(item) {
       const modal = document.getElementById("scenarioModal");
       const catStyle = CATEGORY_PALETTE[item.category] || CATEGORY_PALETTE["其它"];
+      const secStyle = SECTOR_COLORS[item.sector] || { bg: "#4f46e5" };
       const info = categoryInfoMap[item.category];
 
       state.modalCompany = item.company;
 
-      document.getElementById("modalSectorBadge").textContent = item.sector;
+      const sectorBadge = document.getElementById("modalSectorBadge");
+      sectorBadge.textContent = item.sector;
+      sectorBadge.style.backgroundColor = secStyle.bg;
       const holdingBadge = document.getElementById("modalHoldingBadge");
       if (!isUnclassifiedHolding(item.holding)) {
         holdingBadge.textContent = item.holding;
@@ -2267,7 +2451,7 @@
       modal.classList.remove("flex");
     }
 
-    // Tab Switcher
+    // Tab Switcher (保留 whitespace-nowrap shrink-0 確保不換行)
     function switchTab(tabName) {
       state.activeTab = tabName;
       const tabs = ["dashboard", "matrix", "institutions", "definitions"];
@@ -2276,10 +2460,10 @@
         const btn = document.getElementById(`tabBtn-${t}`);
         if (t === tabName) {
           view.classList.remove("hidden");
-          btn.className = "px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition-all bg-indigo-600 text-white shadow-sm";
+          btn.className = "px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-medium whitespace-nowrap shrink-0 transition-all bg-indigo-600 text-white shadow-sm";
         } else {
           view.classList.add("hidden");
-          btn.className = "px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition-all text-slate-300 hover:text-white";
+          btn.className = "px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-medium whitespace-nowrap shrink-0 transition-all text-slate-300 hover:text-white";
         }
       });
     }
@@ -2484,32 +2668,6 @@
       document.getElementById("tabBtn-institutions").addEventListener("click", () => switchTab("institutions"));
       document.getElementById("tabBtn-definitions").addEventListener("click", () => switchTab("definitions"));
 
-      // Helper to clear incompatible child selections when a filter changes
-      function reconcileFilterState(changedKey) {
-        const matches = (sec, cat, hold, comp) => RAW_DATA.scenarios.some(s =>
-          (sec === "ALL" || s.sector === sec) &&
-          (cat === "ALL" || s.category === cat) &&
-          (hold === "ALL" || s.holding === hold) &&
-          (comp === "ALL" || s.company === comp)
-        );
-        if (changedKey === "sector" || changedKey === "category") {
-          if (state.company !== "ALL" && !matches(state.sector, state.category, "ALL", state.company)) {
-            state.company = "ALL";
-          }
-          if (state.holding !== "ALL" && !matches(state.sector, state.category, state.holding, state.company)) {
-            state.holding = "ALL";
-          }
-        } else if (changedKey === "holding") {
-          if (state.company !== "ALL" && !matches(state.sector, state.category, state.holding, state.company)) {
-            state.company = "ALL";
-          }
-        } else if (changedKey === "company") {
-          if (state.holding !== "ALL" && !matches(state.sector, state.category, state.holding, state.company)) {
-            state.holding = "ALL";
-          }
-        }
-      }
-
       // Dropdown 1: Sector
       document.getElementById("filterSector").addEventListener("change", (e) => {
         state.sector = e.target.value;
@@ -2582,34 +2740,39 @@
       // Export CSV
       document.getElementById("exportCsvBtn").addEventListener("click", exportFilteredCsv);
 
-      // Chart Mode Toggles
+      // Left Chart Mode Toggles (總量排行 / 依業別堆疊) - 切換時同步重繪左右兩側圖表
       const btnCatTotal = document.getElementById("catChartModeTotal");
       const btnCatStacked = document.getElementById("catChartModeStacked");
       btnCatTotal.addEventListener("click", () => {
         state.catChartMode = "total";
-        btnCatTotal.className = "px-2.5 py-1 rounded-md text-xs font-medium bg-white text-slate-800 shadow-sm transition";
-        btnCatStacked.className = "px-2.5 py-1 rounded-md text-xs font-medium text-slate-600 hover:text-slate-900 transition";
+        btnCatTotal.className = "px-2.5 py-1 rounded-md text-xs font-medium whitespace-nowrap bg-white text-slate-800 shadow-sm transition";
+        btnCatStacked.className = "px-2.5 py-1 rounded-md text-xs font-medium whitespace-nowrap text-slate-600 hover:text-slate-900 transition";
         renderCharts(getFilteredScenarios());
       });
       btnCatStacked.addEventListener("click", () => {
         state.catChartMode = "stacked";
-        btnCatStacked.className = "px-2.5 py-1 rounded-md text-xs font-medium bg-white text-slate-800 shadow-sm transition";
-        btnCatTotal.className = "px-2.5 py-1 rounded-md text-xs font-medium text-slate-600 hover:text-slate-900 transition";
+        btnCatStacked.className = "px-2.5 py-1 rounded-md text-xs font-medium whitespace-nowrap bg-white text-slate-800 shadow-sm transition";
+        btnCatTotal.className = "px-2.5 py-1 rounded-md text-xs font-medium whitespace-nowrap text-slate-600 hover:text-slate-900 transition";
         renderCharts(getFilteredScenarios());
       });
 
-      const btnRightSec = document.getElementById("rightChartModeSector");
+      // Right Chart Mode Toggles (順序：金控排行 -> 機構排行 -> 業別佔比)
+      const btnRightHold = document.getElementById("rightChartModeHolding");
       const btnRightTop = document.getElementById("rightChartModeTopComp");
-      btnRightSec.addEventListener("click", () => {
-        state.rightChartMode = "sector";
-        btnRightSec.className = "px-2.5 py-1 rounded-md text-xs font-medium bg-white text-slate-800 shadow-sm transition";
-        btnRightTop.className = "px-2.5 py-1 rounded-md text-xs font-medium text-slate-600 hover:text-slate-900 transition";
+      const btnRightSec = document.getElementById("rightChartModeSector");
+      btnRightHold.addEventListener("click", () => {
+        state.rightChartMode = "holding";
+        updateRightChartModeButtons();
         renderCharts(getFilteredScenarios());
       });
       btnRightTop.addEventListener("click", () => {
         state.rightChartMode = "topComp";
-        btnRightTop.className = "px-2.5 py-1 rounded-md text-xs font-medium bg-white text-slate-800 shadow-sm transition";
-        btnRightSec.className = "px-2.5 py-1 rounded-md text-xs font-medium text-slate-600 hover:text-slate-900 transition";
+        updateRightChartModeButtons();
+        renderCharts(getFilteredScenarios());
+      });
+      btnRightSec.addEventListener("click", () => {
+        state.rightChartMode = "sector";
+        updateRightChartModeButtons();
         renderCharts(getFilteredScenarios());
       });
 
