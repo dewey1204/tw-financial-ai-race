@@ -347,7 +347,7 @@
             <div class="min-w-0">
               <h2 id="rightChartTitle" class="text-base font-bold text-slate-900">
                 所屬金控 AI 場景排行
-                <span class="text-xs font-normal text-slate-500">(點擊長條可快速篩選該金控)</span>
+                <!-- <span class="text-xs font-normal text-slate-500">(點擊長條可快速篩選該金控)</span> -->
               </h2>
               <p id="rightChartSubtitle" class="text-xs text-slate-500 mt-0.5">依所屬金控統計場景數</p>
             </div>
@@ -1868,7 +1868,7 @@
           document.getElementById("rightChartTitle").textContent = "所屬金控 AI 場景排行 (依業別堆疊)";
           document.getElementById("rightChartSubtitle").textContent = isUnclassifiedSelected
             ? `目前鎖定「${state.holding}」（本圖僅排行已歸類金控，點擊任一金控長條可切換，或切至「機構排行 / 業別佔比」檢視）`
-            : "不含未歸類，與左圖同步依業別堆疊（點擊金控長條可單獨篩選該金控）";
+            : "不含未歸類，與左圖同步依業別堆疊";
 
           const datasets = activeSectors.map(sec => {
             const baseSecColor = SECTOR_COLORS[sec]?.bg || "#4f46e5";
@@ -1935,7 +1935,7 @@
           document.getElementById("rightChartTitle").textContent = "所屬金控 AI 場景排行";
           document.getElementById("rightChartSubtitle").textContent = isUnclassifiedSelected
             ? `目前鎖定「${state.holding}」（本圖僅排行已歸類金控，點擊任一金控長條可切換，或切至「機構排行 / 業別佔比」檢視）`
-            : "依所屬金控場景數由多到少排列，不含未歸類（點擊長條可篩選該金控）";
+            : "依所屬金控場景數由多到少排列，不含未歸類";
 
           const holdColors = holdLabels.map((h, idx) => {
             const baseCol = getHoldingDotColor(h, idx);
