@@ -80,6 +80,14 @@
                 <span class="text-slate-400">·</span>
                 <span id="headerLastUpdateText">上次更新：2026-10-22</span>
               </span>
+              <button id="openLatestUpdatesBtn" type="button" title="點擊檢視最新更新日期的 AI 應用場景"
+                class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium whitespace-nowrap bg-amber-500/20 hover:bg-amber-500/30 text-amber-200 border border-amber-400/40 cursor-pointer transition shadow-sm">
+                <svg class="w-3.5 h-3.5 text-amber-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+                <span id="latestUpdatesBtnText">最新更新場景</span>
+              </button>
               <label for="excelFileInput" title="手動載入本機 Excel 檔案 (.xlsx)"
                 class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium whitespace-nowrap bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-600 cursor-pointer transition">
                 <svg class="w-3.5 h-3.5 text-indigo-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -304,10 +312,10 @@
     <!-- ==================== TAB 1: DASHBOARD & SCENARIOS ==================== -->
     <div id="tabView-dashboard" class="space-y-6">
 
-      <!-- Charts Grid -->
+      <!-- Charts Grid (各佔 50%: lg:col-span-6) -->
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
-        <!-- Chart 1: AI Category Distribution (7 cols) -->
+        <!-- Chart 1: AI Category Distribution (6 cols = 50%) -->
         <div class="lg:col-span-6 bg-white rounded-xl border border-slate-200/80 shadow-sm p-5 flex flex-col">
           <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 mb-4">
             <div>
@@ -317,7 +325,7 @@
               </h2>
               <p class="text-xs text-slate-500 mt-0.5">統計各技術與應用類別之場景筆數</p>
             </div>
-            <div class="flex items-center bg-slate-100 p-0.5 rounded-lg self-start sm:self-auto shrink-0">
+            <div class="flex items-center bg-slate-100 p-0.5 rounded-lg self-start shrink-0">
               <button id="catChartModeTotal" type="button"
                 class="px-2.5 py-1 rounded-md text-xs font-medium whitespace-nowrap bg-white text-slate-800 shadow-sm transition">
                 總量排行
@@ -333,7 +341,7 @@
           </div>
         </div>
 
-        <!-- Chart 2: Holding Rank / Top Companies / Sector Distribution (5 cols) -->
+        <!-- Chart 2: Holding Rank / Top Companies / Sector Distribution (6 cols = 50%) -->
         <div class="lg:col-span-6 bg-white rounded-xl border border-slate-200/80 shadow-sm p-5 flex flex-col">
           <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 mb-4">
             <div class="min-w-0">
@@ -342,7 +350,7 @@
               </h2>
               <p id="rightChartSubtitle" class="text-xs text-slate-500 mt-0.5">依所屬金控統計場景數（點擊長條可篩選該金控）</p>
             </div>
-            <div class="flex items-center bg-slate-100 p-0.5 rounded-lg self-start sm:self-auto shrink-0">
+            <div class="flex items-center bg-slate-100 p-0.5 rounded-lg self-start shrink-0">
               <button id="rightChartModeHolding" type="button"
                 class="px-2.5 py-1 rounded-md text-xs font-medium whitespace-nowrap bg-white text-slate-800 shadow-sm transition">
                 金控排行
@@ -357,7 +365,7 @@
               </button>
             </div>
           </div>
-          <div class="relative h-64 w-full">
+          <div class="relative h-80 w-full">
             <canvas id="sectorOrCompanyChart"></canvas>
           </div>
           <!-- Mini Sector Breakdown Legend Cards -->
@@ -576,6 +584,75 @@
 
   </main>
 
+  <!-- Latest Updates Modal (顯示最新更新日期的 AI 應用場景，比照 AI 應用場景明細列表) -->
+  <div id="latestUpdatesModal"
+    class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4">
+    <div class="bg-white rounded-2xl max-w-5xl w-full shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[88vh]">
+      <div class="px-6 py-4 bg-slate-900 text-white flex flex-col sm:flex-row sm:items-center justify-between gap-3 shrink-0">
+        <div class="flex items-center flex-wrap gap-2.5">
+          <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-500/20 text-amber-300 border border-amber-400/30">
+            <span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span>
+            <span id="latestModalDateBadge">最新更新</span>
+          </span>
+          <h3 class="text-base font-bold">最新更新 AI 應用場景列表</h3>
+          <span id="latestModalCountBadge" class="px-2.5 py-0.5 text-xs font-semibold rounded-full bg-slate-800 text-slate-200 border border-slate-700">
+            共 0 筆
+          </span>
+        </div>
+        <div class="flex items-center gap-3 self-end sm:self-auto">
+          <div class="flex items-center bg-slate-800 p-0.5 rounded-lg border border-slate-700">
+            <button id="latestViewModeTableBtn" type="button"
+              class="px-2.5 py-1 rounded-md text-xs font-medium bg-indigo-600 text-white shadow-sm transition">
+              表格檢視
+            </button>
+            <button id="latestViewModeCardBtn" type="button"
+              class="px-2.5 py-1 rounded-md text-xs font-medium text-slate-300 hover:text-white transition">
+              卡片檢視
+            </button>
+          </div>
+          <button id="closeLatestModalBtn" type="button" class="text-slate-400 hover:text-white transition">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="flex-1 overflow-y-auto custom-scrollbar">
+        <!-- Latest Table View -->
+        <div id="latestScenariosTableView" class="overflow-x-auto custom-scrollbar">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="bg-slate-50 border-b border-slate-200 text-xs font-semibold text-slate-600 uppercase tracking-wider sticky top-0 z-10">
+                <th class="py-3 px-4 w-16 text-center">序號</th>
+                <th class="py-3 px-4 w-44">金融機構 (業者)</th>
+                <th class="py-3 px-4 w-32">所屬金控</th>
+                <th class="py-3 px-4 w-28">業別</th>
+                <th class="py-3 px-4 w-36">AI 應用類別</th>
+                <th class="py-3 px-4">AI 場景與應用內容</th>
+              </tr>
+            </thead>
+            <tbody id="latestScenariosTableBody" class="divide-y divide-slate-100 text-sm">
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Latest Card Grid View -->
+        <div id="latestScenariosCardView"
+          class="hidden p-4 sm:p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 bg-slate-50/50">
+        </div>
+      </div>
+
+      <div class="px-6 py-3.5 bg-slate-50 border-t border-slate-200 flex items-center justify-between shrink-0">
+        <span id="latestModalFooterHint" class="text-xs text-slate-500">點擊任一列或卡片可檢視該場景之完整分類原則與機構資訊</span>
+        <button id="latestModalCloseFooterBtn" type="button"
+          class="px-4 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 text-white hover:bg-slate-700 transition">
+          關閉視窗
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- Scenario Detail Modal -->
   <div id="scenarioModal"
     class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4">
@@ -585,7 +662,7 @@
           <span id="modalSectorBadge"
             class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-indigo-500 text-white"></span>
           <span id="modalHoldingBadge"
-            class="hidden px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-500/20 text-amber-200 border border-amber-400/30"></span>
+            class="hidden px-2.5 py-0.5 rounded-full text-xs font-semibold border"></span>
           <h3 id="modalCompanyTitle" class="text-base font-bold"></h3>
         </div>
         <button id="closeModalBtn" type="button" class="text-slate-400 hover:text-white transition">
@@ -728,6 +805,41 @@
       return getHoldingDotColor(hName, idx);
     }
 
+    // 對應「所屬金控快速篩選」各金控專屬色系的膠囊標籤樣式（用於明細表格、卡片檢視、分類說明與彈跳視窗）
+    const HOLDING_BADGE_STYLES = {
+      "元大金": { bg: "#eff6ff", text: "#1d4ed8", border: "#bfdbfe", dot: "#2563eb" },
+      "國泰金": { bg: "#f0fdf4", text: "#15803d", border: "#bbf7d0", dot: "#22c55e" },
+      "玉山金": { bg: "#ecfdf5", text: "#047857", border: "#a7f3d0", dot: "#86efac" },
+      "富邦金": { bg: "#f5f3ff", text: "#6d28d9", border: "#ddd6fe", dot: "#7c3aed" },
+      "台新新光金": { bg: "#fff1f2", text: "#be123c", border: "#fecdd3", dot: "#e11d48" },
+      "華南金": { bg: "#fff7ed", text: "#c2410c", border: "#fed7aa", dot: "#ea580c" },
+      "中信金": { bg: "#f0fdfa", text: "#0f766e", border: "#99f6e4", dot: "#0d9488" },
+      "凱基金": { bg: "#fffbeb", text: "#b45309", border: "#fde68a", dot: "#d97706" },
+      "永豐金": { bg: "#fdf2f8", text: "#be185d", border: "#fbcfe8", dot: "#db2777" },
+      "兆豐金": { bg: "#faf5ff", text: "#7e22ce", border: "#e9d5ff", dot: "#9333ea" },
+      "臺灣金": { bg: "#fef3c7", text: "#92400e", border: "#fde68a", dot: "#b45309" },
+      "第一金": { bg: "#fefce8", text: "#a16207", border: "#fef08a", dot: "#eab308" },
+      "合庫金": { bg: "#ecfeff", text: "#0e7490", border: "#a5f3fc", dot: "#06b6d4" },
+      "國票金": { bg: "#fdf4ff", text: "#a21caf", border: "#f5d0fe", dot: "#c026d3" },
+      "未歸類": { bg: "#f1f5f9", text: "#64748b", border: "#cbd5e1", dot: "#94a3b8" },
+      "未分類": { bg: "#f1f5f9", text: "#64748b", border: "#cbd5e1", dot: "#94a3b8" }
+    };
+
+    function getHoldingBadgeStyle(hName, idx = 0) {
+      if (HOLDING_BADGE_STYLES[hName]) return HOLDING_BADGE_STYLES[hName];
+      const dot = getHoldingDotColor(hName, idx);
+      return { bg: `${dot}15`, text: dot, border: `${dot}40`, dot };
+    }
+
+    function renderHoldingTagHtml(hName, showUnclassifiedAsTag = false) {
+      const unclass = isUnclassifiedHolding(hName);
+      if (unclass && !showUnclassifiedAsTag) {
+        return `<span class="text-xs text-slate-400">${hName || "未歸類"}</span>`;
+      }
+      const st = getHoldingBadgeStyle(hName || "未歸類");
+      return `<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold border" style="background-color:${st.bg};color:${st.text};border-color:${st.border}"><span class="w-2 h-2 rounded-full shrink-0" style="background-color:${st.dot}"></span><span>${hName || "未歸類"}</span></span>`;
+    }
+
     // Helper: Check if a holding value represents unclassified ("未歸類" or "未分類")
     function isUnclassifiedHolding(h) {
       if (!h) return true;
@@ -787,6 +899,8 @@
       keyword: "",
       sortBy: "default",
       viewMode: "table", // 'table' | 'card'
+      latestViewMode: "table", // 'table' | 'card' for Latest Updates Modal
+      latestUpdateDate: "2026-10-22",
       catChartMode: "total", // 'total' | 'stacked'
       rightChartMode: "holding", // 'holding' | 'topComp' | 'sector'
       instSort: "holding",
@@ -797,6 +911,30 @@
     let rightChartInstance = null;
     const categoryInfoMap = {};
     const holdingInfoMap = {};
+
+    // Helper: 取得最新更新日期與對應之 AI 應用場景列表
+    function getLatestUpdatedScenarios() {
+      let maxDate = "";
+      RAW_DATA.scenarios.forEach(s => {
+        const d = formatToTaipeiDate(s.updateDate);
+        if (d && /^\d{4}-\d{2}-\d{2}$/.test(d)) {
+          if (d > maxDate) maxDate = d;
+        }
+      });
+
+      if (maxDate) {
+        const list = RAW_DATA.scenarios.filter(s => formatToTaipeiDate(s.updateDate) === maxDate);
+        return { latestDate: maxDate, list };
+      }
+
+      // 若內建 fallback 資料尚未帶入 updateDate 欄位，則以「最新蒐集」或编号 > 134 之最新一波場景作為備援
+      const fallbackDate = state.latestUpdateDate || "2026-10-22";
+      let fallbackList = RAW_DATA.scenarios.filter(s => String(s.pdfPage || "").includes("最新") || s.id > 134);
+      if (fallbackList.length === 0) {
+        fallbackList = RAW_DATA.scenarios.slice(-10);
+      }
+      return { latestDate: fallbackDate, list: fallbackList };
+    }
 
     // Helper to clear incompatible child selections when a filter changes
     function reconcileFilterState(changedKey) {
@@ -959,8 +1097,8 @@
       document.getElementById("institutionsDirTitle").textContent = `金融機構與周邊單位來源索引 (共 ${totalSources} 家)`;
       document.getElementById("definitionsHeaderTitle").textContent = `台灣金融業 AI 應用｜${totalCategories} 大類別判斷原則與界線說明`;
 
-      // 5. 動態更新上次資料更新時間（確保格式為正確的台灣台北日期 YYYY-MM-DD）
-      let latestDate = "2026-10-20";
+      // 5. 動態更新上次資料更新時間與「最新更新場景」按鈕筆數
+      let latestDate = "2026-10-22";
       RAW_DATA.scenarios.forEach(s => {
         const d = formatToTaipeiDate(s.updateDate);
         if (d && /^\d{4}-\d{2}-\d{2}$/.test(d)) {
@@ -969,10 +1107,17 @@
           }
         }
       });
+      state.latestUpdateDate = latestDate;
       const bannerTimeEl = document.getElementById("bannerLastUpdatedTime");
       if (bannerTimeEl) bannerTimeEl.textContent = latestDate;
       const headerTimeEl = document.getElementById("headerLastUpdateText");
       if (headerTimeEl) headerTimeEl.textContent = `上次更新：${latestDate}`;
+
+      const latestInfo = getLatestUpdatedScenarios();
+      const latestBtnTextEl = document.getElementById("latestUpdatesBtnText");
+      if (latestBtnTextEl) {
+        latestBtnTextEl.textContent = `最新更新場景 (${latestInfo.list.length})`;
+      }
     }
 
     // Helper: Sort holding objects (classified holdings sorted by count desc first, unclassified at the end)
@@ -1494,7 +1639,7 @@
       if (btnSec) btnSec.className = state.rightChartMode === "sector" ? activeClass : inactiveClass;
     }
 
-    // Render Charts (支援左圖「總量排行 / 依業別堆疊」與右圖「金控排行 / 機構排行 / 業別佔比」完整連動)
+    // Render Charts (支援左圖「總量排行 / 依業別堆疊」與右圖「金控排行 / 機構排行 / 業別佔比」完整連動，統一 borderRadius: 6 與 autoSkip: false)
     function renderCharts(filtered) {
       const activeSectors = getActiveSectors();
       updateRightChartModeButtons();
@@ -1580,7 +1725,7 @@
                 grid: { color: "#f1f5f9" }
               },
               y: {
-                ticks: { font: { size: 11, weight: "600" }, color: "#1e293b" },
+                ticks: { autoSkip: false, font: { size: 11, weight: "600" }, color: "#1e293b" },
                 grid: { display: false }
               }
             }
@@ -1593,7 +1738,7 @@
             label: sec,
             data: catOrder.map(c => baseForChart.filter(s => s.sector === sec && s.category === c).length),
             backgroundColor: catOrder.map(c => (state.category === "ALL" || state.category === c) ? baseSecColor : baseSecColor + "40"),
-            borderRadius: 4,
+            borderRadius: 6,
             barThickness: 15
           };
         });
@@ -1632,7 +1777,7 @@
               },
               y: {
                 stacked: true,
-                ticks: { font: { size: 11, weight: "600" }, color: "#1e293b" },
+                ticks: { autoSkip: false, font: { size: 11, weight: "600" }, color: "#1e293b" },
                 grid: { display: false }
               }
             }
@@ -1726,8 +1871,8 @@
               label: sec,
               data: holdLabels.map(h => baseForHoldingChart.filter(s => s.holding === h && s.sector === sec).length),
               backgroundColor: holdLabels.map(h => (state.holding === "ALL" || state.holding === h) ? baseSecColor : baseSecColor + "40"),
-              borderRadius: 4,
-              barThickness: 14
+              borderRadius: 6,
+              barThickness: 15
             };
           });
 
@@ -1755,7 +1900,7 @@
                 }
               },
               plugins: {
-                legend: { position: "top", labels: { boxWidth: 11, font: { size: 11 } } },
+                legend: { position: "top", labels: { boxWidth: 12, font: { size: 11 } } },
                 tooltip: {
                   callbacks: {
                     afterBody: (items) => {
@@ -1770,12 +1915,12 @@
                 x: {
                   stacked: true,
                   beginAtZero: true,
-                  ticks: { precision: 0, font: { size: 10 } },
+                  ticks: { precision: 0, font: { size: 11 } },
                   grid: { color: "#f1f5f9" }
                 },
                 y: {
                   stacked: true,
-                  ticks: { font: { size: 11, weight: "600" }, color: "#1e293b" },
+                  ticks: { autoSkip: false, font: { size: 11, weight: "600" }, color: "#1e293b" },
                   grid: { display: false }
                 }
               }
@@ -1801,8 +1946,8 @@
                 label: "場景筆數",
                 data: holdVals,
                 backgroundColor: holdColors,
-                borderRadius: 4,
-                barThickness: 14
+                borderRadius: 6,
+                barThickness: 15
               }]
             },
             options: {
@@ -1828,11 +1973,11 @@
               scales: {
                 x: {
                   beginAtZero: true,
-                  ticks: { precision: 0, font: { size: 10 } },
+                  ticks: { precision: 0, font: { size: 11 } },
                   grid: { color: "#f1f5f9" }
                 },
                 y: {
-                  ticks: { font: { size: 11, weight: "600" }, color: "#1e293b" },
+                  ticks: { autoSkip: false, font: { size: 11, weight: "600" }, color: "#1e293b" },
                   grid: { display: false }
                 }
               }
@@ -1865,8 +2010,8 @@
               label: "場景筆數",
               data: compVals,
               backgroundColor: compColors,
-              borderRadius: 4,
-              barThickness: 12
+              borderRadius: 6,
+              barThickness: 15
             }]
           },
           options: {
@@ -1892,11 +2037,11 @@
             scales: {
               x: {
                 beginAtZero: true,
-                ticks: { precision: 0, font: { size: 10 } },
+                ticks: { precision: 0, font: { size: 11 } },
                 grid: { color: "#f1f5f9" }
               },
               y: {
-                ticks: { font: { size: 11, weight: "600" }, color: "#1e293b" },
+                ticks: { autoSkip: false, font: { size: 11, weight: "600" }, color: "#1e293b" },
                 grid: { display: false }
               }
             }
@@ -1954,7 +2099,7 @@
       }
     }
 
-    // Render Scenarios Table & Card View
+    // Render Scenarios Table & Card View (採用與「所屬金控快速篩選」一致的各金控專屬配色標籤)
     function renderScenariosList(filtered) {
       document.getElementById("tableCountBadge").textContent = `共 ${filtered.length} 筆`;
 
@@ -1995,16 +2140,12 @@
         tr.className = "hover:bg-indigo-50/40 cursor-pointer transition";
         const secStyle = SECTOR_COLORS[item.sector] || { light: "#f1f5f9", text: "#334155" };
         const catStyle = CATEGORY_PALETTE[item.category] || CATEGORY_PALETTE["其它"];
-        const unclass = isUnclassifiedHolding(item.holding);
 
         tr.innerHTML = `
           <td class="py-3 px-4 text-center text-xs font-mono text-slate-400">${item.id}</td>
           <td class="py-3 px-4 font-semibold text-slate-800">${item.company}</td>
           <td class="py-3 px-4">
-            ${unclass
-            ? `<span class="text-xs text-slate-400">${item.holding || "未歸類"}</span>`
-            : `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-50 text-amber-800 border border-amber-200/80">${item.holding}</span>`
-          }
+            ${renderHoldingTagHtml(item.holding, false)}
           </td>
           <td class="py-3 px-4">
             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold" style="background-color:${secStyle.light};color:${secStyle.text}">
@@ -2022,7 +2163,7 @@
         tbody.appendChild(tr);
       });
 
-      // Populate Cards
+      // Populate Cards (所屬金控 tag 同步採用專屬配色)
       cardView.innerHTML = "";
       filtered.forEach(item => {
         const card = document.createElement("div");
@@ -2038,7 +2179,7 @@
                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold" style="background-color:${secStyle.light};color:${secStyle.text}">
                   ${item.sector}
                 </span>
-                ${!unclass ? `<span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-amber-50 text-amber-800 border border-amber-200/80">${item.holding}</span>` : ""}
+                ${!unclass ? renderHoldingTagHtml(item.holding, false) : ""}
               </div>
               <span class="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-semibold border ${catStyle.badgeBg} ${catStyle.badgeText} ${catStyle.badgeBorder}">
                 ${item.category}
@@ -2055,6 +2196,106 @@
         card.addEventListener("click", () => openScenarioModal(item));
         cardView.appendChild(card);
       });
+    }
+
+    // Render Latest Updates Modal Content (比照 AI 應用場景明細列表，支援表格與卡片切換)
+    function renderLatestUpdatesModalContent() {
+      const { latestDate, list } = getLatestUpdatedScenarios();
+      document.getElementById("latestModalDateBadge").textContent = `更新日期：${latestDate}`;
+      document.getElementById("latestModalCountBadge").textContent = `共 ${list.length} 筆`;
+
+      const tableView = document.getElementById("latestScenariosTableView");
+      const cardView = document.getElementById("latestScenariosCardView");
+      const tbody = document.getElementById("latestScenariosTableBody");
+
+      if (state.latestViewMode === "table") {
+        tableView.classList.remove("hidden");
+        cardView.classList.add("hidden");
+      } else {
+        tableView.classList.add("hidden");
+        cardView.classList.remove("hidden");
+      }
+
+      tbody.innerHTML = "";
+      list.forEach(item => {
+        const tr = document.createElement("tr");
+        tr.className = "hover:bg-indigo-50/40 cursor-pointer transition";
+        const secStyle = SECTOR_COLORS[item.sector] || { light: "#f1f5f9", text: "#334155" };
+        const catStyle = CATEGORY_PALETTE[item.category] || CATEGORY_PALETTE["其它"];
+
+        tr.innerHTML = `
+          <td class="py-3 px-4 text-center text-xs font-mono text-slate-400">${item.id}</td>
+          <td class="py-3 px-4 font-semibold text-slate-800">${item.company}</td>
+          <td class="py-3 px-4">
+            ${renderHoldingTagHtml(item.holding, false)}
+          </td>
+          <td class="py-3 px-4">
+            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold" style="background-color:${secStyle.light};color:${secStyle.text}">
+              ${item.sector}
+            </span>
+          </td>
+          <td class="py-3 px-4">
+            <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold border ${catStyle.badgeBg} ${catStyle.badgeText} ${catStyle.badgeBorder}">
+              ${item.category}
+            </span>
+          </td>
+          <td class="py-3 px-4 text-slate-700 leading-relaxed">${item.scenario}</td>
+        `;
+        tr.addEventListener("click", () => {
+          closeLatestUpdatesModal();
+          openScenarioModal(item);
+        });
+        tbody.appendChild(tr);
+      });
+
+      cardView.innerHTML = "";
+      list.forEach(item => {
+        const card = document.createElement("div");
+        card.className = "bg-white rounded-xl p-4 border border-slate-200/90 shadow-sm hover:shadow-md hover:border-indigo-300 cursor-pointer transition flex flex-col justify-between";
+        const secStyle = SECTOR_COLORS[item.sector] || { light: "#f1f5f9", text: "#334155" };
+        const catStyle = CATEGORY_PALETTE[item.category] || CATEGORY_PALETTE["其它"];
+        const unclass = isUnclassifiedHolding(item.holding);
+
+        card.innerHTML = `
+          <div>
+            <div class="flex items-center justify-between gap-2 mb-2.5">
+              <div class="flex items-center flex-wrap gap-1.5">
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold" style="background-color:${secStyle.light};color:${secStyle.text}">
+                  ${item.sector}
+                </span>
+                ${!unclass ? renderHoldingTagHtml(item.holding, false) : ""}
+              </div>
+              <span class="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-semibold border ${catStyle.badgeBg} ${catStyle.badgeText} ${catStyle.badgeBorder}">
+                ${item.category}
+              </span>
+            </div>
+            <h3 class="text-sm font-bold text-slate-900 mb-1.5">${item.company}</h3>
+            <p class="text-xs text-slate-600 leading-relaxed">${item.scenario}</p>
+          </div>
+          <div class="mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-400">
+            <span>場景編號 #${item.id}</span>
+            <span class="font-medium text-indigo-600">點擊檢視詳情 →</span>
+          </div>
+        `;
+        card.addEventListener("click", () => {
+          closeLatestUpdatesModal();
+          openScenarioModal(item);
+        });
+        cardView.appendChild(card);
+      });
+    }
+
+    function openLatestUpdatesModal() {
+      renderLatestUpdatesModalContent();
+      const modal = document.getElementById("latestUpdatesModal");
+      modal.classList.remove("hidden");
+      modal.classList.add("flex");
+    }
+
+    function closeLatestUpdatesModal() {
+      const modal = document.getElementById("latestUpdatesModal");
+      modal.classList.add("hidden");
+      modal.classList.remove("flex");
     }
 
     // Render Cross-Tab Heatmap Matrix (Tab 2) dynamically for all active sectors
@@ -2341,25 +2582,22 @@
         });
       });
 
-      // Render Holdings Table
+      // Render Holdings Table (同步套用各金控專屬配色標籤)
       const holdingsTbody = document.getElementById("holdingsTableBody");
       if (holdingsTbody) {
         holdingsTbody.innerHTML = "";
         RAW_DATA.holdings.forEach(h => {
-          const unclass = isUnclassifiedHolding(h.holding);
           const tr = document.createElement("tr");
           tr.className = "hover:bg-slate-50";
           tr.innerHTML = `
             <td class="py-3 px-4 font-bold">
-              <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold border ${unclass ? 'bg-slate-100 text-slate-600 border-slate-300' : 'bg-amber-50 text-amber-800 border-amber-200'}">
-                ${h.holding}
-              </span>
+              ${renderHoldingTagHtml(h.holding, true)}
             </td>
             <td class="py-3 px-4 text-slate-800 font-medium">${h.keyword1 || "-"}</td>
             <td class="py-3 px-4 text-slate-600 text-xs">${h.keyword2 || "-"}</td>
             <td class="py-3 px-4 text-center font-bold text-slate-900">${h.count} 筆</td>
             <td class="py-3 px-4 text-center">
-              <button type="button" data-def-hold="${h.holding}" class="px-2.5 py-1 rounded-lg text-xs font-semibold text-amber-700 bg-amber-50 hover:bg-amber-100 transition">
+              <button type="button" data-def-hold="${h.holding}" class="px-2.5 py-1 rounded-lg text-xs font-semibold text-indigo-600 bg-indigo-50 hover:bg-indigo-100 transition">
                 查看 (${h.count})
               </button>
             </td>
@@ -2411,7 +2649,11 @@
       sectorBadge.style.backgroundColor = secStyle.bg;
       const holdingBadge = document.getElementById("modalHoldingBadge");
       if (!isUnclassifiedHolding(item.holding)) {
+        const hStyle = getHoldingBadgeStyle(item.holding);
         holdingBadge.textContent = item.holding;
+        holdingBadge.style.backgroundColor = hStyle.bg;
+        holdingBadge.style.color = hStyle.text;
+        holdingBadge.style.borderColor = hStyle.border;
         holdingBadge.classList.remove("hidden");
       } else {
         holdingBadge.classList.add("hidden");
@@ -2660,6 +2902,29 @@
         };
         reader.readAsArrayBuffer(file);
         e.target.value = "";
+      });
+
+      // Latest Updates Modal Events
+      document.getElementById("openLatestUpdatesBtn").addEventListener("click", openLatestUpdatesModal);
+      document.getElementById("closeLatestModalBtn").addEventListener("click", closeLatestUpdatesModal);
+      document.getElementById("latestModalCloseFooterBtn").addEventListener("click", closeLatestUpdatesModal);
+      document.getElementById("latestUpdatesModal").addEventListener("click", (e) => {
+        if (e.target.id === "latestUpdatesModal") closeLatestUpdatesModal();
+      });
+
+      const btnLatestTable = document.getElementById("latestViewModeTableBtn");
+      const btnLatestCard = document.getElementById("latestViewModeCardBtn");
+      btnLatestTable.addEventListener("click", () => {
+        state.latestViewMode = "table";
+        btnLatestTable.className = "px-2.5 py-1 rounded-md text-xs font-medium bg-indigo-600 text-white shadow-sm transition";
+        btnLatestCard.className = "px-2.5 py-1 rounded-md text-xs font-medium text-slate-300 hover:text-white transition";
+        renderLatestUpdatesModalContent();
+      });
+      btnLatestCard.addEventListener("click", () => {
+        state.latestViewMode = "card";
+        btnLatestCard.className = "px-2.5 py-1 rounded-md text-xs font-medium bg-indigo-600 text-white shadow-sm transition";
+        btnLatestTable.className = "px-2.5 py-1 rounded-md text-xs font-medium text-slate-300 hover:text-white transition";
+        renderLatestUpdatesModalContent();
       });
 
       // Navigation Tabs
